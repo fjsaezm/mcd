@@ -1,0 +1,12 @@
+[submodule "CN/mcd-cn"]
+	path = CN/mcd-cn
+	url = https://github.com/Ocete/mcd-cn.git
+[submodule "TI/mcd-ti"]
+	path = TI/mcd-ti
+	url = https://github.com/Ocete/mcd-ti.git
+[submodule "PDGE/mcd-pdge"]
+	path = PDGE/mcd-pdge
+	url = https://github.com/Ocete/mcd-pdge.git
+[submodule "MAAA/mcd-maaa"]
+	path = MAAA/mcd-maaa
+	url = https://github.com/fjsaezm/mcd-maaa.git
