@@ -1,0 +1,247 @@
+\documentclass[a4paper]{article} 
+
+\addtolength{\hoffset}{-2.25cm}
+\addtolength{\textwidth}{4.5cm}
+\addtolength{\voffset}{-3.25cm}
+\addtolength{\textheight}{5cm}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0in}
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\usepackage{blindtext} % Package to generate dummy text
+\usepackage{charter} % Use the Charter font
+\usepackage[utf8]{inputenc} % Use UTF-8 encoding
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage[english, ngerman]{babel} % Language hyphenation and typographical rules
+\usepackage{amsthm, amsmath, amssymb} % Mathematical typesetting
+\usepackage{float} % Improved interface for floating objects
+\usepackage[final, colorlinks = true,
+            linkcolor = black,
+            citecolor = black]{hyperref} % For hyperlinks in the PDF
+\usepackage{graphicx, multicol} % Enhanced support for graphics
+\usepackage{xcolor} % Driver-independent color extensions
+\usepackage{marvosym, wasysym} % More symbols
+\usepackage{rotating} % Rotation tools
+\usepackage{censor} % Facilities for controlling restricted text
+\usepackage{listings} % Environment for non-formatted code, !uses style file!
+\usepackage{pseudocode} % Environment for specifying algorithms in a natural way
+ % Environment for f-structures, !uses style file!
+\usepackage{booktabs} % Enhances quality of tables
+\usepackage{tikz-qtree} % Easy tree drawing tool
+ % Configuration for b-trees and b+-trees, !uses style file!
+\usepackage[backend=biber,style=numeric,
+            sorting=nyt]{biblatex} % Complete reimplementation of bibliographic facilities
+\addbibresource{ecl.bib}
+\usepackage{csquotes} % Context sensitive quotation facilities
+\usepackage[yyyymmdd]{datetime} % Uses YEAR-MONTH-DAY format for dates
+\renewcommand{\dateseparator}{-} % Sets dateseparator to '-'
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{}\renewcommand{\headrulewidth}{0pt} % Blank out the default header
+\fancyfoot[L]{} % Custom footer text
+\fancyfoot[C]{} % Custom footer text
+\fancyfoot[R]{\thepage} % Custom footer text
+\newcommand{\note}[1]{\marginpar{\scriptsize \textcolor{red}{#1}}} % Enables comments in red on margin
+\usepackage{mathtools}
+\usepackage{amsmath}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\usepackage{cancel}
+%-------------------------------
+
+%----------------------------------------------------------------------------------------
+
+%-------------------------------
+%	ENVIRONMENT SECTION
+%-------------------------------
+\pagestyle{fancy}
+\usepackage{mdframed}
+
+
+\newenvironment{problem}[2][Problema]
+    { \begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {  \end{mdframed}}
+
+% Define solution environment
+\newenvironment{solution}
+    {\textit{Solución}}
+    {}
+
+
+%-------------------------------------------------------------------------------------------
+%	CUSTOM COMMANDS
+%-------------------------------
+\newcommand{\gaussian}{\frac{1}{\sigma\sqrt{2\pi}}\exp\left(- \frac{(x-\mu)^2}{2\sigma^2}\right)}
+\newcommand{\R}{\mathbb R}
+
+
+
+\begin{document}
+
+
+
+%-------------------------------
+%	TITLE SECTION
+%-------------------------------
+
+\fancyhead[C]{}
+\hrule \medskip % Upper rule
+\begin{minipage}{0.295\textwidth} 
+\raggedright
+\footnotesize
+Javier Sáez \hfill\\   
+77448344F \hfill\\
+franciscojavier.saez@estudiante.uam.es
+\end{minipage}
+\begin{minipage}{0.4\textwidth} 
+\centering 
+\large 
+Ejercicios\\ 
+\normalsize 
+Teoría de la Información\\ 
+\end{minipage}
+\begin{minipage}{0.295\textwidth} 
+\raggedleft
+\today\hfill\\
+\end{minipage}
+\medskip\hrule 
+\bigskip
+
+%-------------------------------
+%	CONTENTS
+%-------------------------------
+
+
+\begin{problem}{1}
+Sea $X \sim \mathcal N(\mu, \sigma^2)$ para ciertos $\mu,\sigma^2 \in \mathbb R$. Calcula su entropía.\\
+\end{problem}
+
+Recordamos que la función de densidad de una variable aleatoria que sigue una distribución gaussiana de parámetros $\mu,\sigma^2$ es
+\[
+f(x) = \gaussian ,    
+\]
+y que la entropía de una variable aleatoria continua $X$ en general viene dada por la expresión:
+\[
+H(X) = - \mathbb E \left[\log X\right] = \int_{-\infty}^\infty f_X(x) \left(-\log f_X(x)\right) dx.
+\]
+Podemos resolver esta integral de forma muy sencilla si sustituimos la función de densidad $f$ en la parte del logaritmo pero no en la parte que aparece sola. Tenemos que
+\[
+-\log f(x) = \log \frac{1}{f(x)} = \log  \left(2 \pi \sigma^2)^{\frac{1}{2}} \exp \left( \frac{1}{2\sigma^2}(x-\mu)^2 \right) \right) = \frac{1}{2} \log \left( 2\pi \sigma^2 \right) + \frac{1}{2\sigma^2} (x-\mu)^2
+\]
+Con esto se tiene que, en nuestro caso:
+\begin{align*}
+  H(X) %& = - \int \gaussian \log \left(\gaussian\right) dx  \\
+  %& = \int_{-\infty}^\infty f_X(x) \left( \frac{1}{2} \log \left(2\pi \sigma^2\right) + \frac{1}{2\sigma^2} (x-\mu)^2 \right) \\
+  & = \frac{1}{2} \log \left(2\pi \sigma^2\right) \underbrace{\int_{-\infty}^\infty f_X(x) dx}_{(1)} +  \frac{1}{2\sigma^2}  \underbrace{\int_{-\infty}^\infty f_X(x)(x-\mu)^2 dx}_{(2)}
+%& \stackrel{(1)}{=}  \frac{1}{\sigma \sqrt{2\pi}} \int \exp\left(- \frac{(x-\mu)^2}{2\sigma^2}\right) \log \left(\sigma \sqrt{2\pi} \exp \left( \frac{(x-\mu)^2}{2\sigma^2}\right) \right)   dx \\
+\end{align*}
+Donde vemos que en $(1)$ estamos integrando en todo el dominio posible la función de densidad de la normal, por lo que tenemos que eso es igual a $1$. Además, en $(2)$ tenemos la definición de la varianza $\nu = \sigma^2$ de la distribución normal de media $\mu$ y desviación típica $\sigma$.
+\[
+H(X) = \frac{1}{2} \log \left(2\pi \sigma^2\right) +  \frac{\sigma^2}{2\sigma^2} = \frac{1}{2}\left(\log \left(2\pi \sigma^2\right) + 1 \right) = \frac{1}{2}\left(\log \left(2\pi \sigma^2\right) + \log(e) \right) = \frac{1}{2}\log \left(2\pi e \sigma^2\right)  
+\]
+\qed
+
+
+\begin{problem}{2}
+
+ Sean $X,Y$ dos variables aleatorias. Probar que la información mutua entre ambas es simétrica, es decir, $MI(X;Y) = MI(Y;X)$.\\
+
+\end{problem}
+
+Este ejercicio es una consecuencia prácticamente trivial de que la distribución conjunta de $P(X,Y)$ es la misma que la de $P(Y,X)$. Lo vemos formalmente. Recordamos que
+\begin{equation}
+  \label{MI:discreta}
+MI(X;Y) = \sum_{x,y} P_{XY}(x,y) \log \frac{P_{XY}(x,y)}{P_X(x)P_Y(y)}
+\end{equation}
+Ahora, basta cambiar el orden de las sumatorias  y aplicar que $P(X,Y) = P(Y,X)$ para ver que:
+\[
+MI(X;Y) = \sum_{x,y} P_{XY}(x,y) \log \frac{P_{XY}(x,y)}{P_X(x)P_Y(y)} = \sum_{y,x} P_{YX}(y,x) \log \frac{P_{YX}(y,x)}{P_Y(y)P_X(x))} = MI(Y;X)
+    \]
+
+    como queríamos ver.
+
+En el caso continuo, la demostración es análoga, pues podemos aprovecharnos de Teorema de Fubini para cambiar las integrales y obtener el mismo resultado.
+
+\qed
+
+\begin{problem}{3}
+
+ Sean $X,Y$ dos variables aleatorias. Demostrar que, si $H(X)$ es la entropía de $X$, y $H(X,Y)$ es la entropía conjunta de $X$ e $Y$, entonces:
+\[
+MI(X;Y) = H(X) + H(Y) - H(X,Y).
+\]
+\end{problem}
+
+Lo primero que hacemos es recordar la definición de entropía y entropía conjunta para variables discretas. Tenemos que
+\begin{align}
+  H(X) & = - \mathbb E \left[\log X\right] \label{entropia} \\
+  H(X,Y) & = - \mathbb E \left[ \log P_{XY}(x,y)\right] \label{entropia:conjunta}
+\end{align}
+El resultado que queremos obtener se sigue de operar en la definición de información mutua \eqref{MI:discreta}. Lo primero que haremos es separar el logaritmo usando las propiedades de logaritmo del producto y del cociente:
+\begin{align}
+  MI(X;Y) &  = \sum_{x,y} P_{XY}(x,y) \log \frac{P_{XY}(x,y)}{P_X(x)P_Y(y)} \nonumber \\
+  & = \sum_{x,y} P_{XY}(x,y) \left( \log P_{XY}(x,y) - \log P_X(x) - \log P_Y(y) \right)\nonumber \\
+  & =  \underbrace{\sum_{x,y}P_{XY}(x,y) \log P_{XY}(x,y)}_{-H(X,Y)} - \sum_{x,y} P_{XY}(x,y) \log P_X(x) - \sum_{x,y} P_{XY}(x,y) \log P_Y(y) \label{ej3:align}
+\end{align}
+Ya hemos obtenido uno de los términos que queríamos. Ahora, basta ver que
+\[
+\sum_x \sum_y P_{XY}(x,y) \log P_X(x) = \sum_x \log P_X(x) \sum_y P_{XY}(x,y) \stackrel{(*)}{=} \sum_x P_X(x) \log P_X(x) = - H(X)
+\]
+donde en $(*)$ hemos usado que estamos sumando para un $x$ fijo sobre todos los valores de $y$, luego nos queda simplemente la probabilidad de ese $x$ en la distribución marginal $P_X$. Así, sustiyuyendo esto en la ecuación \eqref{ej3:align}, obtemos lo que queríamos:
+$$
+MI(X;Y) = -H(X,Y) - (- H(X)) - (-H(Y)) = H(X) + H(Y) - H(X,Y)
+$$
+
+\qed
+
+\begin{problem}{4}
+ Sean $X,Y$ dos variables aleatorias. Con la notación del ejercicio anterior, demostrar que:
+\begin{itemize}
+\item $H(X,Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$
+\item $MI(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) $
+\item $MI(X,X) = H(X)$
+\end{itemize}
+
+\end{problem}
+
+Recordamos primero la definición de entropía condicionada:
+\begin{equation}\label{entropia:condicionada}
+  H(X|Y) = - \mathbb E_{P_{XY}} \left[\log \frac{P_{XY}(x,y)}{P_X(x)} \right] = - \sum_{x,y} P_{XY}(x,y)\log \frac{P_{XY}(x,y)}{P_X(x)} = - \sum_{x} P_X(x) \sum_y P_{Y|X}(y|x)\log P_{Y|X}(y|x)
+\end{equation}
+
+Vamos a usar esta definición y las que se han dado en ejercicios anteriores para probar estas igualdades. 
+
+\begin{itemize}
+\item $H(X,Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$.\\
+
+  Usando la definición de la entropía conjunta dada en la ecuación \eqref{entropia:conjunta}, y aplicando la definición de probabilidad condicionada $P_{XY}(x,y) = P_{Y|X}(y|x)P_X(x)$ en varias ocasiones obtenemos:
+  \begin{align*}
+    H(X,Y) & = -\sum_{x,y}P_{XY}(x,y) \log P_{XY}(x,y) \\
+    & = - \sum_{x,y} P_{XY}(x,y)\log\left( P_{Y|X}(y|x)P_X(x)\right)\\
+    & = - \sum_{x,y} P_{XY}(x,y)\left( \log P_{Y|X}(y|x) + \log P_X(x)\right)\\
+    & = - \sum_{x,y} P_{XY}(x,y)\log P_{Y|X}(y|x)  - \sum_{x,y} P_{XY}(x,y)\log P_X(x)\\
+    & =  - \sum_{x}P_X(x)\log P_X(x) - \sum_{x,y} P_{XY}(x,y) \log P_{Y|X}(y|x)\\
+    & = H(X) - \sum_{x}P_X(x) \sum_{y} P_{Y|X}(y|x) \log P_{Y|X}(y|x) \\
+    & = H(X) + H(Y|X)
+  \end{align*}
+
+  Del mismo modo pero usando la otra descomposición de la probabilidad conjunta, obtenemos la segunda igualdad.
+
+\item $MI(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$.\\
+
+  Para esta, podemos usar que hemos probado en el ejercicio anterior que $MI(X;Y) = H(X) + H(Y) - H(X,Y)$ y que en el apartado anterior hemos probado que $H(X,Y) = H(Y) + H(X|Y)$ para obtener que
+  $$
+  MI(X;Y) = H(X) + H(Y) - H(X,Y) = H(X) + H(Y) - (H(Y) + H(X|Y)) = H(X) - H(X|Y),
+  $$
+  y, del mismo modo podemos probar la otra igualdad usando que $H(X,Y) = H(X) + H(Y|X)$.
+\item $ MI(X;X) = H(X)$.\\
+  Este es consecuencia directa del anterior y de que
+  \[
+  H(X|X) = - E_{P_X} \left[\log \frac{P_X(x)}{P_X(x)} \right] =  - E_{P_X} \left[\log 1\right] = 0.
+  \]
+\end{itemize}
+quedando así probadas todas las igualdades \qed
+
+\end{document}
