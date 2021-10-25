@@ -1,11 +1,22 @@
-\section{Lorem ipsum dolor sit amet}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Consectetur purus ut faucibus pulvinar elementum integer enim. Donec et odio pellentesque diam volutpat commodo sed egestas egestas. Id consectetur purus ut faucibus pulvinar elementum. Lectus arcu bibendum at varius vel pharetra. Quis hendrerit dolor magna eget est. Ut aliquam purus sit amet luctus. Pellentesque dignissim enim sit amet venenatis urna. Libero volutpat sed cras ornare arcu. Arcu dui vivamus arcu felis bibendum. Sit amet justo donec enim diam vulputate. Neque sodales ut etiam sit amet nisl purus in. Habitasse platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim. Scelerisque fermentum dui faucibus in ornare quam viverra orci sagittis.
 
-Cursus turpis massa tincidunt dui. Platea dictumst vestibulum rhoncus est. Maecenas pharetra convallis posuere morbi. Viverra justo nec ultrices dui sapien eget mi. In hac habitasse platea dictumst quisque sagittis purus sit amet. In arcu cursus euismod quis. Dui vivamus arcu felis bibendum ut tristique et egestas quis. Elementum sagittis vitae et leo duis ut diam. Vulputate eu scelerisque felis imperdiet. Tellus pellentesque eu tincidunt tortor aliquam. Augue neque gravida in fermentum et sollicitudin ac orci phasellus. Mi sit amet mauris commodo. Scelerisque mauris pellentesque pulvinar pellentesque habitant morbi tristique. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat.
+\section{Ejercicio 1 Tema PDF estimation}
 
-Egestas congue quisque egestas diam in. Vel orci porta non pulvinar. Mi quis hendrerit dolor magna. Lacus laoreet non curabitur gravida. Eget egestas purus viverra accumsan in nisl nisi scelerisque eu. Quis enim lobortis scelerisque fermentum. Vivamus arcu felis bibendum ut tristique. Sagittis nisl rhoncus mattis rhoncus urna neque viverra. Lacus luctus accumsan tortor posuere ac ut. Etiam erat velit scelerisque in dictum non consectetur a. Suspendisse potenti nullam ac tortor vitae. Lacus luctus accumsan tortor posuere. Mollis nunc sed id semper. Ac auctor augue mauris augue neque gravida in. Amet purus gravida quis blandit turpis cursus in hac. Porttitor massa id neque aliquam vestibulum morbi blandit. Accumsan in nisl nisi scelerisque eu ultrices vitae auctor. Nullam non nisi est sit amet facilisis magna etiam tempor. Auctor eu augue ut lectus arcu bibendum at varius.
+Sea \(X^*\) una v.a. cuya función de densidad es un estimador del núcleo con parámetro de suavizado \(h\) y núcleo gaussiano. Calcula la esperanza y la varianza de \(X^*\).\\
 
-Amet consectetur adipiscing elit ut aliquam purus sit amet luctus. Lectus nulla at volutpat diam ut. Mi proin sed libero enim sed faucibus turpis in. Pellentesque diam volutpat commodo sed egestas egestas fringilla. Volutpat blandit aliquam etiam erat velit. Lectus magna fringilla urna porttitor rhoncus. In est ante in nibh mauris cursus mattis molestie a. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi. Gravida rutrum quisque non tellus orci ac auctor augue mauris.
+Solución:
 
-Amet volutpat consequat mauris nunc. Duis convallis convallis tellus id interdum velit laoreet id. Sapien eget mi proin sed libero enim. Dignissim suspendisse in est ante in nibh. Sodales ut eu sem integer. Morbi tempus iaculis urna id volutpat lacus laoreet. Dictum fusce ut placerat orci nulla. Porta lorem mollis aliquam ut porttitor leo a diam sollicitudin. Ut aliquam purus sit amet luctus venenatis lectus. A iaculis at erat pellentesque adipiscing commodo. Amet justo donec enim diam vulputate ut pharetra sit amet. In hendrerit gravida rutrum quisque non tellus orci ac auctor.
+Tenemos que \(X^* \sim \hat f\), con \(h >0\) y \(K\) gaussiano, por lo que \(K_h \sim N(0,\sigma=h)\). Sabeoms que \(\hat f = F_n \star K_h\). Por tanto, como son independientes::
+\[
+E_{F_n}(X^* | X_1,\dots,X_n) = E_{F_n}[F_n] + E[K_h] = \bar X + 0 = \bar X
+\]
+y
+\[
+Var_{F_n}(X^*|X_1,\dots,X_n) = \frac{1}{n} \sum_i (X_i - \bar X)^2 + h^2
+\]
+
+\section{Ejercicio 5 Tema PDF estimation}
+
+\[
+E_{F_n}\left[\hat f^*(x)| X_1,\dots,X_n\right] = E_{F_n} \left[ \frac{1}{nh} \sum_{i}K \left(\frac{x-x_i}{h}\right)\right] = \frac{1}{h} E_{F_n} \left[ K\left( \frac{x-x^*}{h}\right)\right] = \frac{1}{h} \frac{1}{n} \sum_i K\left( \frac{x-x^*}{h}\right) = \hat f(x)
+\]

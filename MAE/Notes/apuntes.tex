@@ -298,3 +298,38 @@ MSEI(\hat f) = E \left[ \int \hat f (x;h)^2 dx\right] - 2E\left[ \int \hat f (x;
   \[
   E\left[ \int \hat f (x;h) f(x) dx\right] = E \left[ \hat f (x_{n+1};h) \right]
   \]
+
+
+\subsection{Multivarian density estimation}
+
+Consider \(d\) dimensions, we have that
+\[
+\hat f(x) = \frac{1}{n|H|} \sum \tilde{K}(H^{-1}(x-X_i)), \quad x =(x_1,\dots,x_d) \in \R^d
+\]
+where \(\tilde K\) is a multivariant density, \(\Sigma \in \mathcal M_{d\times d}\) positive definited (?), \(H = \Sigma^{1/2}\) and \(|H|\) is the determinant of \(H\). Note that, if \(\Sigma = CDC'\) where \(D\) is a diagonal matrix, we define \(\Sigma^{1/2} = CD^{1/2}C'\) where \(D^{1/2}\) has the squared roots of the elements. The problem of this definition is that there is a wide range of parameters that we have to fix.
+
+We approach this problem by simplyfying the expression:
+\begin{itemize}
+\item We consider \(\tilde K\) as the product of identic unidimensional kernels:
+\[
+\tilde K(x_1,\dots,x_d) = K(x_1)\dots K(x_d)
+\]
+\item We consider \(H\) to be diagonal and each element in \(H\) to be the same, that is: \(H = h I_d\).
+\end{itemize}
+
+With this considerations, we obtain
+\[
+\hat f(x) = \frac{1}{nh^d} \sum_{i=1}^n \prod_{j=1}^d K \left(\frac{x_j - X_{i,j}}{h}), \quad x=(x_1,\dots,x_d) \in \R^d
+\]
+
+\subsubsection{The curse of dimensionality}
+
+Unless we have huge amounts of data, it is quite hard to find data in many zones of the sample space, so the properties of our estimators are worsen.
+
+For instance, it can be shown that in dimension \(d\),
+\[
+ECMI^* \approx O(n^{\frac{-4}{4+d}})
+\]
+
+
+\section{Regression}
