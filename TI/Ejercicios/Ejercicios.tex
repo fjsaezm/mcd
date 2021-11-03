@@ -244,4 +244,99 @@ Vamos a usar esta definición y las que se han dado en ejercicios anteriores par
 \end{itemize}
 quedando así probadas todas las igualdades \qed
 
+
+\begin{problem}{5}
+En el contexto del \emph{temporal coding}, demostrar que, cuando \(\Delta t\ << \frac{1}{r}\), entonces la entropía viene dada por
+\[
+H \approx T r \log_2 \left(\frac{e}{r\Delta t}\right).  
+\]
+\end{problem}
+
+Recordemos primero algunos conceptos del contexto en el que estamos:
+
+\begin{itemize}
+\item \(T\) es la longitud que tiene un tren de spikes, es un número fijo.
+\item La longitud anteior está dividida en ventanas de tamaño \(\Delta t\), con lo que tenemos que $M = T/\Delta t$ ventanas.
+\item Dentro de una ventana, se codifica un spike si encontramos un \(1\) en la ventana y un $0$ si no hay spike en esa ventana. Por tanto, nuestras observaciones serán vectores de longitud \(M\).
+\item \(r\) será el \emph{firing rate}, que determina el número de unos y ceros que hay en un tren de disparos completo. Formalmente,
+\[
+  r = \frac{\#spikes}{T}.
+  \]
+\end{itemize}
+
+Ahora, como tenemos \(M\) ventanas y \(\#spikes\), usando la definición de \(r\) la probabilidad de tener un spike en una ventana es:
+\[
+P = \frac{\#spikes}{M} = \frac{\#spikes}{T/\Delta t} = r \Delta t 
+\]
+
+Llegados a este punto, queremos suponer que la probabilidad de encontrar un spike es muy baja, es decir que
+\[
+P = r \Delta t << 1  ,
+\]
+para tener las condiciones que se nos indican en el ejercicio. Esto se puede conseguir siempre si tomamos una ventana muy pequeña en unos datos de gran dimensionalidad. 
+
+Hemos de suponer que nuestra cadena es completamente aleatoria extraída del conjunto de todas las cadenas que tienen el mismo número de ceros y de unos. Así,
+\[
+P(x_i) = \frac{1}{{M \choose Tr}}, \quad i = 1,\dots, {M \choose Tr} 
+\]
+
+Como tenemos sucesos con la misma probabilidad, tenemos que la entropía viene dada por el logaritmo del total de los eventos. Llamando \(M_1 = Tr \) y \(M_0 = M - M_1\) a los números de 1 y 0 respectivamente, obtenemos aplicando propiedades del logaritmo que:
+\[
+H = \log_2 {M \choose M_1} = \log_2 \left( \frac{M!}{M_0! M_1!} \right) = \frac{1}{\log 2} \left(\log M! - \log M_0! - \log M_1 !\right).
+\]
+
+Ahora, si consideramos que las observaciones tienen dimensión suficientemente grande, podemos aproximar el logaritmo de un factorial usando la \emph{fórmula de Stirling}:
+\[
+\log n! \approx n \log n  - n = n(\log n - 1),
+\]
+y la usamos en la ecuación anterior obtenemos que:
+\[
+H \approx \frac{1}{\log 2} \left(M\log M - M - M_0\log M_0 - M_0 - M_1\log M_1 - M_1\right) 
+\]
+Y, como sabemos que \(M = M_1 + M_0\), entonces, podemos continuar operando del siguiente modo:
+\begin{align*}
+H &\approx \frac{1}{\log 2} \left(M\log M - M - M_0\log M_0 - M_0 - M_1\log M_1 - M_1\right) \\
+& = \frac{1}{\log 2} \left(M_1(\log M - \log M_1) + M_0(\log M - \log M_0)\right)\\
+& = -\frac{M}{\log 2} \left( (M_1/M)\log (M_1/M) + (M_0/M)\log(M_0/M)\right)
+\end{align*}
+Aplicando podemos expresar \(P = M_1/M\) primero y las definiciones iniciales después, obtenemos la siguiente cadena de igualdades:
+\begin{align*}
+H & \approx   -\frac{M}{\log 2} \left( P \log P + (1-P) \log(1-P) \right)\\
+& = - \frac{T}{\Delta t \log 2} \left(r\Delta t \log (r\Delta t) + (1-r\Delta t)\log (1-r\Delta t) \right) \\
+& \stackrel{(1)}{=} -\frac{T}{\Delta t \log 2} \left(r\Delta t \log (r\Delta t) + (1-r\Delta t)(-r\Delta t) \right)\\
+& \approx -\frac{T}{\Delta t \log 2} \left(r\Delta t \log (r\Delta t) - r\Delta t \right) \\
+& = - \frac{T}{\Delta t \log 2} r \Delta t \left(\log(r\Delta t) - 1\right)\\
+& = - \frac{Tr}{ \log 2} r \Delta t \left(\log(r\Delta t) - \log e\right) \\
+& = - \frac{Tr}{ \log 2} r \Delta t \left(\log \left( \frac{r\Delta t}{e}\right)\right)\\
+& =  \frac{Tr}{ \log 2} r \Delta t \left(\log \left( \frac{e}{r\Delta t}\right)\right) \\
+& = Tr \log_2\left( \frac{e}{r\Delta t}\right)
+\end{align*}
+donde en \((1)\) hemos usado el desarrollo en serie de Taylor de \( \log(1+x)\) despreciando el resto de Taylor. Llegamos así al resultado que queríamos demostrar. 
+\qed
+
+\begin{problem}{6}
+Demostrar que la regla de la cadena de la entropía se puede extender a varias variables de la forma:
+\[
+H(X,Y|Z) = H(X|Z) +H(Y|X,Z).
+\]
+\end{problem}
+
+Vemos primero que, usando la regla de Bayes, obtenemos:
+\[
+P(X,Y|Z) = P(X | Z) P(Y|X,Z).   
+\]
+Por lo que, podemos aplicar el logaritmo para obtener que:
+\[
+ \log P(X,Y|Z) = \log P(X | Z)+ \log P(Y|X,Z). 
+\]
+Ahora,aplicando esto, usando la fórmula de la entropía conjunta y sabiendo que tenemos que condicionar a una variable, obtenemos que
+\begin{align*}
+H(X,Y|Z) & = \sum_{x,y,z} P(x,y,z) \log \frac{1}{P(x,y|z)}\\
+& = - \sum_{x,y,z} P(x,y,z) \log P(x,y|z) \\
+& = - \sum_{x,y,z} P(x,y,z) \left(\log P(x|z) + \log P(y|x,z)\right)\\
+& = - \sum_{x,y,z} P(x,y,z) \log P(x|z) - \sum_{x,y,z} P(x,y,z) \log P(y|x,z)\\
+& = - \sum_{x,z} P(x,z) \log P(x|z) - \sum_{x,y,z} P(x,y,z) \log P(y|x,z)\\
+& = H(X|Z) + H(Y|X,Z)
+\end{align*}
+que es lo que queríamos demostrar. \qed
 \end{document}
