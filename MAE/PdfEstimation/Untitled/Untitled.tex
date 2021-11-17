@@ -1,0 +1,742 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Ejercicios estimación }
+
+    
+\usepackage{mdframed}
+
+
+\newenvironment{problem}[2][Problema]
+    { \begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {  \end{mdframed}}
+
+% Define solution environment
+\newenvironment{solution}
+    {\textit{Solución}}
+    {}
+    
+
+    \usepackage{fancyhdr} % Headers and footers
+    \pagestyle{fancy} % All pages have headers and footers
+    \fancyhead{}\renewcommand{\headrulewidth}{0pt} % Blank out the default header
+    \fancyfoot[L]{} % Custom footer text
+    \fancyfoot[C]{} % Custom footer text
+    \fancyfoot[R]{\thepage} % Custom footer text
+    \newcommand{\note}[1]{\marginpar{\scriptsize \textcolor{red}{#1}}} % Enables comments in red on margin
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+    \pagestyle{fancy}
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    %-------------------------------
+%	TITLE SECTION
+%-------------------------------
+
+\fancyhead[C]{}
+\hrule \medskip % Upper rule
+\begin{minipage}{0.295\textwidth}
+\raggedright
+\footnotesize
+Francisco Javier Sáez Maldonado \hfill\\
+77448344F \hfill\\
+franciscojavier.saez@estudiante.uam.es
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\centering
+\large
+Ejercicios Estimación P.D.F.\\
+\normalsize
+Métodos Avanzados en Estadística\\
+\end{minipage}
+\begin{minipage}{0.295\textwidth}
+\raggedleft
+\today\hfill\\
+\end{minipage}
+\medskip\hrule
+\bigskip
+
+%-------------------------------
+%	CONTENTS
+%-------------------------------
+    
+    \begin{problem}{6}
+
+    
+    Sean \(X_1,\dots,X_n\) v.a.i.i.d. de una distribución con densidad
+\(f\). Se considera el estimador del núcleo \(\hat{f}\) con núcleo
+rectangular \(K(x) = \mathbb I_{[-1/2,1/2]}(x)\) y parámetro de
+suavizado \(h\).
+
+\begin{enumerate}
+\item Calcula el sesgo y la varianza de \(\hat f(x)\) para un valor de \(x\)
+fijo.
+
+\item Demuestra que tanto el sesgo como la varianza tienden a cero si
+\(h\to 0\) y \(nh\to \infty\)
+\end{enumerate}
+
+    \end{problem}
+
+Tenemos que calcular \(E\left[\hat{f}(x)\right]\). Vamos primero a
+expresar el núcleo de otra manera. Tenemos que tratar con $ K\left(
+\frac{x - X_i}{h}\right)$, siendo \(K\) la función indicadora en el
+intervalo \((-1/2,1/2)\). Podemos ver entonces que \[
+ K\left( \frac{x - X_i}{h}\right) = \mathbb I_{(-1/2,1/2)} \left( \frac{x - X_i}{h}\right) = 
+ \begin{cases}
+ 1 & \left| \frac{x - X_i}{h} \right| < \frac{1}{2}\\
+ 0 & \text{else}
+ \end{cases}
+\] Por lo que, si despejamos del miembro superior de la última igualdad,
+obtenemos que esta función será \(1\) cuando: \[
+-\frac{h}{2} < x - X_i < \frac{h}{2} \Longleftrightarrow x - \frac{h}{2} < \lvert X_i \rvert <  x +\frac{h}{2} 
+\]
+
+Vemos que \begin{align*}
+E\left[\hat{f}(x)\right] & = E \left[ \frac{1}{nh} \sum K\left( \frac{x - X_i}{h}\right)\right]\\
+ & = \frac{1}{nh}  \sum  E \left[  K\left( \frac{X_i - t}{h}\right) \right] \\
+ &= \frac{1}{nh}  \sum \int  K\left( \frac{X_i - t}{h}\right) f(t) dt \\
+ & = \frac{1}{nh} \sum \int_{-\frac{h}{2} - x}^{\frac{h}{2}  + x} f(t) dt\\
+ & =  \frac{1}{nh} \sum  P\left(x -\frac{h}{2}  \leq X_i \leq x + \frac{h}{2}\right)
+\end{align*} Ahora, como estas probabilidades son la misma para
+cualquiera de las \(X_i\) y sabiendo que los miembros de la sumatoria
+son la definición de la función de distribución, podemos escribir eso
+como: \[
+E\left[\hat{f}(x)\right] = \frac{F(x + \frac{h}{2}) - F(x -\frac{h}{2})}{h}
+\]
+
+Con esto, podemos decir que \[
+Bias(\hat{f}(x)) = E\left[\hat{f}(x)\right] - f(x) = \frac{F(x + \frac{h}{2}) - F(x -\frac{h}{2})}{h} - f(x)
+\]
+
+Vamos a calcular ahora la varianza de \(\hat{f}(x)\). Sabemos que \[
+Var(\hat{f}(x)) = Var\left(\frac{1}{nh} \sum K\left( \frac{x - X_i}{h}\right)\right) = \frac{1}{n^2 h^2} \sum Var\left(K\left( \frac{x - X_i}{h}\right)\right) = \frac{n}{n^2 h^2} Var\left(K\left( \frac{x - X_i}{h}\right)\right)
+\] Donde, en la última igualdad hemos usado que la varianza para todas
+las variables es la misma pues siguen la misma \(f\). Calculemos
+entonces \(Var\left(K\left( \frac{x - X_i}{h}\right)\right)\). \[
+Var\left(K\left( \frac{x - X_i}{h}\right)\right) = E\left[K\left( \frac{x - X_i}{h}\right)^2\right] - E\left[K\left( \frac{x - X_i}{h}\right)\right]^2
+\] Pero, sabemos que al ser una función indicadora, \(K(x)^2 = K(x)\),
+por lo que tenemos (usando lo que hemos calculado en el ejercicio
+anterior): \begin{align*}
+Var\left(K\left( \frac{x - X_i}{h}\right)\right) & = E\left[K\left( \frac{x - X_i}{h}\right)\right] - E\left[K\left( \frac{x - X_i}{h}\right)\right]^2 \\
+& = P\left(x -\frac{h}{2}  \leq X_i \leq x + \frac{h}{2}\right) - P\left(x -\frac{h}{2}  \leq X_i \leq x + \frac{h}{2}\right)^2\\
+& = \left(F\left(x + \frac{h}{2}\right) - F\left(x -\frac{h}{2}\right)\right)  \left(1 - \left(F(x + \frac{h}{2}) - F(x -\frac{h}{2})\right)\right)
+\end{align*} Por lo que \[
+Var(\hat{f}(x)) = \frac{\left(F\left(x + \frac{h}{2}\right) - F\left(x -\frac{h}{2}\right)\right)  \left(1 - \left(F(x + \frac{h}{2}) - F(x -\frac{h}{2})\right)\right)}{n h^2}
+\]
+
+Ahora, nos queda evaluar los límites cuando \(h\to 0\) y cuando
+\(nh\to 0\). En el primer caso, basta ver que: \begin{align*}
+\lim_{h\to 0}  \frac{F(x + \frac{h}{2}) - F(x -\frac{h}{2})}{h}& = \frac{1}{2}\left(\lim_{h\to 0} \frac{F(x+h/2) - F(x) + F(x) - F(x-h/2)}{h}\right) \\
+ & = \frac{1}{2}\left(\lim_{h/2\to 0}\frac{F(x+h/2) - F(x)}{h/2} - \lim_{h/2\to 0}\frac{F(x-h/2) - F(x)}{-h/2}\right)\\
+&= \frac{2 F'(x)}{2}\\
+& = f(x)
+\end{align*}
+
+Por tanto, tenemos que \[
+\lim_{h\to 0} Bias(\hat{f}(x)) =  \lim_{h\to 0}\left(\frac{F(x + \frac{h}{2}) - F(x -\frac{h}{2})}{h} - f(x)\right) = \lim_{h\to 0} \left(f(x) - f(x)\right) = 0
+\] Ahora, hacemos el mismo proceso para la varianza:
+
+\begin{align*}
+\lim_{\substack{nh \to \infty \\ h \to 0}} Var(\hat{f}(x))  &= \lim_{\substack{nh \to \infty \\ h \to 0}}\frac{ \left(F\left(x + \frac{h}{2}\right) - F\left(x -\frac{h}{2}\right)\right)  \left(1 - \left(F(x + \frac{h}{2}) - F(x -\frac{h}{2})\right)\right)}{n h^2} \\
+& = \lim_{\substack{nh \to \infty \\ h \to 0}} \left( \frac{1}{nh} f(x)\left(1 - \left(F(x + \frac{h}{2}) - F(x -\frac{h}{2})\right)\right)\right)\\
+& =  \lim_{\substack{nh \to \infty \\ h \to 0}} \left( \frac{1}{nh} f(x)\right)\\
+& = 0
+\end{align*}
+
+\begin{problem}{7}
+    Considera una variable aleatoria con distribución beta de parámetros $\alpha = 3,\beta=6$.
+    \begin{enumerate}
+\item Representa gráficamente la función de densidad y la función de distribución.
+\item Simula una muestra de tamaño $20$ de la distribución. A continuación, representa en los mismos gráficos del apartado $(1)$ las estimaciones de $F$ y $f$ obtenidas respectivamente mediante la función de distribución empírica $F_n$ y un estimador del núcleo $\hat f$ obtenidos a partir de la muestra simulada.
+\item Verifica empíricamente el grado de aproximación alcanzado en las estimaciones de $F$ y $f$. Para ello, genera 200 muestras de tamaño $20$ y, para cada una de ellas, evalúa el error (medido en la norma del supremo, es deccir, el máximo de las diferencias entre las funciones) cometido al aproximar $F$ por $F_n$ y $f$ por $\hat f$. Por último, calcula le promedio de los $200$ errores cometidos.
+    \end{enumerate}
+
+\end{problem}
+
+    Incluimos las librerías y opciones necesarias para el correcto
+funcionamiento del ejercicio.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{suppressMessages}\PY{p}{(}\PY{n+nf}{library}\PY{p}{(}\PY{n}{tidyverse}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{suppressMessages}\PY{p}{(}\PY{n+nf}{library}\PY{p}{(}\PY{n}{reshape2}\PY{p}{)}\PY{p}{)}
+\PY{n}{defaultW} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{getOption}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{warn\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{options}\PY{p}{(}\PY{n}{warn} \PY{o}{=} \PY{l+m}{\PYZhy{}1}\PY{p}{)}
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{patchwork}\PY{p}{)}
+\PY{n+nf}{options}\PY{p}{(}\PY{n}{repr.plot.width}\PY{o}{=}\PY{l+m}{12}\PY{p}{,} \PY{n}{repr.plot.height}\PY{o}{=}\PY{l+m}{8}\PY{p}{)}
+\PY{n+nf}{set.seed}\PY{p}{(}\PY{l+m}{123}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Representamos de forma gráfica la p.d.f. y la función de distribución.
+
+Fijamos los valores \(\alpha\) y \(\beta\) para la distribución beta.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{alpha} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{3}
+\PY{n}{beta} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{6}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plot1} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ggplot}\PY{p}{(}\PY{k+kc}{NULL}\PY{p}{)} \PY{o}{+} \PY{n+nf}{stat\PYZus{}function}\PY{p}{(}\PY{n}{fun} \PY{o}{=} \PY{n+nf}{function}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{n+nf}{pbeta}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{alpha}\PY{p}{,} \PY{n}{beta}\PY{p}{)}\PY{p}{,} \PY{n+nf}{aes}\PY{p}{(}\PY{n}{colour} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{Beta CDF\PYZdq{}}\PY{p}{)}\PY{p}{,}\PY{n}{size} \PY{o}{=} \PY{l+m}{1}\PY{p}{)} \PY{o}{+} \PY{n+nf}{scale\PYZus{}color\PYZus{}manual}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Legend\PYZdq{}}\PY{p}{,}\PY{n}{values}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{blue\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{plot2} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ggplot}\PY{p}{(}\PY{k+kc}{NULL}\PY{p}{)} \PY{o}{+} \PY{n+nf}{stat\PYZus{}function}\PY{p}{(}\PY{n}{fun} \PY{o}{=} \PY{n+nf}{function}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{n+nf}{dbeta}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{alpha}\PY{p}{,} \PY{n}{beta}\PY{p}{)}\PY{p}{,} \PY{n+nf}{aes}\PY{p}{(}\PY{n}{colour} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{Beta PDF\PYZdq{}}\PY{p}{)}\PY{p}{,}\PY{n}{size} \PY{o}{=} \PY{l+m}{1}\PY{p}{)} \PY{o}{+} \PY{n+nf}{scale\PYZus{}color\PYZus{}manual}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Legend\PYZdq{}}\PY{p}{,}\PY{n}{values}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{red\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{plot1} \PY{o}{+} \PY{n}{plot2} \PY{o}{+} \PY{n+nf}{plot\PYZus{}layout}\PY{p}{(}\PY{n}{widths} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{3}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_5_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Vamos con el \textbf{segundo apartado}. Vamos a extraer de la
+distribución beta una muestra de tamaño \(20\), hallaremos el estimador
+del núcleo y dibujaremos tanto la función de densidad como el estimador
+del núcleo que nos da la función \texttt{density} de \texttt{R}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{20}
+\PY{c+c1}{\PYZsh{} Extract sample}
+\PY{n}{sample} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rbeta}\PY{p}{(}\PY{n}{n}\PY{p}{,}\PY{n}{alpha}\PY{p}{,}\PY{n}{beta}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Kernel estimator}
+\PY{n}{kernel\PYZus{}estimator} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{density}\PY{p}{(}\PY{n}{sample}\PY{p}{)}
+
+\PY{n+nf}{ggplot}\PY{p}{(}\PY{k+kc}{NULL}\PY{p}{)} \PY{o}{+}
+    \PY{n+nf}{stat\PYZus{}function}\PY{p}{(}\PY{n}{fun}\PY{o}{=}\PY{n}{dbeta}\PY{p}{,}\PY{n+nf}{aes}\PY{p}{(}\PY{n}{colour}\PY{o}{=}\PY{l+s}{\PYZsq{}}\PY{l+s}{P.D.F.\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{n}{args}\PY{o}{=}\PY{n+nf}{list}\PY{p}{(}\PY{n}{shape1}\PY{o}{=}\PY{n}{alpha}\PY{p}{,}\PY{n}{shape2}\PY{o}{=}\PY{n}{beta}\PY{p}{)}\PY{p}{,}\PY{n}{size}\PY{o}{=}\PY{l+m}{1}\PY{p}{)}\PY{o}{+}
+    \PY{n+nf}{geom\PYZus{}line}\PY{p}{(}\PY{n+nf}{aes}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{kernel\PYZus{}estimator}\PY{o}{\PYZdl{}}\PY{n}{x}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{n}{kernel\PYZus{}estimator}\PY{o}{\PYZdl{}}\PY{n}{y}\PY{p}{,}\PY{n}{colour}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Kernel\PYZhy{}estimated pdf\PYZdq{}}\PY{p}{)}\PY{p}{,}\PY{n}{size}\PY{o}{=}\PY{l+m}{1}\PY{p}{)}\PY{o}{+}
+    \PY{n+nf}{scale\PYZus{}color\PYZus{}manual}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Legend\PYZdq{}}\PY{p}{,}\PY{n}{values}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{blue\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{red\PYZdq{}}\PY{p}{)}\PY{p}{)}\PY{o}{+}
+    \PY{n+nf}{xlim}\PY{p}{(}\PY{l+m}{\PYZhy{}0.01}\PY{p}{,}\PY{l+m}{1.01}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_7_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    A continuación, dibujamos la función de distribución teórica
+comparándola con la \(F_n\) empírica obtenida por la muestra anterior.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{x} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{seq}\PY{p}{(}\PY{l+m}{0}\PY{p}{,} \PY{l+m}{1}\PY{p}{,} \PY{l+m}{0.01}\PY{p}{)} 
+\PY{n}{orig} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{pbeta}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{shape1} \PY{o}{=} \PY{n}{alpha}\PY{p}{,} \PY{n}{shape2} \PY{o}{=} \PY{n}{beta}\PY{p}{)}
+\PY{n}{data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{data.frame}\PY{p}{(} \PY{n}{x} \PY{o}{=} \PY{n}{sample}\PY{p}{)}
+\PY{n+nf}{ggplot}\PY{p}{(}\PY{k+kc}{NULL}\PY{p}{)}\PY{o}{+}
+    \PY{n+nf}{stat\PYZus{}ecdf}\PY{p}{(}\PY{n}{data} \PY{o}{=} \PY{n}{data}\PY{p}{,}\PY{n+nf}{aes}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{colour}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Estimated C.D.F\PYZdq{}}\PY{p}{)}\PY{p}{)} \PY{o}{+}
+    \PY{n+nf}{stat\PYZus{}ecdf}\PY{p}{(}\PY{n}{data} \PY{o}{=} \PY{n}{data}\PY{p}{,}\PY{n+nf}{aes}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{,} \PY{n}{geom} \PY{o}{=} \PY{l+s}{\PYZsq{}}\PY{l+s}{point\PYZsq{}}\PY{p}{)} \PY{o}{+}
+    \PY{n+nf}{geom\PYZus{}line}\PY{p}{(}\PY{n+nf}{aes}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{orig}\PY{p}{,}\PY{n}{colour}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Original CDF\PYZdq{}}\PY{p}{)}\PY{p}{,}\PY{n}{size}\PY{o}{=}\PY{l+m}{1}\PY{p}{)}\PY{o}{+}
+    \PY{n+nf}{scale\PYZus{}color\PYZus{}manual}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Legend\PYZdq{}}\PY{p}{,}\PY{n}{values}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{blue\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{red\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_9_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Por último, realizamos el \textbf{tercer apartado}. Vamos a realizar
+\(200\) experimentos en los que extraemos \(n=20\) muestras y, para cada
+una de ellas calcularemos el error entre el estimador del núcleo de la
+muestra y la función de densidad teórica. Haremos lo mismo con la
+función de distribución.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Initialize variables}
+\PY{n}{num\PYZus{}experiments} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{200}
+\PY{n}{experiment\PYZus{}size} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{20}
+\PY{n}{errors\PYZus{}f} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rep}\PY{p}{(}\PY{k+kc}{NA}\PY{p}{,}\PY{n}{num\PYZus{}experiments}\PY{p}{)}
+\PY{n}{p\PYZus{}values\PYZus{}f} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rep}\PY{p}{(}\PY{k+kc}{NA}\PY{p}{,}\PY{n}{num\PYZus{}experiments}\PY{p}{)}
+\PY{n}{errors\PYZus{}F} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rep}\PY{p}{(}\PY{k+kc}{NA}\PY{p}{,}\PY{n}{num\PYZus{}experiments}\PY{p}{)}
+\PY{n}{p\PYZus{}values\PYZus{}F} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rep}\PY{p}{(}\PY{k+kc}{NA}\PY{p}{,}\PY{n}{num\PYZus{}experiments}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Repeat experiment}
+\PY{n+nf}{for }\PY{p}{(}\PY{n}{i} \PY{n}{in} \PY{l+m}{0}\PY{o}{:}\PY{n}{num\PYZus{}experiments}\PY{p}{)}\PY{p}{\PYZob{}}
+    
+    \PY{c+c1}{\PYZsh{} Obtain sample, kernel estimator, and evaluate the xs obtained in the estimator}
+    \PY{n}{sample} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rbeta}\PY{p}{(}\PY{n}{experiment\PYZus{}size}\PY{p}{,}\PY{n}{alpha}\PY{p}{,}\PY{n}{beta}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} Kernel estimator from the sample}
+    \PY{n}{kernel\PYZus{}estimator} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{density}\PY{p}{(}\PY{n}{sample}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} Obtain theoretical density values in the x coordinates}
+    \PY{n}{true\PYZus{}fs} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{dbeta}\PY{p}{(}\PY{n}{kernel\PYZus{}estimator}\PY{o}{\PYZdl{}}\PY{n}{x}\PY{p}{,}\PY{n}{alpha}\PY{p}{,}\PY{n}{beta}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} Obtain the empirical CDF and evaluate in the sample}
+    \PY{n}{empirical\PYZus{}F} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ecdf}\PY{p}{(}\PY{n}{sample}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{}Obtain theoretical distribution function values in x coordinates}
+    \PY{n}{true\PYZus{}Fs} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{pbeta}\PY{p}{(}\PY{n}{kernel\PYZus{}estimator}\PY{o}{\PYZdl{}}\PY{n}{x}\PY{p}{,}\PY{n}{alpha}\PY{p}{,}\PY{n}{beta}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} Obtain empirical F in x coordinates}
+    \PY{n}{Fs} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{empirical\PYZus{}F}\PY{p}{(}\PY{n}{kernel\PYZus{}estimator}\PY{o}{\PYZdl{}}\PY{n}{x}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} Compute the KS test (provides distance and pvalue)}
+    \PY{n}{test\PYZus{}f} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ks.test}\PY{p}{(}\PY{n}{kernel\PYZus{}estimator}\PY{o}{\PYZdl{}}\PY{n}{y}\PY{p}{,} \PY{n}{true\PYZus{}fs}\PY{p}{)}
+    \PY{n}{test\PYZus{}F} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ks.test}\PY{p}{(}\PY{n}{Fs}\PY{p}{,}\PY{n}{true\PYZus{}Fs}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} Save the result}
+    \PY{n}{errors\PYZus{}f}\PY{p}{[}\PY{n}{i}\PY{l+m}{+1}\PY{p}{]} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{test\PYZus{}f}\PY{o}{\PYZdl{}}\PY{n}{statistic}
+    \PY{n}{errors\PYZus{}F}\PY{p}{[}\PY{n}{i}\PY{l+m}{+1}\PY{p}{]} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{test\PYZus{}F}\PY{o}{\PYZdl{}}\PY{n}{statistic}
+    
+    \PY{n}{p\PYZus{}values\PYZus{}f}\PY{p}{[}\PY{n}{i}\PY{l+m}{+1}\PY{p}{]} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{test\PYZus{}f}\PY{o}{\PYZdl{}}\PY{n}{p.value}
+    \PY{n}{p\PYZus{}values\PYZus{}F}\PY{p}{[}\PY{n}{i}\PY{l+m}{+1}\PY{p}{]} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{test\PYZus{}F}\PY{o}{\PYZdl{}}\PY{n}{p.value}
+
+\PY{p}{\PYZcb{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Podemos ahora mostrar la información que hemos obtenido. Mediante la
+función \texttt{summary}, mostramos un resumen de la misma.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{print}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Information about errors in the density function\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{errors\PYZus{}f}\PY{p}{)}
+\PY{n+nf}{print}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{p\PYZhy{}values in the density function\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{p\PYZus{}values\PYZus{}f}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[1] "Information about errors in the density function"
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.07617 0.14648 0.17969 0.18719 0.23047 0.34570 
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+[1] "p-values in the density function"
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+0.000e+00 0.000e+00 1.300e-07 1.777e-03 3.386e-05 1.025e-01 
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{print}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Information about errors in the distribution function\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{errors\PYZus{}F}\PY{p}{)}
+\PY{n+nf}{print}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{p\PYZhy{}values in the distribution function\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{p\PYZus{}values\PYZus{}F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[1] "Information about errors in the distribution function"
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.1504  0.2031  0.2188  0.2170  0.2305  0.3184 
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+[1] "p-values in the distribution function"
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+0.000e+00 3.000e-12 4.600e-11 2.940e-07 1.338e-09 1.870e-05 
+    \end{Verbatim}
+
+    
+    Podemos ver que la media de los errores es de \(0.18\) en la función de
+densidad y de alrededor de \(0.21\) en la función de distribución. Vemos
+que en ambos casos los p-values son prácticamente cero. Esto nos indica
+que nuestro nivel de significancia es bastante alto, es decir, que
+tenemos resultados significativos.
+
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
