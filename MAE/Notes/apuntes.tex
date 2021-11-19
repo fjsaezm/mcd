@@ -333,3 +333,256 @@ ECMI^* \approx O(n^{\frac{-4}{4+d}})
 
 
 \section{Regression}
+
+
+
+The general goal in a regression problem is, given a random variable \(Y\) and a vector of random regressor variables \(X = \left(X_1,\dots,X_p\right)\), study the relation between \(X\) and \(Y\). Remark that \(Y\) can also be a random vector and in this case we are in the case of multivariant regression.
+
+\begin{ndef}
+In the previous conditions, we call the regression function to:
+\[
+m(X) = E\left[Y|X\right], \quad m(x) = E\left[Y|X = x\right].
+\]
+\end{ndef}
+
+It is known that \(m(X)\) is the best prediction of \(Y\) from \(X\) (using the MSE). Our goal is to estimate \(\hat m(x)\).
+
+Usually, regression models are expresed as follows:
+\[
+Y = m(X) + \epsilon,
+\]
+where \(E(\epsilon | X) = 0\) or, equivalently, \(m(X) = E\[Y|X\]\). That can be proved the following way:
+\[
+E[Y|X] = E \left[ m(x) + \epsilon | x\right] = m(x) + E\left[ \epsilon | x\right] = m(x)
+\]
+because the expectation \(E \left[\epsilon | x\right] = 0\). These hypothesis provide the following statements:
+
+\begin{itemize}
+\item \(E(\epsilon) = E(E(\epsilon | X)) = E(0) = 0\)
+\item \(Var(\epsion = 0)\) using the formula of the total variance.
+\item \(E(\epsilon X) = E\left[ E(\epsilon X | X)\right] = E\left[ E(\epsilon | X)\right] = 0\).
+\item Lastly, the last item implies that \(Cov(\epsilon,X) = E(\epsilonX) - E(\epsilon)E(X) = 0 - 0\cdot E(X)\).
+\end{itemize}
+
+There are many different possible models:
+\begin{enumerate}
+\item Linear regression, where
+\[
+m(X) = m(X_1,\dots,X_p) = \beta_0 + \beta_1X_1 + \dots + \beta_p X_p
+\]
+
+\item Non parametric models, that assume continuity or smoothness conditions for \(m(x)\).
+\end{enumerate}
+
+\subsection{Non parametric regression. Nadaraya-Watson Estimator}
+
+Let us assume that the vector \(X,Y\) has a joint p.d.f \(f(x,y)\) and the marginal pdf of \(X\) is \(g(x)\), then:
+\[
+m(x) = E\left[Y| X = x\right] = \int y f(y|x) dy = \frac{\int y f(x,y) dy}{g(x)}.
+\]
+The main idea is to use a kernel estimator in the numerator and in the denominator to replace the densities that appear in the last expression.
+\[
+\hat g(x) = \frac{1}{nh} \sum K\left( \frac{x-X_i}{h}\right)
+\]
+and, hence,
+\[
+
+\]
+
+then, the estimator is:
+\[
+\hat m(x) = \frac{\sum  K\left( \frac{x-X_i}{h}\right Y_i)}{\sum }{}}
+\]
+
+\begin{proof}
+\begin{align*}
+\int y \hat f(x,y) dy & = \frac{1}{nh^2} \sum K \left(\frac{x-X_i}{h}\right) \int y  K \left(\frac{x-X_i}{h}\right) dy \\
+& \stackrel{=}{(1)} \frac{1}{nh} \sum K \left(\frac{x-X_i}{h}\right) \underbrace{\int(uh+Y_i) K(u)}_{(2)} du
+\end{align*}
+where, in \(1\) we have applied the change of variables \(u = \frac{y-y_i}{h}\) and in \((2)\) we have used that \(\int uk(u)du = 0\) and that \(\int k(u)du =1\). To end this proof, we insert this term in the expression of \(\hat m(x)\) and we finish the proof
+\end{proof}
+
+We can change the way of expressing \(\hat m(x)\). If we name
+\[
+w_i(x) = \frac{ K \left(\frac{x-X_i}{h}\right)}{\sum  K \left(\frac{x-X_i}{h}\right)},
+\]
+then \(\hat m(x) = \sum w_i(x) y_i\).
+
+\begin{remark}
+The estimator is an average of \(Y_i\) locally weighted such that, to estimate \(m(x)\), we use only the \(Y_i\) such that \(X_i \approx x\).
+\end{remark}
+
+A natural question is to consider the extreme cases of the smoothing parameter \(h\) of the kernel.
+\begin{itemize}
+\item If \(h \to \infty\), we have that
+\[
+w_i(x) \to_{h \to \infty} \frac{K(0)}{nK(0)} \frac{1}{n}
+\]
+and, then,
+\[
+\hat m(x) = \sum \frac{1}{n} Y_i = \hat Y
+\]
+
+\item If \(h \to 0\), since \( K \left(\frac{x-X_i}{h}\right) \to 0\) when \(j \neq i\) and \(K(0)\) if \(i = j\), which implies
+\[
+\hat m(x_i) \to_{h \to 0} Y_i
+\]
+\end{itemize}
+
+We can also make an interpretation using the mean squared error. The NW estimator computed in \(x\) is the ... complete (7/54).
+
+
+We can also approximate the bias and the variance from the NW estimator:
+
+\begin{nprop}
+  \[
+    \int Var [\hat m(x)] dx \approx \frac{\sigma^2 ||K||_2^2}{nh} \int \frac{dx}{h(x)}, \quad nh >>> 0
+  \]
+  and the bias term:
+  \[
+    \int (E(\hat m(x) - m(x))^{2})dx \approx \frac{h^{4}}{4}\sigma_{K}^{4} \int \left( m''(x) COMPLETE\right)
+  \]
+
+\end{nprop}
+
+\subsubsection{Penalized MSE}
+
+In this case, the estimatos are functions that minimize \(\phi(\lambda)\) for \(\lambda > 0\) and
+\[
+\phi(\lambda):= \sum_{i}(Y_{i} - m(x_{i}))^{2} + \lambda \int_{a}^{b} m''(x)^{2} dx
+\]
+
+The first term measures how our model fits the data. The second term controls the smoothness of our estimator. We can think of it as the regularization term used frequently in machine learning.
+
+We have to consider the following extreme situations:
+
+\begin{enumerate}
+  \item \[
+        \lim_{\lambda \to \infty} \hat m(x) = \hat \beta_{0} + \hat \beta_{1}x
+        \]
+  \item
+        \[
+        \lim_{\lambda \to 0} \hat m(x) = interpolator
+        \]
+\end{enumerate}
+
+\begin{remark}
+The solution of this problem, which is a tradeoff between fitting our data and being smooth, is a spline.
+\end{remark}
+
+\subsection{Multiple linear regression}
+
+Recall that the most ocmmon regression model is:
+\[
+Y = \beta_{0} + \sum_{j}^{p} \beta_{j}X_{j} + \epsilon
+\]
+where \(E(\epsilon | X_{1},\dots,X_{p}) = 0\) and its variance is \(\sigma^2\). We can assume that, for many inferences (intervals, contrasts,...) \(\epsilon|(X_{1},\dots,X_{p})\) follows a gaussian distribution.
+
+Each observation from the training sample follows the model:
+\[
+y_{i} = \beta_{0} + \sum_{j}^{p} \beta_{j}x_{i,j} + \epsilon_{i}, \quad i = 1,\dots,n
+\]
+where, again, \(E(\epsilon_{i}|x_{i}) = 0\) and \(Var(\epsilon_{i}|x_{i}) = \sigma^{2}\).
+
+
+...................
+.........................
+..............................
+..........................................
+
+\subsubsection{Prediction errors}
+
+Suppose that we have a real model, predicting some data. Let \(Y = (Y_{1},\dots,Y_{n})\) be the labels of the training data, \(\tilde Y = (\tilde Y_{1},\dots, \tilde Y_{n})\) the labels of the test data. We hipothesize that the vectors \(Y,\tilde Y\) are independent. We assume that \(E(Y) = E(\tilde Y) = \mu = (\mu_{1},\dots, \mu_{n})\) and \(\Sigma\) be the covariance matrix.
+
+We fit a regression model \(Y = X\Beta + \epsilon \iif Y = \mu + \epsilon\) where \(\mu \in V = \{X\Beta \ : \ \Beta \in \mathbb R^{p}\}\). We already know that:
+
+\begin{itemize}
+  \item The MSE model is $\hat \Beta = (X'X)^{-1}X'Y$
+        \item ... D(44/57)
+\end{itemize}
+
+
+\begin{ndef}
+  We call the training error:
+  \[
+E_{\text{train}}E \left[\sum_{i=1}^{n}(Y_{i} - x_{i}'\hat \Beta)^{2}]
+\]
+and we can define the test error the same way using test labels.
+\end{ndef}
+
+\begin{nprop}
+  The test error can be expressed as:
+  \[
+    E_{\text{test}} = E_{\text{train}} + 2E(\norm{C}^2)
+    \]
+
+  \end{nprop}
+  \begin{proof}
+    Recall that:
+  \[
+E_{\text{test}} = E(\norm{A}^{2}) + E(\norm{B}^{2}) + E(\norm{C}^{2}) + 2E(A'B) + 2E(A'C) + 2E(B'C)
+\]
+and, since \(E(A'B) = E(A'C) = E(B'C) = 0\) and using that \(E(\norm{B}^{2})\) and \(E(\norm{C}^{2})\) are identical and iid, we obtain the final result.
+\end{proof}
+
+Having the previous proposition, we would like to calculate the last term of the error:
+\[
+E(\norm{C}^{2}) = E[(\hat \Beta - \Beta)' X'X(\hat \Beta - \Beta^{*})]
+\]
+
+We can use the following \emph{trick}:
+\[
+E(\norm{C}^{2}) = E[(\hat \Beta - \Beta)' X'X(\hat \Beta - \Beta^{*})] = E(\norm{C}^{2}) = E[tr((\hat \Beta - \Beta)' X'X(\hat \Beta - \Beta^{*}))] = E(\norm{C}^{2}) = E[tr(XX'(\hat \Beta - \Beta^{*})(\hat \Beta - \Beta^{*})')] = tr(E\left[ (X'X)(X'X)^{-1} X'\Sigma X (X'X)^{-1}\right])
+\]
+and, recalling that \(X(X'X)^{-1}X' = H\), we obtain that
+\[
+ tr(E\left[ (X'X)(X'X)^{-1} X'\Sigma X (X'X)^{-1}\right]) = tr(\Sigma H).
+\]
+
+We have just proved that
+\[
+E_{\text{test}} = E_{\text{train}} + 2tr(\Sigma H).
+\]
+Furthermore, recalling that
+\[
+Cov(Y,\hat Y) = Cov(Y,HY) = \Sigma H
+\]
+we obtain that
+\[
+E_{\text{test}} = E_{\text{train}} + 2 \sum_{i=1}^{n}Cov(Y_{i},\hat Y_{i}).
+\]
+
+An interpretation for this is that, if \(Y_{i} \approx \hat Y_{i}\), then we are being pretty optimistic.
+
+\textbf{Case: Independence and homocedastic XDXDXDXXDXDXX}
+
+Consider that
+\[
+\begin{pmatrix} \sigma^{2} & 0 \\ 0 & \sigma^{2} \end{pmatrix} = \sigma^{2} I
+\]
+then,
+\[
+  tr(\Sigma H) = \sigma^{2} tr(H) = \sigma^{2}p
+\]
+
+\[
+tr(X(X'X^{-1}X')) = p
+\]
+
+Hence,
+\[
+E_{\text{test}} = E_{\text{train}} + 2p\sigma^{2}
+\]
+
+
+\textbf{Case: Independence and heterocedastic XDXDXD}
+
+In this case,
+\[
+\begin{pmatrix} \sigma_{1}^{2} & 0 \\ 0 & \sigma_{n}^{2} \end{pmatrix} = \sigma^{2} I
+\]
+
+Hence,
+\[
+E_{\text{test}} = E_{\text{train}} + 2\sigma_{i}^{n}\sigma_{i}^{2} h_{ii}
+\]
