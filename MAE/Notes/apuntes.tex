@@ -586,3 +586,102 @@ Hence,
 \[
 E_{\text{test}} = E_{\text{train}} + 2\sigma_{i}^{n}\sigma_{i}^{2} h_{ii}
 \]
+
+
+
+
+\section{Supervised Classification}
+
+\subsection{Problem settlement}
+
+Suppose that we have a data set $\mathcal D = \{(x_{i},y_{i})\}$, where there are more than 1 different types of classes $y_{i}$.  In our case, we will consider binary classification, that is:
+\[
+D_{n}: = (X_{1},Y_{1}),\dots,(X_{n},Y_{n}), \quad \text{ where } (X_{i},Y_{i})\in \mathbb R^{p}\times \{0,1\}
+\]
+
+Our goal will be: given a new sample $\(X,Y\)$, independent from the previous ones \emph{but extrated from the same distribution}, predict the value of $Y$. The elements of our problem are:
+
+\begin{enumerate}
+  \item We have a prior probability $\pi_{1} = P(Y = 1)$ and $\pi_{0} = P(Y = 0) = 1-\pi_{1}$
+  \item We have a posterior probability
+        \[
+          \eta(x) = P(Y = 1|X = x) = E\left[Y|X = x\right]
+        \]
+  \item The marginal distribution
+        \item COMPLETE (4/58)
+        \end{enumerate}
+
+        With these elements, we have to build a function $g:\mathbb R^d \to \{0,1\}$ that assigns a class to each input of any of the two classes. This function $g$ can provide wrong results.
+        $$
+        L_{n} = P(g(X) \neq Y | D_{n})
+        $$
+        \begin{remark}
+$L_{n}$ is a random variable, since it is a function of a random variable $\Phi(D_{n})$.
+          \end{remark}
+
+          Having this random variable, we can take its expectation to obtain the expected error using different training samples:
+          \[
+            E(L_{n}) = P(g(X) \neq Y)
+          \]
+          This can be shown easily as a consequence of the law of the iterated expectation as follows:
+          \[
+            P(g(X) \neq Y) = E[g(X) \neq Y | D_{n}] = E[I_{g(x) \neq Y}|D_{n}]
+          \]
+
+          In practise, we cannot compute the theoretical probability, so we reduce our problem to our data.
+
+          \begin{ndef}
+            The \emph{empiric error} or \emph{apparent error rate} is defined as
+            \[
+              \hat L_{n} = \frac{1}{n} \sum_{i}^{n} I_{g(x_{i}) \neq y_{i}}
+            \]
+          \end{ndef}
+          \begin{ndef}
+            The \emph{croos validation error rate} is defined as.... COMPLETE THIS IS WRONG
+            \[
+              \hat L_{n} = \frac{1}{n} \sum_{i}^{n} I_{g(x_{i}) \neq y_{i}}
+            \]
+          \end{ndef}
+
+
+          \subsubsection{Fisher linear rule}
+
+          \begin{nprop}
+
+            Let $\mu_{0}$ and $\mu_{1}$ be the means vector of $X$ under \(P_{0}\) and \(P_{1}\), respectively. Then, the covariance matrices of \(X\) under \(P_{0}\) and \(P_{1}\) verify:
+            \[
+              \Sigma_{0} = \Sigma_{1} = \Sigma
+            \]
+
+          \end{nprop}
+
+          A good Fisher direction must separate as much as possible the center (the means) of the groups. The distance between projected means is
+          \[
+            (a'\mu_{0} -a' - \mu_{1})^2 = a' (\mu_{1} - \mu_{0})(\mu_{1} - \mu_{0}) a=  a'Ba.
+          \]
+          We have expressed this distance as a quadratic form. Also, we want the variance to be as lower as possible. Let \(\Sigma\) be the covariance matrix of \(X\). Then
+          \[
+            Var(a'x) = a' \Sigma a,
+          \]
+          so we have another quadratic form.
+
+          We have two quadratic forms and we want to maximize the first one and minimize the first one. We can consider the function
+          \[
+            f(a) = \frac{a'Ba}{a\Sigma a}
+          \]
+
+          this is called the \textbf{Rayleigh quotient}. Firstly, note that for any \(\lambda \neq \), \(f(\lambda a) = \f(a)\). Lets us find the optimal solution for this optimization problem. Consider the gradient of \(f\) and let us force it to be zero, that is:
+
+          \[
+            \nabla f(a) = \frac{2Ba (a' \Sigma a) - 2\Sigma a (a'Ba)}{(a'\Sigma a)^2} = 0
+          \]
+          we have that
+          \[
+            2Ba(a'\Sigma a) = 2\Sigma a(a'Ba)
+          \]
+          \[
+            Ba(a'\Sigma a) = (\mu_{1} - \mu_{0})(\mu_{1} - \mu_{0})' a (a' \Sigma a)
+          \]
+          now, \(Ba (a'\Sigma a)\) is proportional to \(\mu_{1} - \mu_{0}\). Also, since \(a'\Sigma a\) is a constant, \(\Sigma a\) is also proportional to \(\mu_{1} - \mu_{0}\).
+
+          \(\nabla f\)
