@@ -1,0 +1,433 @@
+
+
+\section{Settlement}
+
+The general goal in a regression problem is, given a random variable \(Y\) and a vector of random regressor variables \(X = \left(X_1,\dots,X_p\right)\), study the relation between \(X\) and \(Y\). Remark that \(Y\) can also be a random vector and in this case we are in the case of multivariant regression.
+
+\begin{ndef}
+In the previous conditions, we call the regression function to:
+\[
+m(X) = E\left[Y|X\right], \quad m(x) = E\left[Y|X = x\right].
+\]
+\end{ndef}
+
+It is known that \(m(X)\) is the best prediction of \(Y\) from \(X\) (using the MSE). Our goal is to estimate \(\hat m(x)\) using a finite number of i.i.d. datapoints \((x_1,y_1),\dots,(x_n,y_n)\) where \(x_i \in \R^p\).
+
+Usually, regression models are expressed as follows:
+\[
+Y = m(X) + \epsilon,
+\]
+where \(E(\epsilon | X) = 0\) or, equivalently, \(m(X) = E[Y|X]\). That can be proved the following way:
+\[
+E[Y|X] = E \left[ m(x) + \epsilon | x\right] = m(x) + E\left[ \epsilon | x\right] = m(x)
+\]
+because the expectation \(E \left[\epsilon | x\right] = 0\). These hypothesis provide the following statements:
+
+\begin{itemize}
+\item \(E(\epsilon) = E(E(\epsilon | X)) = E(0) = 0\)
+\item \(Var(\epsilon = 0)\) using the formula of the total variance.
+\item \(E(\epsilon X) = E\left[ E(\epsilon X | X)\right] = E\left[ E(\epsilon | X)\right] = 0\).
+\item Lastly, the last item implies that \(Cov(\epsilon,X) = E(\epsilon X) - E(\epsilon)E(X) = 0 - 0\cdot E(X)\).
+\end{itemize}
+
+There are many different possible models:
+\begin{enumerate}
+\item Linear regression, where
+\[
+m(X) = m(X_1,\dots,X_p) = \beta_0 + \beta_1X_1 + \dots + \beta_p X_p
+\]
+
+\item Non parametric models, that assume continuity or smoothness conditions for \(m(x)\).
+\end{enumerate}
+
+
+
+\section{Non parametric regression. Nadaraya-Watson Estimator}
+
+Let us assume that the vector \(X,Y\) has a joint p.d.f. \(f(x,y)\) and the marginal p.d.f. of \(X\) is \(g(x)\). Then, using the definition of the conditional probability:
+\[
+m(x) = E\left[Y| X = x\right] = \int y f(y|x) dy = \frac{\int y f(x,y) dy}{g(x)}.
+\]
+A very good first idea is to use a kernel estimator in the numerator and in the denominator to replace the densities that appear in the last expression.
+\[
+\hat g(x) = \frac{1}{nh} \sum_{i=1}^n \Ker{x}{X}
+\]
+and
+\[
+\hat{f}(x,y) = \frac{1}{nh^2} \sum_{i=1}^n \Ker{x}{X} \Ker{y}{Y}.
+\]
+
+\begin{nprop}
+In the previous conditions, the Nadaraya-Watson estimator is has the expression:
+\[
+\hat m(x) = \frac{\sum_{i=1}^n \Ker{x}{X}Y_i }{\sum_{i=1}^n \Ker{x}{X} }
+\]
+\end{nprop}
+\begin{proof}
+\begin{align*}
+\int y \hat f(x,y) dy & = \frac{1}{nh^2} \sum K \left(\frac{x-X_i}{h}\right) \int y  K \left(\frac{x-X_i}{h}\right) dy \\
+& \stackrel{=}{(1)} \frac{1}{nh} \sum K \left(\frac{x-X_i}{h}\right) \underbrace{\int(uh+Y_i) K(u)}_{(2)} du
+\end{align*}
+where, in \((1)\) we have applied the change of variables \(u = \frac{y-y_i}{h}\) and in \((2)\) we have used that \(\int uk(u)du = 0\) and that \(\int k(u)du =1\). To end this proof, we insert this term in the expression of \(\hat m(x)\).
+\end{proof}
+
+\begin{nprop}
+The N-W estimator in \(x\) is the value \(\hat \beta_0\) that minimizes
+\[
+\sum_{i=1}^n w_i(x)(Y_i - \beta_0)^2,  
+\]
+which is a sum of weighted least squares.
+\end{nprop}
+We can change the way of expressing \(\hat m(x)\). If we name
+\[
+w_i(x) = \frac{ K \left(\frac{x-X_i}{h}\right)}{\sum  K \left(\frac{x-X_i}{h}\right)},
+\]
+then \(\hat m(x) = \sum w_i(x) y_i\).
+
+\begin{remark}
+The estimator is an average of \(Y_i\) locally weighted such that, to estimate \(m(x)\), we use only the \(Y_i\) such that \(X_i \approx x\).
+\end{remark}
+
+A natural question is to consider the extreme cases of the smoothing parameter \(h\) of the kernel.
+\begin{itemize}
+\item If \(h \to \infty\), we have that
+\[
+\lim_{h \to \infty} w_i(x) = \frac{K(0)}{nK(0)} \frac{1}{n}
+\]
+and, then,
+\[
+\hat m(x) = \sum \frac{1}{n} Y_i = \hat Y
+\]
+
+\item If \(h \to 0\), since \( K \left(\frac{x-X_i}{h}\right) \to 0\) when \(j \neq i\) and \(K(0)\) if \(i = j\), we obtain 
+\[
+  \lim_{h \to \infty} \hat m(x_i) = Y_i
+\]
+\end{itemize}
+
+
+We can generalize the previous case as follows:
+\begin{nprop}
+The N-W estimator can be expressed as
+\[
+\hat m(x) = \hat \beta_0 + \hat \beta_1 x + \dots + \hat \beta_p x^p  
+\]
+where \(\hat \beta_1,\dots,\hat \beta_p\) minimize the term:
+\[
+\sum_{i=1}^n w_i(x)(\mathbf{Y}_i - \beta_0 - \beta_1(x_i - x) - \dots - \beta_p(x_i - x)^p)^2.
+\]
+\end{nprop}
+
+\subsection{Integrated MSE of the N-W estimator}
+
+
+We can also approximate the bias and the variance from the NW estimator.
+
+\begin{nprop}
+  We can approximate the integrated variance of the N-W estimator as
+  \[
+    \int Var [\hat m(x)] dx \approx \frac{\sigma^2 ||K||_2^2}{nh} \int \frac{dx}{h(x)}, \quad nh >>> 0.
+  \]
+  The bias of this estimator can also be approximated as:
+  \[
+    \int (E(\hat m(x) - m(x))^{2})dx \approx \frac{h^{4}}{4}\sigma_{K}^{4} \int \left( m''(x) +2 \frac{m'(x)g'(x)}{g(x)}\right)^2 dx
+  \]
+
+\end{nprop}
+
+Note that:
+\begin{itemize}
+\item Since \(g(X)\) is the density of \(X\), if \(g(x) \approx 0\), we do not have much information of \(X\) around \(x\), so \(\hat m(x)\) has a high variance.
+\item In the bias, the term \( \frac{2m'(x)g'(x)}{g(x)}\) is a design bias depending on \(\mathbf{X}\). This term disappears when locally linear regression is used.
+\end{itemize}
+
+\subsection{Penalized MSE}
+
+In this case, the estimators are functions that minimize \(\phi(\lambda)\) for \(\lambda > 0\) and
+\[
+\phi(\lambda):= \sum_{i}(Y_{i} - m(x_{i}))^{2} + \lambda \int_{a}^{b} m''(x)^{2} dx
+\]
+
+The first term measures how our model fits the data. The second term controls the smoothness of our estimator. We can think of it as the regularization term used frequently in machine learning.
+
+We have to consider the following extreme situations:
+
+\begin{enumerate}
+  \item \[
+        \lim_{\lambda \to \infty} \hat m(x) = \hat \beta_{0} + \hat \beta_{1}x
+        \]
+  \item
+        \[
+        \lim_{\lambda \to 0} \hat m(x) = interpolator
+        \]
+\end{enumerate}
+
+\begin{remark}
+The solution of this problem, which is a tradeoff between fitting our data and being smooth, is a spline.
+\end{remark}
+
+\begin{nprop}
+The function that minimizes \(\phi(\lambda)\) is a cubic natural spline which nodes correspond to \(x_1,\dots,x_n\).
+\end{nprop}
+
+\subsection{Multiple linear regression}
+
+The most common regression model is:
+\[
+Y = \beta_{0} + \sum_{j}^{p} \beta_{j}X_{j} + \epsilon
+\]
+where \(E(\epsilon | X_{1},\dots,X_{p}) = 0\) and its variance is \(\sigma^2\). We can assume that, for many inferences (intervals, contrasts,...) \(\epsilon|(X_{1},\dots,X_{p})\) follows a gaussian distribution.
+
+Each observation from the training sample follows the model:
+\[
+y_{i} = \beta_{0} + \sum_{j}^{p} \beta_{j}x_{i,j} + \epsilon_{i}, \quad i = 1,\dots,n
+\]
+where, again, \(E(\epsilon_{i}|x_{i}) = 0\) and \(Var(\epsilon_{i}|x_{i}) = \sigma^{2}\).
+
+We can formulate the previous model as follows:
+\[
+  \underbrace{\left( \begin{array}{c}y_1 \\ y_2 \\ \vdots \\ y_n \end{array} \right)}_{\mathbf Y} = \underbrace{\left( \begin{array}{cccc}1 & x_{1,1} & \ldots & x_{1,p} \\ 1 & x_{2,1} & \ldots & x_{2,p} \\\vdots & \vdots   & \ddots & \vdots \\  1 & x_{n,1} & \ldots &x_{n,p}\end{array} \right)}_{\mathbf{X}} \underbrace{\left( \begin{array}{c}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_p\end{array} \right)}_{\mathbf \beta} +\underbrace{\left(\begin{array}{c}\epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n\end{array} \right)}_{\mathbf \epsilon}.  
+\]
+Using the names in the under braces, our problem is formulated as:
+\[
+  Y = X\beta + \epsilon, \ \ \epsilon|X\equiv \mbox{N}_n(0,\sigma^2 \mathbb{I}_n)\Leftrightarrow Y|X   \equiv \mbox{N}_n(X\beta,\sigma^2 \mathbb{I}_n)  
+\]
+we call \(X\) the design matrix. 
+
+Note that, throughout this section, the data \(X\) is fixed. Hence, in the expression \(\nn{Y} = \nn{X}\nn{\beta} + \nn{\epsilon}\), the term \(\nn{X\beta}\) is \emph{constant}, so the distribution that \(\nn{Y}\) follows depends only on the distribution of \(\nn{\epsilon}\). Applying how the multi dimensional gaussian distribution is affected by sums and product by scalars, is how we obtain the distribution of \(\nn{Y}|\nn{X}\).
+
+\subsection{MSE fit}
+
+This is the case where we want to fit our coefficients \( \beta_0,\dots, \beta_p\) using the MSE. We want to find the values \(\beta_0,\dots, \beta_p\) that minimize
+\[
+\norm{\mathbf{Y} - \mathbf{X\beta}}_2^2 = \sum_{i=1}^n \left[ \mathbf{Y_i} - (\beta_0 + \beta_1 x_{i,1} + \dots + \beta_p x_{i,p})\right]^2
+\]
+
+It can be shown that \(\hat{\mathbf{Y}}\) is the orthogonal projection.
+
+\begin{ndef}
+In the previous conditions, the residuals vector \(\nn{e}\) is defined as
+\[
+\nn{e} = \nn{Y} - \nn{\hat{Y}} = \nn{Y} - \nn{X\hat\beta}. 
+\]
+This residuals must be orthogonal to the columns of the design matrix.
+\[ 
+\nn{X}'( \nn{Y} -  \nn{\hat{Y}}) = 0 \iif \nn{X}' \nn{e} = 0
+\]
+\end{ndef}
+
+\begin{nprop}
+The least squares estimators \(\nn{\hat \beta}\) is expressed as
+\[
+\nn{\hat \beta} = \nn{(X'X)^{-1}X'Y}  
+\]
+\end{nprop}
+
+To proof this, derive the error expression and then set it equal to zero to find the minimum.
+
+\begin{nprop}
+The least squares estimator is the maximum likelihood estimator of \(\nn{\beta}\).
+\[
+L(\nn{\beta},\sigma^2) = \left(\frac{1}{\sigma \sqrt{2\pi}}\right)^n \exp\left\{-\frac{1}{2\sigma^2 \norm{\nn{Y} - \nn{X}\nn{\beta}}_2^2}\right\}  
+\]
+\end{nprop}
+
+\begin{nprop}
+The vector \(\nn{\hat \beta}\) follows a \(p+1\) gaussian distribution with means vector \(\nn{\beta}\) and covariance matrix \(\sigma^2(\nn{X'X})^{-1}\).
+\[
+\nn{\hat \beta} \equiv N_{p+1}(\nn{\beta},\sigma^2(\nn{X'X})^{-1} ).  
+\]
+\end{nprop}
+
+
+
+If we \emph{fit the values}, we obtain the adjusted values vector, defined as:
+\[
+ \nn{\hat{Y}} = \nn{X}  \nn{\hat\beta} = \nn{HY}, \quad \text{ where } \nn{H} = \nn{X(X'X)^{-1}X'}  .
+\]
+
+\(\nn{H}\) is called the \emph{hat matrix} and, geometrically, it is a projection matrix over \(V\). Using this hat matrix, the residual vector is defined as:
+\[
+\nn{e} = \nn{Y} -  \nn{\hat Y} = \nn{(I-H)Y}  
+\]
+
+We also want to estimate the \textbf{variance} \(\sigma^2\). To do this, we can use the variance of our residuals:
+\[
+\nn{S}^2_R = \frac{1}{n-p-1} \sum_{i=1}^n \nn{e}_i^2
+\]
+
+\begin{nprop}
+\[
+(n-p-1)\nn{S}^2_R/\sigma^2 \equiv \chi_{n-p-1}^2  
+\]
+\end{nprop}
+
+This result is a consequence of the fact that the distribution of the residuals follows a gaussian distribution, and we are multiplying by a constant that normalizes each term, so we are adding Gaussian distributions, which is the definition of a \(\chi^2\)
+
+\begin{note}
+Thanks to the previous proposition, we can build confidence intervals and contrasts for \(\sigma^2\)
+\end{note}
+
+\begin{nprop}
+\(\nn{S}_R^2\) and \( \nn{\hat \beta}\) are independent.
+\end{nprop}
+
+\subsubsection{Variability decomposition}
+
+\begin{ndef}
+We can define the following quantities:
+\begin{itemize}
+\item The \textbf{Total squared sum} \[
+  SCT = \sum_{i=1}^n (\nn{Y}_i - \bar{\nn{Y}})^2
+\]
+measures the total variability of the predicted variable.
+
+\item The \textbf{Explained squared sum} \[
+  SCE = \sum_{i=1}^n ({\nn{\hat Y}}_i - \bar{\nn{Y}})^2
+\]
+measures the variability of the predicted variable \emph{explained by the model}.
+
+\item The \textbf{Residual squared sum} \[
+  SCR = \sum_{i=1}^n e_i^2
+\]
+measures the variability of the predicted variable that is \emph{not explained by the model}.
+\end{itemize}
+\end{ndef}
+
+Using that the residuals are orthogonal to the regression variables, we obtain
+\begin{ncor}
+  The total variability of the predicted variable can be decomposed into the the explained variability by the model and the residual variability (not explained by the model). That is:
+\[
+SCT = SCE  + SCR  
+\]
+\end{ncor}
+
+\begin{ndef}
+The determination coefficient measures the capability of our model to explain \(\nn{Y}\).
+\[
+R^2 = \frac{SCE}{SCT}  
+\]
+\end{ndef}
+
+Let us set in the case that we would like to contrast the hypothesis 
+\[
+\nn{H}_0: \beta_1 = \dots = \beta_p = 0 . 
+\]
+
+In this case, we would use the statistic:
+\[
+F = \frac{SCE/p}{SCR/(n-p-1)}.  
+\]
+Under \(\nn{H}_0\), the statistic \(F\) follows a distribution \(F_{p,n-p-1}\).
+
+
+\subsection{Reduced and complete models}
+
+Adding complexity to a model usually turns into a better fit to available data. However, this could result in worse predictions for new data. The simpler the model, the less overfitting.
+
+Our goal in this section will be to compare two models:
+\begin{enumerate}
+\item The complete model
+\item A simplified model \(\nn{M0}\), where we constrain our model to \(\nn{A}\nn{\beta} = 0\), where \(\nn{A} \in \mathcal M_{k \times (p+1)}\) and \(range(\nn{A} = k < p+1\).
+\end{enumerate}
+
+We will compare both models contrasting \(H_0 : \nn{A\beta} = 0\).
+
+\subsubsection{Prediction errors}
+
+Suppose that we have a real model, predicting some data. Let \(Y = (Y_{1},\dots,Y_{n})\) be the labels of the training data, \(\tilde Y = (\tilde Y_{1},\dots, \tilde Y_{n})\) the labels of the test data. We hypothesize that the vectors \(Y,\tilde Y\) are independent. We assume that \(E(Y) = E(\tilde Y) = \mu = (\mu_{1},\dots, \mu_{n})\) and \(\Sigma\) be the covariance matrix.
+
+We fit a regression model \(Y = X \beta + \epsilon \iif Y = \mu + \epsilon\) where \(\mu \in V = \{X\beta \ : \ \beta \in \R^{p}\}\). We already know that:
+
+\begin{itemize}
+  \item The MSE model is \(\hat \beta = (X'X)^{-1}X'Y\)
+        \item ... D(44/57)
+\end{itemize}
+
+
+\begin{ndef}
+  We call the training error:
+  \[
+E_{\text{train}}E \left[\sum_{i=1}^{n}(Y_{i} - x_{i}'\hat \beta)^{2}\right]
+\]
+and we can define the test error the same way using test labels.
+\end{ndef}
+
+\begin{nprop}
+  The test error can be expressed as:
+  \[
+    E_{\text{test}} = E_{\text{train}} + 2E(\norm{C}^2)
+    \]
+
+  \end{nprop}
+  \begin{proof}
+    Recall that:
+  \[
+E_{\text{test}} = E(\norm{A}^{2}) + E(\norm{B}^{2}) + E(\norm{C}^{2}) + 2E(A'B) + 2E(A'C) + 2E(B'C)
+\]
+and, since \(E(A'B) = E(A'C) = E(B'C) = 0\) and using that \(E(\norm{B}^{2})\) and \(E(\norm{C}^{2})\) are identical and iid, we obtain the final result.
+\end{proof}
+
+Having the previous proposition, we would like to calculate the last term of the error:
+\[
+E(\norm{C}^{2}) = E[(\hat \beta - \beta)' X'X(\hat \beta - \beta^{*})]
+\]
+
+We can use the following \emph{trick}:
+\[
+E(\norm{C}^{2}) = E[(\hat \beta - \beta)' X'X(\hat \beta - \beta^{*})] = E(\norm{C}^{2}) = E[tr((\hat \beta - \beta)' X'X(\hat \beta - \beta^{*}))] = E(\norm{C}^{2}) = E[tr(XX'(\hat \beta - \beta^{*})(\hat \beta - \beta^{*})')] = tr(E\left[ (X'X)(X'X)^{-1} X'\Sigma X (X'X)^{-1}\right])
+\]
+and, recalling that \(X(X'X)^{-1}X' = H\), we obtain that
+\[
+ tr(E\left[ (X'X)(X'X)^{-1} X'\Sigma X (X'X)^{-1}\right]) = tr(\Sigma H).
+\]
+
+We have just proved that
+\[
+E_{\text{test}} = E_{\text{train}} + 2tr(\Sigma H).
+\]
+Furthermore, recalling that
+\[
+Cov(Y,\hat Y) = Cov(Y,HY) = \Sigma H
+\]
+we obtain that
+\[
+E_{\text{test}} = E_{\text{train}} + 2 \sum_{i=1}^{n}Cov(Y_{i},\hat Y_{i}).
+\]
+
+An interpretation for this is that, if \(Y_{i} \approx \hat Y_{i}\), then we are being pretty optimistic.
+
+\textbf{Case: Independence and homocedasticity }
+
+Consider that
+\[
+\begin{pmatrix} \sigma^{2} & 0 \\ 0 & \sigma^{2} \end{pmatrix} = \sigma^{2} I
+\]
+then,
+\[
+  tr(\Sigma H) = \sigma^{2} tr(H) = \sigma^{2}p
+\]
+
+\[
+tr(X(X'X^{-1}X')) = p
+\]
+
+Hence,
+\[
+E_{\text{test}} = E_{\text{train}} + 2p\sigma^{2}
+\]
+
+
+\textbf{Case: Independence and heterocedastic XDXDXD}
+
+In this case,
+\[
+\begin{pmatrix} \sigma_{1}^{2} & 0 \\ 0 & \sigma_{n}^{2} \end{pmatrix} = \sigma^{2} I
+\]
+
+Hence,
+\[
+E_{\text{test}} = E_{\text{train}} + 2\sigma_{i}^{n}\sigma_{i}^{2} h_{ii}
+\]
+
+

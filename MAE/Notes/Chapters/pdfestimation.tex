@@ -1,0 +1,277 @@
+
+
+\section{ PDF Estimation}
+
+
+Let $X_1,\dots,X_n$ be an iid sample from the distribution $F$ with p.d.f. $f$. We woud like to estimate $f$ making no previous assumptions, just making use of the data. Our goal will be to compute an estimator $\hat f$ such that $\hat f \approx f$. Let $h \approx 0$, then
+\[
+P(x-h \leq X \leq x+h) = \int_{x-h}^{x+h} f(t) dt \approx 2hf(x)
+\]
+that means that we can approximate $f(x)$ as follows:
+\[
+f(x) \approx \frac{1}{2h} P(x-h \leq X \leq x+h).
+\]
+If we replace the probability by the proportion we obtain an p.d.f. estimator:
+\[
+\hat{f}(x) = \frac{1}{2h} \frac{\#\{i : |x-X_i|< h\}}{n} = \frac{1}{2hn}\#\{i : \frac{|x-X_i|}{h} \leq 1\}.
+\]
+If $K(x) = \frac{1}{2} \mathbb I_{\{|x| \leq 1\}}$, where $\mathbb I_A$ is the indicator function over $A$, then
+\[
+\hat{f}(x) = \frac{1}{nh} \sum_{i=1}^n K\left(\frac{x-x_i}{h}\right)
+\]
+
+\subsection{ Estimating the kernel as a convolution}
+
+Let $U = Y+Z$ where:
+\begin{enumerate}
+\item $Y \sim F_n$ where $F_n$ is the empiric distribution function
+\item $Z$'s density function is $K_h(x) = h^{-1}K(x/h)$.
+\item $Y$ and $Z$ are independent.
+\end{enumerate}
+
+that is, making a small perturbation on the empiric distribution. We can understand the kernel estimator as a slightly modified(smoothed) empiric distribution so that it is continuous.
+
+\begin{nprop}
+In the previous conditions, the p.d.f. of $U$ is the kernel estimator $\hat f$.
+\end{nprop}
+\begin{proof}
+Firstly, we recall that
+\[
+F_u(x) = P(u \leq x) = P(y+z \leq x)
+\]
+now, using the total probability formula, we obtain
+\[
+P(y+z \leq x) = \frac{1}{n}\sum_{i=1}^n P(y+z \leq x | y = x_i) = \frac{1}{n}\sum_{i=1}^n P(z \leq x - x_i)
+\]
+in the last step, we can \emph{forget} the conditional since $Z,Y$ are independent. Then, we can use the definition of the probability to obtain:
+\[
+\frac{1}{n}\sum_{i=1}^n P(z \leq x - x_i) = \frac{1}{nh} \sum_{i=1}^n \int_{-\infty}^{x-x_i} k(\frac{u}{h})du
+\]
+We can now derivate the distribution function to obtain
+\[
+f_u(x) = F_u'(x) = \frac{1}{nh} = \sum_{i=1}^n k(\frac{x-x_i}{h}) = \hat{f}(x)
+\]
+\end{proof}
+
+Using this, we can have an \emph{algorithm} to obtain an iid random variable with p.d.f. $\hat f$ following the next steps:
+\begin{enumerate}
+\item Pick a random element with the same probability in the set $X_1,\dots,X_n$. Let the result be $X^*$.
+\item Simulate items to obtain $Z$ with distribution $K_h$
+\item Compute $U = X^* +Z$
+\end{enumerate}
+
+
+\subsection{ Integrating the MSE }
+
+In general, we use the bias and the variance of an estimator to determine its \emph{goodness}. Recall that
+\begin{enumerate}
+\item The bias of $\hat f (x)$ is $E[\hat f (x)] - f(x)$
+\item The variance of $\hat f(x)$ is $E[(\hat f(x) - E[\hat f (x)])^2]$
+\item The MSE $E[\hat f(x) - f(x)]^2$ verifies:
+\[
+MSE = Bias^2[\hat f(x)] + Var[\hat f(x)].
+\]
+\end{enumerate}
+
+We would like to determine the MSE in terms of the hyperparameters $h,n$ and the smoothness of $f$. If we use higer values for $h$, then we would have a high bias since we would be forgetting the data. If we use very small values for $h$, our estimator would be very colse to the data, we would have a high variance and very small bias. 
+
+\subsubsection{ Other criteria}
+
+There are also other criteria to integrate the MSE. For instance, considering the $||\dot||_p$ in $L_p$, we can see that the ECMI is the expectation of the $L_2$ distance between $f$ and $\hat f$ squared, that is:
+\[
+ECMI(\hat f) = E[||f-\hat f||_2^2]
+\]
+It is easily shown seeing that:
+\[
+E(||f-\hat f||^2_2) = E[ \int |f(x) - \hat f(x)|^2 dx]
+\]
+and, using Fubini's theorem, we obtain:
+\[
+E[ \int |f(x) - \hat f(x)|^2 dx] = \int E[(f(x) - \hat f(x))^2] dx = \int MSE(x) dx
+\]
+
+\section{ Bias and Variance approximations}
+
+We will make the following assumptions for this section:
+\begin{itemize}
+\item $K$ is a symmetric function with $\int K(u)du = 1$, $\int uK(u)du = 0$.
+\item $\sigma_K^2 = \int u^2 K(u) du < \infty$ and $d_k = ||K||_2^2 = \int K(u)^2 du < \infty$.
+\item $f$ is twice \emph{derivable} with continuous derivative.
+\end{itemize}
+
+\begin{nprop}
+The bias... (diapositiva 21/37)
+\end{nprop}
+\begin{proof}
+
+Then, the approximation of the bias can be obtained as follows:
+\[
+E[\hat f(x)] = E \left[ \frac{1}{nh} = \sum K \left( \frac{x-x_i}{h}\right)\right] = \frac{1}{n} E[K \left( \frac{x-x_i}{h}\right] = \frac{1}{n}\int K \left( \frac{x-t}{h} f(t) dt\right)
+\]
+we apply a \emph{variable change} \(w = \frac{x-t}{h}\), \(dw = \frac{-dt}{h}\), \(t = x -wh\), we obtain
+\[
+ \frac{1}{n}\int K \left( \frac{x-t}{h} f(t) dt\right) = \int K(w) f(x-wh) dw
+\]
+and, applying Taylor's theorem (forgetting the terms that have $h^3$ and so on since $h$ will be very small),
+\[
+\int K(w) f(x-wh) dw = \int K(w)\left[ f(x) - whf'(x) + \frac{w^2 h^2}{2}f''(x)'\right]dw = f(x) + \frac{h^2}{2}f''(x) \int w^2 K(w) dw
+\]
+where the last integral equals $\sigma_k^2$, so
+\[
+Bias(\hat f(x)) = \frac{h^2}{2}f''(x) \sigma_k^2.
+\]
+As we can see, the bias of $\hat f$ depends highly on $h$.
+
+\end{proof}
+
+\begin{nprop}
+The variance..
+\end{nprop}
+
+\begin{proof}
+We can see that
+\[
+Var[\hat f(x)] = Var\left[ \frac{1}{nh} = \sum K \left( \frac{x-x_i}{h}\right)\right] = \frac{1}{h^2n} Var\left[ K\left(K(\frac{x-x_i}{h})\right)\right]
+ =  \frac{1}{h^2n} \left[ E\left[ K^2(\frac{x-x_i}{h})\right] - E^2 \left[ K(\frac{x-x_i}{h})\right]\right]
+ \]
+ which is approximately 
+ \[
+ \frac{1}{h^2n}E\left[K^2(\frac{x-x_i}{h})\right] = \frac{1}{nh^2}\int K^2(\frac{x-t}{h}) f(t)dt
+ \]
+ and, applying the same \emph{variable change}, and Taylor's theorem:
+ \[
+  = \frac{1}{nh^2} \int K^2(w) f(x-hw)dw \approx \frac{1}{nh} \int K^2(w)\left[ f(x) - hwf'(x) + \frac{h^2w^2}{2}f''(x)\right]dw
+ \]
+ Since we are dividing by $nh$, we can forget the term $f'(x)$ term, so we finally obtain:
+ \[
+ Var[\hat f] = \frac{1}{nh} f(x) d_k
+ \]
+\end{proof}
+
+Using both previous propositions, we obtain:
+\begin{nprop}
+The approximation of the MSEI is:
+\[
+MSEI(\hat f) \approx \frac{h^4}{4}\sigma_k^4 \int f''(x)^2 dx  + \frac{d_K}{nh} = \frac{h^4}{4}\sigma_K ||f''||_2^2 + \frac{||K||^2_2}{nh}
+\]
+\end{nprop}
+
+The idea now is to optimize this function with respect $h$. We have to derivate this function respect to $h$ and make it equal to $0$, that is:
+\[
+\frac{4h^3}{4}\sigma_K^4 ||f''||_2^2 = \frac{||K||_2^2}{nh^2}
+\]
+and the optimal value is
+\[
+h^* = c n^{-1/5} \to 0
+\]
+which implies
+\[
+nh^* = cn^{4/5}\to \infty
+\]
+
+The conclusions are:
+\begin{itemize}
+\item $h^*$ has to go to zero but slowly
+\item The speed at which $h$ goes to zero in this case is $n^{-4/5}$, which is pretty slower than just $n$.
+\end{itemize}
+
+
+
+\subsubsection{Optimal kernel}
+What is more, when computing the IMSE, the factor that depends on \(K\) is \(\sigma(K) = \sigma_K^{4/5}||K||_2^{8/5}\) . It can be proved that if \(K_h(\cdot) = \frac{1}{h} K(\frac{\cdot}{h})\). 
+
+To optimize the kernel, we have the following variational problem:
+\[
+\min ||K||^2_2 \quad s.t.
+\]
+
+The solution to this problem is the Epanechnikov
+\[
+K^*(u) = \frac{3}{4\sqrt{5}} \left( 1 - \frac{t^2}{5}\right) \quad \text{ if } -\sqrt{5} \leq u \leq \sqrt{5}
+\]
+The choice of the kernel does not hardly affect the value of the IMSE.
+
+
+\subsubsection{Choosing the smoothing parametern}
+To select the optimal smoothing parameter there are many methods:
+
+\begin{enumerate}
+\item Plug in:
+  \begin{itemize}
+  \item Suppose that $f \approx N(\mu,\sigma)$
+    \item Non parametric methods
+  \end{itemize}
+  \item Cross validation
+\end{enumerate}
+
+\textbf{Plug-in supposing Normal.-}
+
+We assume that
+\[
+f(x) = \frac{1}{\sigma \sqrt{2\pi}}\exp...
+\]
+So, we substitute \(\norm{f''}_2^2\) in the expression of the optimal parameter \(h^*\) and , since we already know that the value of the norm, we obtain
+
+\[
+h^* = \sigma(4/(3n))^{1/5} \approx \sigma(1.0456)n^{-1/5}
+\]
+So, since the number is approximately \(1\), it is enough to estimate \(\sigma\) to estimate \(h^*\). Some literature (\emph{Silverman}) proposes to use \(\hat \sigma = \min \{ s,\hat\sigma_{ri}\}\) where \(\hat \sigma_{ri}\) is the interquartilic range (estandardized so that it converges to \(\sigma\)).
+
+
+\textbf{Non-parametric plug-in.-}
+
+We fix a preliminar smoothing parameter $g$, using for instance the previous approximation. This way, we obtain an auxiliar estimator \(\hat f_g (x) \). Using this estimator, we now estimate \[
+\hat{\norm{f''}_2^2} = \int \hat f_g ''(x)^2dx
+  \]
+
+
+  \textbf{ Cross Validation }
+
+  The intuitive idea under cross validation is to divide the population in two splits and we use one of them to obtain information of how good is the estimator computed with the first one. We can then compute
+  \[
+MSEI(\hat f) = E \left[ \int \hat f (x;h)^2 dx\right] - 2E\left[ \int \hat f (x;h)f(x) dx \right] + \int f(x)^2 dx
+  \]
+  Again, we would like to find \(h^*\) such that this IMSE is small. As we can see, the last term only depends on the \emph{true} density function. For each \(h\), our sample is fixed, so the expectation is reduced to a single term and we would like to minimize
+  \[
+  C(h) =   \int \hat f (x;h)^2 dx - \frac{2}{n} \sum \hat f_{(-i)} (X_i;h)
+  \]
+  where \(f_{(-i)}\) is the estimator computed with all the observations except \(X_i\). The last term comes from the following reasoning. Let \(x_1,\dots,x_n \to \hat f\), and let us have another point \(x_{n+1}\). Then, we can see that:
+  \[
+  \int \hat f (x;h) f(x) dx = E \left[ \hat f (x_{n+1};h) | x_1,\dots x_n \right]
+  \]
+  If we take expectation in both sides and use the known formula, we obtain:
+  \[
+  E\left[ \int \hat f (x;h) f(x) dx\right] = E \left[ \hat f (x_{n+1};h) \right]
+  \]
+
+
+\subsection{Multivarian density estimation}
+
+Consider \(d\) dimensions, we have that
+\[
+\hat f(x) = \frac{1}{n|H|} \sum \tilde{K}(H^{-1}(x-X_i)), \quad x =(x_1,\dots,x_d) \in \R^d
+\]
+where \(\tilde K\) is a multivariant density, \(\Sigma \in \mathcal M_{d\times d}\) positive definited (?), \(H = \Sigma^{1/2}\) and \(|H|\) is the determinant of \(H\). Note that, if \(\Sigma = CDC'\) where \(D\) is a diagonal matrix, we define \(\Sigma^{1/2} = CD^{1/2}C'\) where \(D^{1/2}\) has the squared roots of the elements. The problem of this definition is that there is a wide range of parameters that we have to fix.
+
+We approach this problem by simplyfying the expression:
+\begin{itemize}
+\item We consider \(\tilde K\) as the product of identic unidimensional kernels:
+\[
+\tilde K(x_1,\dots,x_d) = K(x_1)\dots K(x_d)
+\]
+\item We consider \(H\) to be diagonal and each element in \(H\) to be the same, that is: \(H = h I_d\).
+\end{itemize}
+
+With this considerations, we obtain
+\[
+\hat f(x) = \frac{1}{nh^d} \sum_{i=1}^n \prod_{j=1}^d K \left(\frac{x_j - X_{i,j}}{h}), \quad x=(x_1,\dots,x_d) \in \R^d
+\]
+
+\subsubsection{The curse of dimensionality}
+
+Unless we have huge amounts of data, it is quite hard to find data in many zones of the sample space, so the properties of our estimators are worsen.
+
+For instance, it can be shown that in dimension \(d\),
+\[
+ECMI^* \approx O(n^{\frac{-4}{4+d}})
+\]
