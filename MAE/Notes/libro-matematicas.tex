@@ -158,6 +158,16 @@
 	before upper={\parindent 12pt},
 }
 
+\tcolorboxenvironment{remark}{
+	blanker,
+	breakable,
+	left=12pt,
+	before skip=12pt,
+	after skip=12pt,
+	borderline west={2pt}{0pt}{300},
+	before upper={\parindent 12pt},
+}
+
 % ------------------------------------------------------------------------------
 % LISTINGS
 % ------------------------------------------------------------------------------
@@ -181,6 +191,7 @@
 		tabsize=2,
 	}
 }
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ------------------------------------------------------------------------------
@@ -278,9 +289,17 @@
 % CONTENIDO
 % ---------------------------------------------------------------------------
 
-\part{Teoría}
-\input{apuntes}
+\part{Bootstrap}
+%\input{Chapters/bootstrap}
 \newpage
-
+\part{PDF Estimation}
+%\input{Chapters/pdfestimation}
+\newpage
+\part{Regression}
+\input{Chapters/regression}
+\newpage
+\part{Classification}
+%\input{Chapters/classification}
+\newpage
 
 \end{document}

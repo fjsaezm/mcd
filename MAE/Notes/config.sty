@@ -100,6 +100,7 @@
 {\thmname{#1}\thmnumber{ #2.}\thmnote{ #3.}}
 
 % Nuevo estilo para la demostración
+\renewcommand*{\proofname}{Proof}
 
 \makeatletter
 \renewenvironment{proof}[1][\proofname] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\itshape\sffamily#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse}
@@ -109,29 +110,30 @@
 
 % Teoremas, proposiciones y corolarios
 \theoremstyle{theorem-style}
-\newtheorem{nth}{Teorema}[section]
-\newtheorem{nprop}{Proposición}[section]
-\newtheorem{ncor}{Corolario}[section]
-\newtheorem{lema}{Lema}[section]
+\newtheorem{nth}{Theorem}[section]
+\newtheorem{nprop}{Proposition}[section]
+\newtheorem{ncor}{Corollary}[section]
+\newtheorem{lema}{Lemma}[section]
 
 % Definiciones
 \theoremstyle{definition-style}
-\newtheorem{ndef}{Definición}[section]
+\newtheorem{ndef}{Definition}[section]
 
 % Notas
 \theoremstyle{remark-style}
-\newtheorem*{nota}{Nota}
+\newtheorem*{note}{Note}
+\newtheorem{remark}{Remark}[section]
 
 % Ejemplos
 \theoremstyle{example-style}
-\newtheorem{ejemplo}{Ejemplo}[section]
+\newtheorem{example}{Example}[section]
 
 % Ejercicios y solución
 \theoremstyle{definition-style}
-\newtheorem{ejer}{Ejercicio}[section]
+\newtheorem{exer}{Exercise}[section]
 
 \theoremstyle{remark-style}
-\newtheorem*{sol}{Solución}
+\newtheorem*{sol}{Solution}
 
 %---------------------------------------------------------------------------
 %  PORTADA
@@ -149,4 +151,15 @@
 
 \newcommand{\enlaceweb}{tu-web.es}
 
+
+
+
+%%% Macros
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\iif}{\;\Longleftrightarrow\;}
+
+\newcommand{\Ker}[2]{K\left( \frac{{#1} - {#2}_i}{h}\right)}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\newcommand{\nn}[1]{\mathbf{#1}}
