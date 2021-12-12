@@ -34,6 +34,7 @@
 
 import math
 import random
+import numpy as np
 
 #########################################################################
 #
@@ -76,7 +77,7 @@ def minus_proj(x, y):
 #
 def mulmat(A, B):
     if len(A[0]) != len(B):
-        print "Matrix multiplication error"
+        print("Matrix multiplication error")
         sys.exit(1)
     n = len(A)
     u = len(A[0])
@@ -86,7 +87,7 @@ def mulmat(A, B):
         for j in range(m):
             for k in range(u):
                 R[i][j] = R[i][j] + A[i][k]*B[k][j]
-    return R
+    return np.array(R)
     
 
 #
@@ -106,7 +107,7 @@ def mulmat(A, B):
 #
 def mulvec(A, v):
     if len(A[0]) != len(v):
-        print "Vector multiplication error"
+        print("Vector multiplication error")
         sys.exit(1)
     n = len(A)
     u = len(A[0])
@@ -114,7 +115,7 @@ def mulvec(A, v):
     for i in range(n):
         for k in range(u):
             R[i] = R[i] + A[i][k]*v[k]
-    return R
+    return np.array(R)
 
 
 #
@@ -158,8 +159,8 @@ def mk_ortho(n):
         v = norm(v)
         UT = UT + [v]
 
-    U = [[UT[j][i] for j in range(n)] for i in range(n)] 
-    return (U, UT)
+    U = np.array([[UT[j][i] for j in range(n)] for i in range(n)])
+    return (U, np.array(UT))
 
 
 #########################################################################
@@ -179,7 +180,7 @@ def mk_mat(lb):
         L[k][k] = lb[k]
     (U, UT) = mk_ortho(n)
     A = mulmat(U, mulmat(L, UT))
-    return A
+    return np.array(A)
 
 Tstep = 50
 
@@ -209,11 +210,11 @@ def u_f(t):
 #     [1.0]
 #     ]
 
-B = [1.0, 1.0, 1.0, 1.0]
+B = np.array([1.0, 1.0, 1.0, 1.0]).T
 
-C = [ [1.0, 0.0, 0.0, 0.0],
+C = np.array([ [1.0, 0.0, 0.0, 0.0],
       [0.0, 1.0, 0.0, 0.0]
-    ]
+    ])
 
 #
 # This is an example of matrix A. You will have to generate your own
@@ -221,20 +222,22 @@ C = [ [1.0, 0.0, 0.0, 0.0],
 
 eigens = [0.6, 0.3, 0.2, -0.2]   # This is just an example, NOT one of the lists of eigenvectors of the assignment
 
-A = mk_mat(eigens)
+A = np.array(mk_mat(eigens))
 
 #
 #  Variance of the input noise, and covariance matrix
 #
-sigma_w = 0.1
+#sigma_w = 0.1
+sigma_w = 10
 
-Q = [ [(sigma_w if i == j else 0.0) for i in range(4)] for j in range(4)]
+Q = np.array([ [(sigma_w if i == j else 0.0) for i in range(4)] for j in range(4)])
 
 
 #
 #  Variance of the output noise, and covariance matrix
 #
-sigma_v = 0.1
+#sigma_v = 0.1
+sigma_v = 1
 
-R = [ [(sigma_w if i == j else 0.0) for i in range(2)] for j in range(2)]
+R = np.array([ [(sigma_w if i == j else 0.0) for i in range(2)] for j in range(2)])
 
