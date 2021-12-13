@@ -210,7 +210,7 @@ def u_f(t):
 #     [1.0]
 #     ]
 
-B = np.array([1.0, 1.0, 1.0, 1.0]).T
+B = np.array([1.0, 1.0, 1.0, 1.0])
 
 C = np.array([ [1.0, 0.0, 0.0, 0.0],
       [0.0, 1.0, 0.0, 0.0]
@@ -227,8 +227,7 @@ A = np.array(mk_mat(eigens))
 #
 #  Variance of the input noise, and covariance matrix
 #
-#sigma_w = 0.1
-sigma_w = 10
+sigma_w = 0.1
 
 Q = np.array([ [(sigma_w if i == j else 0.0) for i in range(4)] for j in range(4)])
 
@@ -236,8 +235,7 @@ Q = np.array([ [(sigma_w if i == j else 0.0) for i in range(4)] for j in range(4
 #
 #  Variance of the output noise, and covariance matrix
 #
-#sigma_v = 0.1
-sigma_v = 1
+sigma_v = 0.1
 
-R = np.array([ [(sigma_w if i == j else 0.0) for i in range(2)] for j in range(2)])
+R = np.array([ [(sigma_v if i == j else 0.0) for i in range(2)] for j in range(2)])
 
