@@ -1,0 +1,3 @@
+[submodule "PE/mcd-pe-continuo"]
+	path = PE/mcd-pe-continuo
+	url = https://github.com/Ocete/mcd-pe-continuo
