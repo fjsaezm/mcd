@@ -1,3 +1,12 @@
 [submodule "PE/mcd-pe-continuo"]
 	path = PE/mcd-pe-continuo
 	url = https://github.com/Ocete/mcd-pe-continuo
+[submodule "TI/mcd-ti"]
+	path = TI/mcd-ti
+	url = https://github.com/fjsaezm/mcd-ti
+[submodule "mcd-cn"]
+	path = mcd-cn
+	url = https://github.com/Ocete/mcd-cn
+[submodule "mcd-pdge"]
+	path = mcd-pdge
+	url = https://github.com/Ocete/mcd-pdge
