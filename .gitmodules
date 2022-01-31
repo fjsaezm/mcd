@@ -10,3 +10,12 @@
 [submodule "mcd-pdge"]
 	path = mcd-pdge
 	url = https://github.com/Ocete/mcd-pdge
+[submodule "mcd-maaa"]
+	path = mcd-maaa
+	url = https://github.com/fjsaezm/mcd-maaa
+[submodule "mcd-gd"]
+	path = mcd-gd
+	url = https://github.com/fjsaezm/mcd-gd
+[submodule "mcd-pst"]
+	path = mcd-pst
+	url = https://github.com/Ocete/mcd-pst
