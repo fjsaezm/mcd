@@ -104,6 +104,8 @@ Let us firstly consider the simplest case of linear filter. An \textbf{autoregre
     \end{equation}
 \end{ndef}
 
+Note that it is called autoregressive since, if you consider \(\tilde z_{i-k}\) for \(k = 1,\dots,p\) as points, you are doing a \emph{linear regression} over the past values.\\
+
 Now, if we define the \textbf{autoregressive operator of order p} using the backward shift operator \(B\) as:
 \[
 \phi(B) = 1- \phi_{1}B - \phi_{2}B^{2} - \dots - \phi_{p}B^{p},
@@ -112,3 +114,34 @@ we can economically write the autoregressive model in \eqref{model:AR} as
 \begin{equation}\label{model:ar:red}
   \phi(B)\tilde z_{t} = a_{t}
 \end{equation}
+
+In practice, this model has \(p+2\) unknown parameters \(\mu,\phi_{1},\dots,\phi_{p},\sigma_{a}^{2}\) which have to be estimated from the data.
+
+\begin{nprop}
+The autoregressive model is a particula case of a linear filter
+\end{nprop}
+\begin{proof}
+  Although we will not be estrictly formal in this proof, we will give an intuition on the iterative process that has to be done.
+
+  Consider the term \(\tilde z_{t-1}\), let us eliminate it. Recall that
+  \[
+    \tilde z_{t-1} = \phi_{1}\tilde z_{t-2} + \dots + \phi_{p} \tilde z_{t-p-1} + a_{t-1}.
+  \]
+  We can substitute this term in the expression of the AR model given in Equation \eqref{model:AR}. The same can be done for \(\tilde z_{t-2}\) and so on, to yield eventually an infinite series in the \(a\) terms.
+
+\end{proof}
+
+  In the case where \(p=1\), we have the AR process \(\tilde z_{t} = \phi \tilde z_{t-1} + a_{t}\). After \(m\) sucessive substitutions of \(\tilde z_{t-j} = \phi \tilde z_{t-j-1} + a_{t-j} \), with \(j = 1,\dots,m\), we obtain
+  \[
+    \tilde z_{t} = \phi^{m+1}\tilde z_{t-m-1}+ a_{t} + \phi a_{t-1} + \phi^{2}a_{t-2} + \dots + \phi^{m}a_{t-m}
+  \]
+  Now, if we take the limit \(m\to \infty\) this leads to the \emph{convergent inifinite series representation} \(\tilde z_{t} = \sum_{j=0}^{\infty}\phi^{j}a_{t-j}\), with \(\psi_{j} = \phi^{j}, j \geq 1\), provided that \(\abs{\phi} < 1\). In the general AR case,
+  \[
+    \phi(B) \tilde z_{t} = a_{t}
+  \]
+  is equivalent to
+  \[
+    \tilde z_{t} = \phi^{-1}(B) a_{t} = \psi(B)a_{t}, \quad \quad \psi(B) = \phi^{-1}(B) = \sum_{j=0}^{\infty}\psi_{j}B^{j}.
+  \]
+
+  AR processes can be stationary or nonstationary. From the definition, it is clear that for a AR process to be stationary, the coefficients \(\phi\) must be such that the weights \(\psi_{1},\psi_{2},\dots\) in \(\psi(B) = \phi^{-1}(B)\) form a convergent series. A \textbf{necessary requirement} for stationarity is that the autoregressive operator \(\phi(B)\), considered a polynomial in \(B\) of degree \(p\), must have all roots greater than \(1\) in absolute value.
