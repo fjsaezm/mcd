@@ -25,7 +25,7 @@
 % ------------------------------------------------------------------------------
 
 \documentclass[fontsize=12pt]{scrartcl}
-\usepackage[english, es-tabla, es-lcroman, es-noquoting, es-minimal]{babel}
+\usepackage[english]{babel}
 \usepackage{graphicx}
 
 \usepackage{templatetools}
@@ -168,6 +168,7 @@
 	before upper={\parindent 12pt},
 }
 
+
 % ------------------------------------------------------------------------------
 % LISTINGS
 % ------------------------------------------------------------------------------
@@ -193,6 +194,14 @@
 }
 
 
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+\pgfplotsset{compat=newest}
+\usepackage{float}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ------------------------------------------------------------------------------
 % COMIENZO DEL DOCUMENTO
@@ -212,7 +221,7 @@
 	\parbox[t]{\textwidth}{
 			\raggedright
 			\fontsize{50pt}{50pt}\selectfont\sffamily\color{white}{
-			  \textbf{\subject}
+			  \textbf{\subj}
       }
 	}
 
@@ -244,11 +253,11 @@
   \includegraphics{by-nc-sa.pdf}\\[4pt]
   \raggedright
   \sffamily
-  {\large This book is distributed under a license CC BY-NC-SA 4.0.}\\[4pt]\\[4pt]
+  {\large This book is distributed under a license CC BY-NC-SA 4.0.}\\[4pt]
   \texttt{creativecommons.org/licenses/by-nc-sa/4.0/}
 }
 
-
+\newpage
 % ---------------------------------------------------------------------------
 % ÍNDICE
 % ---------------------------------------------------------------------------

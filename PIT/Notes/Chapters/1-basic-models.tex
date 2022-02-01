@@ -2,6 +2,11 @@
 
 A time series, also known as discrete time signal, is a sequence of observations taken periodically in time. We can use time series to perform many tasks such as predictions of future values, behaviour analysis or information extraction. Examples of time series are audio signals, industrial instrument measures or diary finantial activity.
 
+\begin{figure}[H]
+  \centering
+  \input{Figures/TimeSeries}
+  \caption{Example of a random time series.}
+\end{figure}
 A system can be determined comparing the input and the output. We call the system a filter if it is linear and time invariant. Considering the dynamic system as a black box, we can estimate the transference function or the impulse response to taht filter.
 
 We can also consider \textbf{multivariate} time series, where some values of the time series have an influence on the other values in different or the same time instant. We can \textbf{classify} the time series in two wide types:
@@ -12,3 +17,98 @@ We can also consider \textbf{multivariate} time series, where some values of the
 \end{itemize}
 
 In this subject, we will focus on stochastic models.
+
+\subsection{Stochastic Models}
+
+We can make three big considerations on the stochastic models.
+\begin{itemize}
+  \item Stationary models.
+        \begin{ndef}
+          Let \(\{X_{t}\}\) be a stochastic process and let \(F_{X}\left(x_{t_{1} + \tau}, \dots, x_{t_{n} +\tau}\right)\) represent the CDF of the \textbf{unconditional} joint distribution of \(\{X_{t}\}\) at times \(t_{1 }+ \tau,\dots, t_{n} + \tau\). Then \(\{X_{t}\}\) is strictly stationary if
+          \[
+            F_{X}\left( x_{t_{1} + \tau}, \dots, x_{t_{n} +\tau}\right) = F_{X}\left(X_{t_{1}},\dots,x_{t_{n}}\right)
+          \]
+
+        \end{ndef}
+        However, we will use the case of \textbf{weak stationarity}, where we assume that the expectation of the stochastic process and the covariance at times \(t,t+\tau\) are constant.
+
+        \begin{example}
+          AR, MA, ARMA
+        \end{example}
+
+  \item Non stationary models, where we do not make the assumption that the average of the process is constant in time and that there is seasonality
+        \begin{example}
+          ARIMA, SARIMA
+        \end{example}
+
+  \item Influenced by exogenous(extern) variables. In this cases, the exogenous variable affects the model, but the model does not affect this variable.
+        \begin{example}
+          SARIMAX
+        \end{example}
+\end{itemize}
+
+Let us introduce some \textbf{notation} for the following explanations
+
+\begin{ndef}
+  Let \(z_{t}\) be the value of the time series at instant \(t\).
+  \begin{itemize}
+    \item The \textbf{backward shift} operator is \(z_{t-m} = B^{m}z_{t}\)
+    \item The \textbf{forward shift} operator is \(z_{t+m} = F^{m}z_{t} = B^{-m}z_{t}\)
+    \item The difference or discrete gradient operator is \(\nabla z_{t} = z_{t} - z_{t-1} = (1-B)z_{t}\)
+  \end{itemize}
+\end{ndef}
+
+Recall that, having a time series we can consider its \textbf{Z-transform}, that converts the discrete-time signal into a complex frequency-domain representation. In the Z-transform representation, the previously introduced notation is:
+\begin{itemize}
+  \item The backward shift is \(z_{t-m} = B^{m}z_{t} = Z^{-m}z_{t}\)
+  \item The forward shift is \(z_{t+m} = B^{-m}z_{t} = Z^{m}z_{t}\)
+        \item The difference or discrete gradient is \(\nabla z_{t} = (1-Z^{-1})z_{t}\)
+\end{itemize}
+
+
+\section{Linear filter based models}
+
+The stochastic models we use are based on time series \(z_{t}\) in which sucessive values are highly dependent. In these cases, we can see that the time series is generated from a series of independependent ``shocks''.
+
+\begin{ndef}
+  Let \(a_{t} \sim \mathcal N\left(0,\sigma_{a}^{2}\right)\) be \emph{white noise} (where each \emph{shock} is related to \(a_{t}\)) which is not observed. Consider a linear filter that transforms the unobserved \(a_{t}\) to a observed time series \(z_{t}\). We say that a \textbf{linear filter model is}
+  \[
+    z_{t} = \mu + a_{t} + \psi_{1}a_{t-1} + \psi_{2}a_{t-2} + \dots = \mu + \psi(B)a_{t},
+  \]
+  where
+  \[
+    \psi(B) = 1 + \psi_{1}B + \psi_{2}B^{2} + \dots
+  \]
+  is called the \textbf{transfer function} of the filter.
+\end{ndef}
+
+\begin{figure}[H]
+
+  \centering
+  \includegraphics{Figures/LinearFilter}
+
+\end{figure}
+
+As we can see, we are expressing the filter in terms of a infinite sum of the coefficients \(\psi_{i}\). If there are finite coefficients of the sum is \emph{absolutely summable}, that is: \(\sum_{j = 0}^{\infty}\abs{\psi_{j}} < \infty\) or the vector of coefficients has finite \(\ell^{1}\) norm, we say that the filter is \textbf{stable} and the process \(z_{t}\) is \textbf{stationary}.
+
+In the case where the \(\ell^{1}\) norm is not finite, our filter are non-stable and produce non-stationary series.
+
+\subsection{Autoregressive Models (AR)}
+
+Let us firstly consider the simplest case of linear filter. An \textbf{autoregressive model} is a linear filter where the current value of the process \(\tilde z_{t}\) is expressed as a finite sum of the previous values and a random shock \(a_{t}\).
+
+\begin{ndef}
+  Let us denote the values of a process af equally spaced times \(t,t-1,\dots\) by \(z_{t}, z_{t-1}, \dots\). Consider that the values are centered, that is \(\tilde z_{t} = z_{t} - \mu\). Then, the \textbf{autoregressive (AR) process} of \textbf{order p} is
+  \begin{equation}\label{model:AR}
+    \tilde z_{t} = \phi_{1}\tilde z_{t-1} + \phi_{2}\tilde z_{t-2}+ \dots  + \phi_{p}\tilde z_{t-p} + a_{t}
+    \end{equation}
+\end{ndef}
+
+Now, if we define the \textbf{autoregressive operator of order p} using the backward shift operator \(B\) as:
+\[
+\phi(B) = 1- \phi_{1}B - \phi_{2}B^{2} - \dots - \phi_{p}B^{p},
+\]
+we can economically write the autoregressive model in \eqref{model:AR} as
+\begin{equation}\label{model:ar:red}
+  \phi(B)\tilde z_{t} = a_{t}
+\end{equation}
