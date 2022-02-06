@@ -145,3 +145,57 @@ The autoregressive model is a particula case of a linear filter
   \]
 
   AR processes can be stationary or nonstationary. From the definition, it is clear that for a AR process to be stationary, the coefficients \(\phi\) must be such that the weights \(\psi_{1},\psi_{2},\dots\) in \(\psi(B) = \phi^{-1}(B)\) form a convergent series. A \textbf{necessary requirement} for stationarity is that the autoregressive operator \(\phi(B)\), considered a polynomial in \(B\) of degree \(p\), must have all roots greater than \(1\) in absolute value.
+
+  \subsection{Application: Linear Prediction Coefficients in Speech Coding}
+
+
+  Let us now set in the case of the \textbf{Speech Coding} topic. It is considered that a speech sample can be approximated as a linear combination of the past samples, which is how an AR model behaves. We have to find the coefficients that best suit our problem, using for instance the mean squared error prediction. We use the obtained \textbf{Linear Prediction Coefficients (LPCs)} to represent the signal frame.
+
+  Using this technique, we would be \textbf{reducing} the signal size significantly. However, since we are only approximating the signal, we would be most probably losing information. Two examples of codification of the audio signals are:
+
+  \begin{itemize}
+    \item MP3: which produces a different audio signal, involving loss of information
+          \item FLAC: where the output is almost equal to the input, no loss of information
+\end{itemize}
+
+Signals are digitalized using a coding system.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[scale=0.5]{Figures/SpeechCodingSystem}
+  \caption{Block diagram of a speech coding system.}
+\end{figure}
+
+The filter eliminates aliasing and the sampler makes the continuous to discrete time conversion.
+
+\begin{example}
+  In this example, we present the digital CD audio signal and why we would like to reduce its size without losing information. This signal has the following properties:
+
+  \begin{enumerate}
+    \item Sample rate \(\Omega_{s} = 44.1 kHz\)
+    \item Bits per sample: \(16\)
+          \item 2 channels (although sometimes 3 are used)
+  \end{enumerate}
+
+  With this properties, the input bit rate is
+  \[
+    R = \Omega_{s} \ \cdot \ \operatorname{Bits/sample} \ \cdot \ \operatorname{Channels} = 44.1*10^{3} * 16 * 2 = 14112000 \frac{\operatorname{bits}}{s} = 1.41 \frac{\operatorname{Mb}}{s}
+  \]
+  Which implies that, in a single minute we would need
+  \[
+    60s ; * ; 1,4112 \frac{\operatorname{Mb}}{s} ; * ; \frac{1 \operatorname{byte}}{8 \operatorname{bits}} = 10.09 \operatorname{MB},
+  \]
+  which is a high size for a single minute audio.
+\end{example}
+
+\begin{example}
+  In this example, we will present the input bit rate for the speech digital signal. Its common properties are:
+    \begin{enumerate}
+    \item Sample rate \(\Omega_{s} = 8 ; \operatorname{kHz}\)
+    \item Bits per sample: \(16\)
+          \item 1 channel
+    \end{enumerate}
+
+  With this properties, the input bit rate is \(128\) Kb per second.
+
+\end{example}
