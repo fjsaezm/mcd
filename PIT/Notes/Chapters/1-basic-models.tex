@@ -72,9 +72,9 @@ The stochastic models we use are based on time series \(z_{t}\) in which sucessi
 
 \begin{ndef}
   Let \(a_{t} \sim \mathcal N\left(0,\sigma_{a}^{2}\right)\) be \emph{white noise} (where each \emph{shock} is related to \(a_{t}\)) which is not observed. Consider a linear filter that transforms the unobserved \(a_{t}\) to a observed time series \(z_{t}\). We say that a \textbf{linear filter model is}
-  \[
+  \begin{equation}\label{linear:filter}
     z_{t} = \mu + a_{t} + \psi_{1}a_{t-1} + \psi_{2}a_{t-2} + \dots = \mu + \psi(B)a_{t},
-  \]
+  \end{equation}
   where
   \[
     \psi(B) = 1 + \psi_{1}B + \psi_{2}B^{2} + \dots
@@ -199,3 +199,138 @@ The filter eliminates aliasing and the sampler makes the continuous to discrete 
   With this properties, the input bit rate is \(128\) Kb per second.
 
 \end{example}
+
+As a quick note, remember that \textbf{to quantify} a continuous time series is to assign it discrete amplitude values. When we do this, we are introducing a \textbf{cuantification error},
+\[
+\operatorname{error}(t) = z_{\operatorname{quantified}}(t) - z_{\operatorname{original}}(t)  
+\]
+In each \(t \in \mathbb R\), this error can be positive or negative. We can consider that the error is additive.\\
+
+Let us consider a simplified version of the speech production model. Consider that there is a source and a filter, such as in the next figure:
+
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=0.6]{Figures/SpeechGeneration}
+\caption{LPC model of speech production.}
+\end{figure}
+
+Then,
+
+\begin{itemize}
+  \item We assume that we can separate the voice in non overlapping frames that are short enough to keep the model parameters constant.
+  \item Then, we estimate the model parameters for each frame . These parameters are: voicing, gain (energy level of the frame), filter coefficients (response of the synthesis filter), pitch period (time length between consecutive excitation impulses)
+\end{itemize}
+
+\subsubsection*{Using the AR model to compute the synthesis filter coefficients}
+
+We can use the autoregressive model to predict a speech sample. Let \(x[n]\) be the discrete signal. The prediction aims to find the coefficients \(a_k\), \(k = 1,\dots, p\) such that we can compute that sample using the previous samples
+
+\[
+x[n] \approx \sum_{k=1}^p a_k \ x[n-k] \implies x[n] = \sum_{k=1}^p a_k \ x[n-k] + e[n] = \sum_{k=1}^p a_k \ x[n-k] + Ge'[n],
+\]
+where \(e[n]\) is the error at time step \(n\), \(e'[n]\) is the theoretical excitation and \(G\) is the gain. We \textbf{minimize the mean squared error}(also called mean energy) of the prediction error \(e[n]\) in order to fit this model.
+
+\section{ARMA, (S)ARIMA(X) and Multivariate series}
+
+
+In this section we will generalize the Autoregressive model, adding complexity (and thus more generalization capability) to it.
+
+\subsection{MA and ARMA}
+
+Firstly, we bring back the general expression of a linear filter given in Equation \eqref{linear:filter}:
+\[
+\tilde z_t = a_t + \sum_{j=1}^\infty \psi_j a_{t-j}. 
+\]
+
+We can consider a special case when only the first \(q \in \mathbb N\) are nonzero.
+
+\begin{ndef}
+A \textbf{Moving Average (MA)} process of order \(q\) is a linear filter where only the first \(q\) terms are nonzero
+\begin{equation}\label{model:MA}
+\tilde z_t = a_t - \theta_1 a_{t-1} - \dots - \theta_q a_{t-q}.
+\end{equation}
+\end{ndef}
+As it can be appreciated, we now use the symbols \(-\theta_1,\dots, -\theta_q\) for the finite set of \emph{weights}. What we are doing is to \emph{smooth} the white noise \(a_t\).
+
+
+Recall that, as we did before, we can express the moving average model as
+\[
+\tilde z_t = (1- \theta_1 B - \theta_2 B^2 - \dots - \theta_q B^q) a_t = \theta(B) a_t.
+\]
+
+The Moving Average models are \textbf{not addecuate} when the series has \emph{autocorrelation} (that is, relation to its past values). Also, real-life time series are ``more than white noise'' to smooth.
+
+A solution for this disadvantages could be combining the MA model with the AR model linearly:
+
+\begin{ndef}
+The \textbf{Autoregressive-Moving Average (ARMA)} process of order \(p,q\) is defined as a linear combination of both models
+\[
+\tilde z_t = \sum_{i = 1}^p \phi_i \tilde z_{t-i} + a_t - \sum_{j = 1}^q \theta_j a_{t-j}, 
+\]
+or 
+\[
+\phi(B)\tilde z_t = \theta(B)a_t. 
+\]
+\end{ndef}
+
+Using an ARMA model, we are not only capturing the relationships between a point \(\tilde z_t\) and its previous ones (AR), but also smoothing the influence of the white noise (MA).
+
+A great \textbf{disadvantage} of the ARMA models is that they are \textbf{always stationary}, so we cannot model non-stationary time series.
+
+The following proposition presents a very interesting results on ARMA models:
+
+\begin{nprop}
+  An ARMA process is stationary if all the roots of \(\phi(B) = 0\) have module greater than one, and it is (explosive) non stationary if the roots have module lesser than one.
+
+\end{nprop}
+
+The left-to-mention case where the roots of \(\phi(B) = 0\) lie \textbf{on} the unit circle is very interesting. Nonseasonal series are often well represented by models in which one or more roots are unitary.
+\section{Non estationarity}
+
+Many time series appearing in real life have non stationary behaviour. Thus, we have to obtain new models to be able to make prediction of future values.
+
+However, we can decompose these time series and treat them separately. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{Figures/Decomp}
+\caption{Multiplicative decomposition of a time series.}
+\end{figure}
+
+
+
+Tipically, we use the following components (all of them at time \(t\)):
+
+\begin{enumerate}
+\item \(T_t\), the \textbf{trend} component, reflecting the long-term progression of the series. It exists when there is a persistent increasing or decreasing direction on the data. It is not neccesarily linear.
+
+\item \(S_t\), the \textbf{seasonal} component, reflecting the seasonal variation. A seasonal pattern exists when a time series is influenced by seasonal factors. Seasonality occurs over a fixed known period of time.
+
+\item \(R_t\), the \textbf{residual} component, describing randomness or irregular influences
+\end{enumerate}
+
+Ocassionally, an additional cyclical component \(C_t\) is considered, but we will not do consider that case. With the considered components, using an \textbf{additive} model (used when the variations around the trend do not vary with the level of the time series), we can think of the time series as 
+\[
+z_t = T_t + S_t + R_t.
+\]
+Using a \textbf{multiplicative} model (used when the trend is proportional to the level of the time series), our time series can be written as:
+\[
+z_t = T_t \times S_t \times R_t. 
+\]
+
+Having the different components of a time series, we can look at the properties of each of the individual components and study them separately. Some properties that will help us in the creation of new models are:
+
+\begin{enumerate}
+\item The residual \(R_t\) is usually stationary, so we can use an already known model.
+\item The trend \(T_t\) is usually a smooth function, which we can derivate (one or multiple times) in orden to \emph{make it dissapear}
+
+\item The stationality \(S_t\) has a periodic component.
+\end{enumerate}
+
+
+
+\subsection{ARIMA}
+
+Firstly, we will deal with the trend \(T_t\). As we have said, we can make it \emph{dissapear} by differenciating it.
+
+
