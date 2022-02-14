@@ -217,11 +217,11 @@ If we keep executing the \inline{main.m} script we obtain the following Quality 
      \quad
      \begin{subfigure}[t]{0.45\textwidth}
          \centering
-         \includegraphics[scale=0.8]{Figures/Enhanced2}
+         \includegraphics[scale=0.8]{Figures/QMap2}
          \caption{Quality Map of the second fingerprint.}
      \end{subfigure}
     \caption{Quality maps.}
-    \label{fig:ex2a}
+    \label{fig:ex3a}
 \end{figure}
 
 
@@ -249,11 +249,110 @@ Thus, we can say that both Quality Maps have all its values in the range \([0,1]
 
 \subsection{ What kind information (apart from the quality) can be inferred from such code?}
 
+We examine the file \inline{testfin.m} to understand the result that we are obtaining.
+
+If we read the first commented lines, we find that the function we applied returns
+\begin{minted}{MatLab}
+  % Returns:    newim - Ridge enhanced image.
+  %             binim - Binary version of enhanced image.
+  %             mask  - Ridge-like regions of the image
+  %             reliability - 'Reliability' of orientation data  
+\end{minted}
+Considering this and the code of the \inline{main.m} file, what we just showed in Figure \ref{fig:ex3a} is the \textbf{reliabiltiy} of the orientation data, that is, how secure we are of the orientation of the ridge-lines in each point of the image. As we can see in the figure, we can say that we can not rely on the results outside the fingerprint, and that the algorithm has some problems in the zone where the loop is detected. This makes sense to us, since in the top of the loop the orientation of the ridge-line changes completely.  
+
+We also find that the process followed to obtain the quality maps is:
+\begin{enumerate}
+\item Identify the ridge-like regions and normalise the image. We can see that different blocksizes and thresholds have been used but finally using \(blocksize=16\) and \(threshold = 0.1\) are the values used.
+\item Determine the orientations of the found ridge-like regions.
+\item Determine ridge frequency values across the image. Then, the median frequency is multiplied in the final mask that will be applied to the image (a comment says that the median frequency performed better than the actual frequency.)
+\item Lastly, the filter is applied to enhance the patterns
+\end{enumerate}
+
+
+
+
 \section{Exercise 4}
 
 \subsection{ Execute the code in order to show the Binarized Fingerprint and the Segmented Fingerprint. Apply different values of quality threshold (0.1, 0.3, 0.6, 0.9) and paste here the resulting images}
 
+Let us first examine the code to see what we are doing in this section.
 
+\begin{minted}{MatLab}
+  %Binarized and Segmented Fingerprints
+  threshold=0.1; %quality threshold
+  figure;
+  subplot(121)
+  imagesc(binI1+mask1+(relI1>threshold)) 
+  binI1(relI1<threshold)=0; 
+  inv_binI1 = (binI1 == 0); 
+\end{minted}
+
+We can see that we stablish a threshold (which we are told to modify) and then plots an image that is an addition of the images:
+\begin{itemize}
+\item Enhanced binarized image
+\item The mask that contains the ridge-like regions of the image (returned by testfin)
+\item The reliability of the orientation, selecting the pixels where the reliability is above the selected threshold
+\end{itemize}
+
+The result of the code is shown in Figures \ref{fig:ex4-1st} and \ref{fig:ex4-2nd}.
+
+\begin{figure}[h!]
+  \centering
+       \begin{subfigure}[t]{0.2\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/E4-e1-0.1}
+         \caption{\(0.1\)}
+     \end{subfigure}%
+     \quad
+     \begin{subfigure}[t]{0.2\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/E4-e1-0.3}
+         \caption{\(0.3\)}
+     \end{subfigure}
+     \begin{subfigure}[t]{0.2\textwidth}
+      \centering
+      \includegraphics[scale=0.5]{Figures/E4-e1-0.6}
+      \caption{\(0.6\)}
+  \end{subfigure}%
+  \quad
+  \begin{subfigure}[t]{0.2\textwidth}
+      \centering
+      \includegraphics[scale=0.5]{Figures/E4-e1-0.9}
+      \caption{\(0.9\)}
+  \end{subfigure}
+    \caption{Different thresholds for the first fingerprint example.}
+    \label{fig:ex4-1st}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+       \begin{subfigure}[t]{0.2\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/E4-e2-0.1}
+         \caption{\(0.1\)}
+     \end{subfigure}%
+     \quad
+     \begin{subfigure}[t]{0.2\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/E4-e2-0.3}
+         \caption{\(0.3\)}
+     \end{subfigure}
+     \begin{subfigure}[t]{0.2\textwidth}
+      \centering
+      \includegraphics[scale=0.5]{Figures/E4-e2-0.6}
+      \caption{\(0.6\)}
+  \end{subfigure}%
+  \quad
+  \begin{subfigure}[t]{0.2\textwidth}
+      \centering
+      \includegraphics[scale=0.5]{Figures/E4-e2-0.9}
+      \caption{\(0.9\)}
+  \end{subfigure}
+    \caption{Different thresholds for the second fingerprint example.}
+    \label{fig:ex4-2nd}
+\end{figure}
+
+We can observe in both cases that, as the threshold is augmented, the reliability around the loops decreases and the yellow mask dissapear in both cases. This phenomenon also happens in other points that, until this point of the lab, we have not detected as important points.
 
 
 
