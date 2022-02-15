@@ -55,5 +55,5 @@ function nfimg = smoothen_frequency_image(fimg,RLOW,RHIGH,diff_cycles)
         invalid_cnt =   sum(sum(fimg<RLOW | fimg>RHIGH));
         cycles      =   cycles+1;
     end;
-    cycles
+    cycles;
 %end function smoothen_orientation_image

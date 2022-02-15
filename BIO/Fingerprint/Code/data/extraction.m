@@ -59,10 +59,10 @@ end
 
 time=toc;
 
-figure,imshow(~in);
-hold on;
-plot(minucias_y, minucias_x, 'rx');
-hold off;
-title('8.Extracion de todas las terminaciones y bifurcaciones dentro del margen');
-xlabel (['Tiempo de computo de la extracion : ',num2str(time)]);
-ylabel (['ventana: ',num2str(ventana) ' margen: ',num2str(marg)]);
+%figure,imshow(~in);
+%hold on;
+%plot(minucias_y, minucias_x, 'rx');
+%hold off;
+%title('8.Extracion de todas las terminaciones y bifurcaciones dentro del margen');
+%xlabel (['Tiempo de computo de la extracion : ',num2str(time)]);
+%ylabel (['ventana: ',num2str(ventana) ' margen: ',num2str(marg)]);

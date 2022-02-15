@@ -87,11 +87,11 @@ out_y=y(ind);
 % ---------------------------------------------------------------
 
 time=toc;
-hold on;
+%hold on;
 %plot(out_y,out_x, 'go');
-hold off;
+%hold off;
 
 
-title('Final validated set');
-xlabel (['Tiempo de computo de la validacion : ',num2str(time)]);
-ylabel (['distancia desde el margen: ',num2str(dist)]);
+%title('Final validated set');
+%xlabel (['Tiempo de computo de la validacion : ',num2str(time)]);
+%ylabel (['distancia desde el margen: ',num2str(dist)]);
