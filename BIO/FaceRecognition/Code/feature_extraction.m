@@ -3,7 +3,7 @@ function [param] = feature_extraction (image,coeff)
 image_dct=dct2(image);
 
 %plot the DCT image
-figure;imshow(image_dct);
+%figure;imshow(image_dct);
 
 %Get the feature vector of the corresponding coefficients 
 for i=1:coeff,

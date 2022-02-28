@@ -1,23 +1,17 @@
 close all
 clear all
 clc
-cd ..\
+restoredefaultpath
+cd ..\..\
+pwd
 
 %%%%%%%%%
 % First visualize some example images
 
 imagen=imread('./FaceDatabaseATT/s07/3.pgm');
-figure;imshow(imagen);
-
-%imwrite(imagen, "../Figures/Original.jpg");
-
-%image_dct=dct2(imagen);
-
-%imwrite(image_dct, "../Figures/Original-DCT.jpg");
-
+%figure;imshow(imagen);
 %plot the DCT image
 %figure;imshow(image_dct);
-
 
 
 %Divide the number of images per user for Train and Test:
@@ -56,16 +50,15 @@ for i=1:numel(dirList) %Loop for each user
     for j=1:Train %Train images
        im=imread(images(j).name);
        im=double(im);
-        %figure;imshow(im);
         
-        %%Feat Extraction
+       %%Feat Extraction
         
-        % extract the features from each image
-        feats=feature_extraction(im,coeff);
-        return
-        MatrixTrainFeats(contR,:)=feats;
-        MatrixTrainLabels(contR,1)=i; %user i
-        contR=contR+1;
+       % extract the features from each image
+       feats=feature_extraction(im,coeff);
+       MatrixTrainFeats(contR,:)=feats;
+       MatrixTrainLabels(contR,1)=i; %user i
+       contR=contR+1;
+
         
     end
     
@@ -74,15 +67,14 @@ for i=1:numel(dirList) %Loop for each user
     for j=(Train+1):10
        im=imread(images(j).name);
        im=double(im);
-        %figure;imshow(im);
         
-        %%Feat Extraction
-        
-        % extract the features from each image
-        feats=feature_extraction(im,coeff);
-        MatrixTestFeats(contT,:)=feats;
-        MatrixTestLabels(contT,1)=i;
-        contT=contT+1;
+       %%Feat Extraction
+       
+       % extract the features from each image
+       feats=feature_extraction(im,coeff);
+       MatrixTestFeats(contT,:)=feats;
+       MatrixTestLabels(contT,1)=i;
+       contT=contT+1;
     end
     
     cd ..
@@ -117,7 +109,8 @@ for i=1:numel(MatrixTestLabels) %For each Test image
         
     end
     
-    %The final score is the min of the 6 comparisons of each Test image against the training images of each user
+    %The final score is the min of the 6 comparisons of 
+    % each Test image against the training images of each user
     contF=1;
     for k=1:Train:numel(my_distance)
         my_distanceRed(contF)=min(my_distance(k:k+Train-1)); %Extract the scores of the N training signatures and select the min
@@ -133,11 +126,10 @@ for i=1:numel(MatrixTestLabels) %For each Test image
     end
     
     
-    
-    
 end
 
-%Multiply by -1 to have higher values for genuine comparisons, as we have a distance computation. With other type of classifier this wouldn't be necessary.
+%Multiply by -1 to have higher values for genuine comparisons, as we have a distance computation. 
+% With other type of classifier this wouldn't be necessary.
 
 TargetScores=-TargetScores;
 NonTargetScores=-NonTargetScores;
@@ -147,6 +139,5 @@ cd ..
 save('ParametrizaATT','TargetScores','NonTargetScores');
 
 [EER]=Eval_Det(TargetScores,NonTargetScores,'b') %Plot Det curve
-
 
 

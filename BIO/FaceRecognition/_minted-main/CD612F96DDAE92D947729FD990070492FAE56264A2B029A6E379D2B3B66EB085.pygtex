@@ -1,3 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n}{SVMModel}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{fitcsvm}\PYG{p}{(}…\PYG{p}{)}
-\end{Verbatim}
