@@ -294,13 +294,13 @@ Using the previously commented code, we run the \inline{PCA_EER} script with the
     \label{fig:ex2a}
 \end{figure}
 
-We obtain an \(EER = 8.0769\), which is approximately \(2.5 \%\) higher than the one we obtained in the simplest case using the DCT. Using all the components returned from PCA is not the best option.
+We obtain an \(EER = 8.125\), which is approximately \(2.5 \%\) higher than the one we obtained in the simplest case using the DCT. Using all the components returned from PCA is not the best option.
 
 
 
 \subsection{ A key aspect for the PCA is the number of components considered. Analyze and represent how the EER value changes in terms of the number of PCA components. Give your explanation about the results achieved.}
 
-As we already know, we obtain the principal components by diagonalizing the covariance matrix of the data. This way, we obtain principal directions \(v_1,\dots, v_n\) and eigenvalues \(\lambda_1,\dots,\lambda_n\), which indicate the \textbf{percentage} of the variance explained by each component. The components are sorted by the variance explained (its eigenvalue \(\lambda_i\). The most common technique when using PCA is \textbf{selecting} a number of components that explain a decent amount of the variance. 
+As we already know, we obtain the principal components by diagonalizing the covariance matrix of the data. This way, we obtain principal directions \(v_1,\dots, v_n\) and eigenvalues \(\lambda_1,\dots,\lambda_n\), which indicate the \textbf{percentage} of the variance explained by each component. The components are sorted by the variance explained (its eigenvalue \(\lambda_i\). The most common technique when using PCA is \textbf{selecting} a number of components that explain a decent amount of the variance. \\
 
 In order to determine how many components we want to select, let us first do an analysis of the variance explained. We find (by obtaining the number of elements of the variable \inline{explained}) that PCA returns \(239\) components. Let us show in Figure \ref{fig:ex2b}  the percentage of variance explained by each of them and the accumulated variance explained by the components \(1,\dots, i\) for each \(i = 1,\dots, 239\). 
 
@@ -323,11 +323,61 @@ In order to determine how many components we want to select, let us first do an 
 
 We can observe in the graphics that using approximately \(50\) components we are explaining \(\approx 80\%\) of the total variance, which is usually enough to be able to classify the images well. Also, from the component \(50\) onwards, the components explain less than \(1\%\) of the total variance, which means that they are possibly not really relevant.\\
 
-We now compute the EER for each number of components. There is a little adaptation that the current code 
+We now compute the EER for each number of components. We create a fragment of code that \emph{iterates} over all the possible number of components (\(1\) to \(239\)) and computes the EER for each of them, and gets the number of components which results in a smaller EER. The result is shown in Figure \ref{fig:ex2c}.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{Figures/ERR-per-ncomponents}
+    \caption{EER obtained using each possible number of components returned by PCA.}
+    \label{fig:ex2c}
+\end{figure}
+
+
+As we can observe, using less than \(50\) components (which is the number of components that can explain approximately \(80\%\) of the variance), results in the lowest values of the EER. The EER increases when we increment the number of components, and this \textbf{makes sense}, since we have already mentioned that after the \(50-\)th component, the rest of them explain less than \(1\%\) of the variance, which means that they are \textbf{not signifficant}. \\
+
+All in all, our results in terms of the EER are coincident with our preliminar study of the explained variance by the components.
+
+
 
 
 \subsection{ Indicate the optimal number of PCA components and paste the resulting DET curve together with the EER achieved. Compare the results using PCA with the DCT features considered in Task 1.}
 
+After the loop that iterates through all possible components, we added some code that outputs the minimum of the computed EERs. This code outputs the following:
+
+\begin{minted}{MatLab}
+  Min EER is obtained with 31 components
+  Minimum EER is  3.910256e+00 
+  Explained Variance 7.826086e+01
+\end{minted}
+
+As we can see, we obtain that selecting \textbf{31 components} results in \(EER = 3.91\), which is the minimum that we can obtain using PCA. Also, we are explaining approximately a \(78\%\) of the total variance, which is quite a high quantity. We \textbf{state} that the optimal number of PCA components to use in this problem is \(31\). The resulting DET curve is plotted in Figure \ref{fig:ex2c-optim}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.7]{Figures/DET-optim-comps-PCA}
+    \caption{DET curve for \(n\_components = 31\) in PCA feature selection.}
+    \label{fig:ex2c-optim}
+\end{figure}
+
+\subsubsection{Comparison with the previous method}
+
+Now we want to compare the results obtained using PCA with the results obtained using the feature extractor that used the DCT. For PCA we used a fixed \(n\_train = 6\) and \(n\_test = 4\). Remember that, in the DCT method, the best results were achieved using \(n\_train = 7, n\_test = 3\). However, we have tested this configuration (and also \(n\_train = n\_test = 5\)) in the PCA feature extraction, but the results have only gotten worse (we obtained higher values for the EER).
+
+With this in consideration, we have resumed all the information until this point in Table \ref{table:comp1}. For each of the feature extraction methods, we include the original hyperparameters and the optimal hyperparameters selection.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|rr}
+  Method/Hyperparameters                                                & \multicolumn{1}{l}{Starting} & \multicolumn{1}{l}{Best} \\ \hline
+  \begin{tabular}[c]{@{}l@{}}DCT\end{tabular} & $5.5$                        & $3.33$                   \\
+  PCA                                                                   & $8.125$                      & $3.91$                  
+  \end{tabular}
+  \caption{Comparison of the results obtained with both used methods.}
+  \label{table:comp1}
+  \end{table}
+
+PCA obtains an EER \(0.6 \%\) higher than the one obtained by using the DCT, which is worse than the first case but not really in a determinant quantity. However, we know that PCA focus on explaining the variance of the data, so the extracted features might be more relevant when generalizing this code for a larger dataset, so we would \textbf{choose PCA} as the most relevant way of extracting features.
 
 
 
@@ -348,6 +398,9 @@ For more information, check Matlab Help:
 \url{https://es.mathworks.com/help/stats/fitcsvm.html?lang=en} 
 \subsection{ Using the parameters train = 6 and test = 4, paste the DET curves and indicate the EERs in the following cases: 1) regarding the KernelFunction parameter of the SVM (using all PCA components), and 2) regarding the number of PCA components considered for the feature extraction module (using the KernelFunction polynomial and starting with 3 PCA components).}
 
+\subsubsection{Using the KernelFunction}
+
+\subsubsection{Changing the number of selected PCA components}
 
 
 

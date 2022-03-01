@@ -1,17 +1,18 @@
-function [EER] = compute_eer_distance (MatrixTrainFeatures, MatrixTestFeatures, ...
-                                        MatrixTrainLabels, MatrixTestLabels, ...
-                                        Train, Test)
+function [EER] = compute_eer_distance (X_train, X_test, ...
+                                        y_train, y_test, ...
+                                        Train, Test,...
+                                        plot_eer)
 
     TargetScores=[];
     NonTargetScores=[];
     
-    for i=1:numel(MatrixTestLabels) %For each Test image
+    for i=1:numel(y_test) %For each Test image
     
-        for j=1:numel(MatrixTrainLabels) %Comparison with each Training image
+        for j=1:numel(y_train) %Comparison with each Training image
                 
-            my_distance(j)=mean(abs(MatrixTestFeatures(i,:)-MatrixTrainFeatures(j,:))); %Compute the distance measure
+            my_distance(j)=mean(abs(X_test(i,:)-X_train(j,:))); %Compute the distance measure
             
-            if(MatrixTestLabels(i,:)==MatrixTrainLabels(j,:)) %if it's a genuine comparison
+            if(y_test(i,:)==y_train(j,:)) %if it's a genuine comparison
                 LabelTest(j)=1;
                 
             else % otherwise
@@ -45,6 +46,6 @@ function [EER] = compute_eer_distance (MatrixTrainFeatures, MatrixTestFeatures, 
     
     %save('ParametrizaATT','TargetScores','NonTargetScores');
     
-    [EER]=Eval_Det(TargetScores,NonTargetScores,'b'); %Plot Det curve
+    [EER]=Eval_Det(TargetScores,NonTargetScores,'b',plot_eer); %Plot Det curve
 
 end

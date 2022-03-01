@@ -1,4 +1,4 @@
-function[EER] = eer (n_train, n_test,param_coeff)
+function[EER] = eer (n_train, n_test,param_coeff,plot_curve)
 
     %Divide the number of images per user for Train and Test:
     Train=n_train;
@@ -122,6 +122,6 @@ function[EER] = eer (n_train, n_test,param_coeff)
     
     %save('ParametrizaATT','TargetScores','NonTargetScores');
     
-    [EER]=Eval_Det(TargetScores,NonTargetScores,'b') %Plot Det curve
+    [EER]=Eval_Det(TargetScores,NonTargetScores,'b',plot_curve) %Plot Det curve
     
 end

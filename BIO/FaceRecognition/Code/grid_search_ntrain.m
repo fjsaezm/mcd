@@ -12,9 +12,10 @@ n_iters = max_ntrain - min_ntrain;
 X = zeros(n_iters);
 optimal_coeff = 5;
 
+plot_curve = false;
 
 for i=min_ntrain:max_ntrain
-    X(i-min_ntrain+1) = eer(i,max_ntrain - i,optimal_coeff);
+    X(i-min_ntrain+1) = eer(i,max_ntrain - i,optimal_coeff,plot_curve);
 end
 
 [mr,mir] = min(X);

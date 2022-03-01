@@ -1,4 +1,4 @@
-function [EER,DCF_opt,ThresEER]=Eval_Det(true_scores,impostor_scores,color)
+function [EER,DCF_opt,ThresEER]=Eval_Det(true_scores,impostor_scores,color,plot_eer)
 %------------------------------
 %load speaker detection output scores
 %load true_scores
@@ -21,7 +21,7 @@ ThresEER=ScoresTab(posmin);
 %------------------------------
 %plot results
 
-plot_curve = false;
+plot_curve = plot_eer;
 
 if plot_curve
 
