@@ -68,59 +68,13 @@ cd ..
 
 % PCA on Training matrix
 [PCA_coeffs,MatrixTrainPCA,latent,none,explained,mu] = pca(MatrixTrainFeats);
+%MatrixTestPCA = (MatrixTestFeats - mu)*PCA_coeffs;
 
-perform_all_components = true;
-
-% Test in all components
-if perform_all_components
-    MatrixTestPCA = (MatrixTestFeats - mu)*PCA_coeffs;
-    EER = compute_eer_distance(MatrixTrainPCA,MatrixTestPCA, ...
-                                MatrixTrainLabels,MatrixTestLabels,...
-                                Train,Test, ...
-                                false);
-    fprintf('EER with all components is  %d \n',EER)
-end
-
-
-
-
-
-
-% Useful variables
-min_comps = 1;
-max_comps = numel(explained);
-
-% Accumulated variance
-cumulative_variance = cumsum(explained);
-
-plot_explained_var = false;
-
-if plot_explained_var
-    
-   
-    figure;
-    hold on;
-    plot((min_comps:max_comps),explained,'LineWidth',2);
-    title('Variance explained by each component');
-    xlabel('Component');
-    ylabel('Explained Variance');
-    xlim([-1 240]);
-    ylim([-0.5 20]);
-    hold off;
-    
-    figure;
-    hold on;
-    plot((min_comps:max_comps),cumulative_variance,'LineWidth',2, 'Color', '#ff6347');
-    title('Accumulated variance');
-    xlabel('Component');
-    ylabel('Accumulation');
-    hold off;
-end
 
 EER_comps = zeros(max_comps);
 
 
-for ncomps=1:max_comps
+parfor ncomps=1:max_comps
 
 
     % Project Test Set
@@ -173,65 +127,8 @@ ylabel('EER');
 hold off;
 
 
-fprintf('Execting experiment with different Train-Test partitions...\n')
-
-
-min_ntrain = 1;
-max_ntrain = 9;
-iters = (1:9);
-n_iters = max_ntrain - min_ntrain;
-
-results = zeros(n_iters,max_comps);
-minimums = zeros(n_iters,1);
-
-% Iterate through train samples
-for i=min_ntrain:max_ntrain
-
-    fprintf('N train = %d...\n',i)
-    EER_comps = zeros(n_comps,1);
 
 
 
-    
-    % For i train samples, find EER for each PCA Ncomps
-    for ncomps=1:max_comps
 
 
-        % Project Test Set
-        MatrixTestPCA = (MatrixTestFeats - mu)*PCA_coeffs(:, 1:ncomps);
-
-        % Select ncomps components
-        MatrixTrainSelectedPCA = MatrixTrainPCA(:,1:ncomps);
-
-
-
-    
-
-        EER = compute_eer_distance(MatrixTrainSelectedPCA,MatrixTestPCA, ...
-                                MatrixTrainLabels,MatrixTestLabels,...
-                                Train,Test, ...
-                                false);
-    
-        EER_comps(ncomps) = EER;
-   
-
-    end
-    
-    EER_comps(1:20,:)
-    results(i,:) = EER_comps;
-
-    % Find minimum in this number of train samples
-    [mr,mir] = min(EER_comps)
-    minimums(i) = mr;
-end
-
-
-
-figure;
-hold on;
-plot((1:9),minimums(1:9));
-%stem(min_pos(1),m(1),'filled','MarkerFaceColor','red', 'LineStyle','none');
-title('Minimum EER per number of train samples');
-xlabel('Train Samples');
-ylabel('Minimum EER');
-hold off;

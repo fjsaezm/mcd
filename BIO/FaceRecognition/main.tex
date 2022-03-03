@@ -160,7 +160,7 @@ The \textbf{EER} is the point where \(FAR = FRR\), that is, the point where we a
     \label{fig:ex1b}
 \end{figure}
 
-We can appretiate in Figure \ref{fig:ex1b} that the EER (circled) is around \(\sim 5.5\%\). Also, the code shows on screen that the EER is \inline{EER = 5.6571}.
+We can appreciate in Figure \ref{fig:ex1b} that the EER (circled) is around \(\sim 5.5\%\). Also, the code shows on screen that the EER is \inline{EER = 5.6571}.
 
 
 \subsection{Find out the configuration of the DCT coefficients that achieves the best EER results (keeping train = 6 images, test = 4 images). Justify your result, including the resulting DET image and EER value.}
@@ -184,7 +184,7 @@ In this case where the number of images is small and the techniques that we appl
 \end{figure}
 
 
-As we can see, the \textbf{optimal} number of coefficients is \(5\), obtaining an \(EER = 3.750\). We can appretiate how using a small number of coefficients, the EER is very high (the features are not captured). When using more than \(5\), the EER slowly starts to increase.
+As we can see, the \textbf{optimal} number of coefficients is \(5\), obtaining an \(EER = 3.750\). We can appreciate how using a small number of coefficients, the EER is very high (the features are not captured). When using more than \(5\), the EER slowly starts to increase.
 
 
 \subsection{ Once selected the best configuration of the DCT coefficients (in previous point), analyze the influence of the number of training images in the system performance. Include the EER result achieved for each case (from \(train = 1\) to \(train = 7\)). Justify the results.}
@@ -334,9 +334,9 @@ We now compute the EER for each number of components. We create a fragment of co
 \end{figure}
 
 
-As we can observe, using less than \(50\) components (which is the number of components that can explain approximately \(80\%\) of the variance), results in the lowest values of the EER. The EER increases when we increment the number of components, and this \textbf{makes sense}, since we have already mentioned that after the \(50-\)th component, the rest of them explain less than \(1\%\) of the variance, which means that they are \textbf{not signifficant}. \\
+As we can observe, using less than \(50\) components (which is the number of components that can explain approximately \(80\%\) of the variance), results in the lowest values of the EER. The EER increases when we increment the number of components, and this \textbf{makes sense}, since we have already mentioned that after the \(50-\)th component, the rest of them explain less than \(1\%\) of the variance, which means that they are \textbf{not significant}. \\
 
-All in all, our results in terms of the EER are coincident with our preliminar study of the explained variance by the components.
+All in all, our results in terms of the EER are coincident with our preliminary study of the explained variance by the components.
 
 
 
@@ -396,17 +396,240 @@ For the test phase, you should follow:
 to obtain the scores for each user model. 
 For more information, check Matlab Help:
 \url{https://es.mathworks.com/help/stats/fitcsvm.html?lang=en} 
+
+\subsection{Introduction}
+
+In this last task, we use the PCA feature extractor created in the last task to apply an \emph{Support Vector Machine} to the extracted features and compute the EER using the predictions given by this SVM.\\
+
+We will use the \textbf{one versus all} strategy, that is: consider for each class a binary classification problem where the positive examples are the ones belonging to that class and the rest of the elements in the dataset will be negative examples.The code for this task will be in the module \inline{PCA_SVM.m}. However, in order to make it simpler, we create a submodule called \inline{compute_eer_svm} that receives the Train and Test sets (and a few extra parameters) and returns the EER for the given sets.\\
+
+As we executed the train stage for the first time, we realized that the training times were \textbf{quite high}. To avoid this problem, we found the MatLab tool \inline{Parallel Computing Toolbox}, which allows us to \textbf{parallelize} the executions of the training of the multiple classifiers for a determined number of features. 
+
+We can divide the code of the script \inline{compute_eer_svm} in two main sections. The \textbf{first one} trains an SVM (using a given kernel) for each of the individuals of the dataset (we use \inline{parfor} to parallelize the for loop)
+
+\begin{minted}{MatLab}
+  parfor i = 1:n_users
+    idx = y_train == i;
+
+    if strcmp(kernel_type,'polynomial')
+        SVMModels{i} = fitcsvm(X_train,idx, ...
+            "KernelFunction",kernel_type, ...
+            "PolynomialOrder",degree, ...
+            "Standardize",true);
+    elseif strcmp(kernel_type,'rbf')
+        SVMModels{i} = fitcsvm(X_train,idx, ...
+            "KernelFunction",kernel_type, ...
+            "KernelScale",scale);
+    else % linear case
+        SVMModels{i} = fitcsvm(X_train,idx);
+    end
+end
+\end{minted}
+
+Then, the second part predicts the test images for all the users and saves the scores to vectors using a mask that contains the true labels of the images. Lastly, our old friend \inline{Eval_Det} is called to compute the EER(and draw the DET curve).
+
+\begin{minted}{MatLab}
+parfor i=1:n_users  % For each user
+    % Predict 
+    [none , scores]=predict(SVMModels{i}, X_test);
+
+    % Create a Mask to determine TargetScores
+    userLabels = y_test(:, 1) == i;
+    % Apply Positive and negative masks to obtain Scores vectors
+    TargetScores=[TargetScores, scores(userLabels, 2)'];
+    NonTargetScores=[NonTargetScores, scores(~userLabels, 2)'];
+end
+
+[EER] = Eval_Det(TargetScores, NonTargetScores, 'b', plot_eer);
+\end{minted}
+
+
 \subsection{ Using the parameters train = 6 and test = 4, paste the DET curves and indicate the EERs in the following cases: 1) regarding the KernelFunction parameter of the SVM (using all PCA components), and 2) regarding the number of PCA components considered for the feature extraction module (using the KernelFunction polynomial and starting with 3 PCA components).}
 
 \subsubsection{Using the KernelFunction}
 
+One of the arguments of the previously mentioned script \inline{compute_eer_svm} is the \textbf{kernel function}. A kernel is a non-negative real-valued and integrable function \(K\), used to perform a transformations of the features to a different feature space. In this case, we will try three different kernels applied to the features obtained by PCA:
+
+\begin{itemize}
+\item Linear kernel: the default kernel, which can be expressed as
+\[
+K(x,y) = x^T y.  
+\]
+\item Polynomial kernel: A degree-\(d\) polynomial kernel is defined as
+\[
+K(x,y) = (x^T y + c)^d.  
+\]
+In our case, we tried with \(d = 2\). When we use this kernel, we use \inline{standardize = true} since it provides better results and the training is faster.
+\item Gaussian (or RBF) kernel, which has the following expression:
+\[
+K(x,y) = exp(-\gamma \lVert x- y \rVert^2).  
+\]
+This is the most common kernel, since it provides very good results in a wide variety of classification and regression problems.
+\end{itemize}
+
+After executing our code with the three kernels, we obtained the results shown in Table \ref{table:extra}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|lll}
+      & Linear                      & Polynomial                & Gaussian                  \\ \hline
+  EER & \multicolumn{1}{r}{$3.125$} & \multicolumn{1}{r}{$7.5$} & \multicolumn{1}{r}{$2.5$}
+  \end{tabular}
+  \caption{EERs for each of the kernels using all PCA components.}
+  \label{table:extra}
+  \end{table}
+
+  We also plot the DET curve for each of the different kernels in Figure \ref{fig:extra:all}.
+
+  \begin{figure}[H]
+    \centering
+         \begin{subfigure}[t]{0.32\textwidth}
+           \centering
+           \includegraphics[scale=0.4]{Figures/SVM-Linear}
+           \caption{Linear}
+       \end{subfigure}%
+       \quad
+       \begin{subfigure}[t]{0.32\textwidth}
+           \centering
+           \includegraphics[scale=0.4]{Figures/SVM-POLY}
+           \caption{Polynomial.}
+       \end{subfigure}
+       \quad
+       \begin{subfigure}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[scale=0.4]{Figures/SVM-RBF}
+        \caption{RBF.}
+    \end{subfigure}%
+      \caption{DET curve for the different kernels.}
+      \label{fig:extra:all}
+  \end{figure}
+
+As we can see in both the table and the DET curve, the \textbf{RBF kernel} is the one that performs better in terms of the EER metric, obtaining a \(2.5\%\) of EER when using all features extracted by PCA. This is already a really low percentage of equal error rate, which would result in a highly accurate classifier. The linear kernel also obtains a relatively low EER, being less than \(1\%\) above the RBF kernel, but also being \textbf{much slower} to train. Lastly, the Polynomial kernel is quite behind on this metric compared with RBF and Linear. Further experimentation with the degree \(d\) of the polynomial should be done to seek for a better-performing model using this kernel.\\
+
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|r}
+  Matcher  & \multicolumn{1}{l}{Lowest EER} \\ \hline
+  Original & $3.33$                         \\
+  SVM      & $2.5$                         
+  \end{tabular}
+  \caption{Comparison of minimum EERs obtained by each matcher.}
+  \label{table:extra:comp}
+  \end{table}
+
+In Table \ref{table:extra:comp} we show the minimum EER obtained by each of the matchers tested. We find that training an SVM with an appropriate kernel over the extracted features is \textbf{better} than using the original matcher. 
+
 \subsubsection{Changing the number of selected PCA components}
 
+\emph{In this part of the task we realized that we needed to parallelize the executions}.\\
+
+In the last subtask, we used \textbf{all the features} extracted by PCA. However, we already found out in previous tasks that using a much lower number of features provided in fact better results, since many features extracted by PCA are often of low importance.
+
+In this last task, we would like to \textbf{vary the number of used features} and train an SVM over each of the possible number of features extracted to see which is the optimal number of features to use.
+
+Although only the polynomial kernel was asked, we executed the code with the three kernels as extra. We will present the results one by one:
+
+\begin{enumerate}
+
+\item Polynomial.\\
+
+Changing the number of used components was very beneficial for the polynomial kernel.
+\begin{minted}{MatLab}
+  Elapsed time is 88.666707 seconds.
+  Min EER is obtained with 36 components
+  Minimum EER is  1.939103e+00 
+\end{minted}
+The EER was reduced from \(7.5\) to \(1.93\), which is a really low value, indicating a very good model in general. Also, the elapsed time checking on all the possible components was less than one and a half minutes, which is quite fast. The \textbf{selected number of components} was 36, which is quite similar to the number of components found in previous task (remember that from component $\approx 50$, the rest of them do not explain more than \(1\%\) of the variance of the data.
+
+\begin{figure}[H]
+  \centering
+       \begin{subfigure}[t]{0.45\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/SVM-POLY-1TOMAX}
+         \caption{EER Evolution.}
+     \end{subfigure}%
+     \quad
+     \begin{subfigure}[t]{0.45\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/SVM-POLY-OPTIMPCA}
+         \caption{DET curve for SVM in \(36\) components.}
+     \end{subfigure}
+    \caption{Results for exploration with \textbf{polynomial kernel}.}
+    \label{fig:extra:poly:all}
+\end{figure}
+
+The graph in Figure \ref{fig:extra:poly:all} shows that using this kernel, the components that explain most part of the variance obtain better results in terms of the EER, and when non-relevant components are added, the results get worse.
+
+\item RBF.\\
+
+This kernel was the fastest on training, obtaining very good results.
+\begin{minted}{MatLab}
+  Elapsed time is 80.869806 seconds.
+  Min EER is obtained with 14 components
+  Minimum EER is  1.875000e+00
+\end{minted}
+
+We can see that a very low number (14) of features are selected, obtaining \textbf{better results}(lower EER) than the ones obtained with the previous kernel.
+\begin{figure}[H]
+  \centering
+       \begin{subfigure}[t]{0.45\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/SVM-RBF-1TOMAX}
+         \caption{EER Evolution.}
+     \end{subfigure}%
+     \quad
+     \begin{subfigure}[t]{0.45\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/SVM-RBF-OPTIMPCA}
+         \caption{DET curve for SVM in \(14\) components.}
+     \end{subfigure}
+    \caption{Results for exploration with \textbf{RBF kernel}.}
+    \label{fig:extra:rbf:all}
+\end{figure}
+
+Figure \ref{fig:extra:rbf:all} shows that using this kernel, there is a huge drop in the EER when we increment the number of considered features up to \(15\), but then the EER remains constant for any number of components that we add.
+
+\item Linear.\\
+
+This was the \textbf{slowest} of the three kernels trained. However,
+\begin{minted}{MatLab}
+  Elapsed time is 2079.385995 seconds.
+  Min EER is obtained with 95 components
+  Minimum EER is  1.666667e+00 
+\end{minted}
+our code shows that the linear kernel obtains \textbf{the lowest} EER obtained by any possible model until now. It uses, though, a quite high number of components, and the training time makes the use of this kernel \textbf{infeasible}.
+\begin{figure}[H]
+  \centering
+       \begin{subfigure}[t]{0.45\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/SVM-Linear-1TOMAX}
+         \caption{EER Evolution.}
+     \end{subfigure}%
+     \quad
+     \begin{subfigure}[t]{0.45\textwidth}
+         \centering
+         \includegraphics[scale=0.5]{Figures/SVM-linear-OPTIMPCA}
+         \caption{DET curve for SVM in \(95\) components.}
+     \end{subfigure}
+    \caption{Results for exploration with \textbf{linear kernel}.}
+    \label{fig:extra:linear:all}
+\end{figure}
+
+Figure \ref{fig:extra:linear:all} reveals that the behavior of this kernel in terms of the EER per number of components is \emph{similar} to the behavior of the RBF kernel, although this one increases (very slowly) and seems like much less robust (lots of variations).
+
+\end{enumerate}
 
 
+\section{Conclusions}
 
+In this assignment, we have verified that in the \textbf{Face Recognition} task (without using the \emph{state of art} Convolutional Neural Networks), there are a few aspects that must be researched to obtain a good classifier:
 
+\begin{enumerate}
+\item The \textbf{feature extractor} is very important and determines the quality of the final classifier. In this case, PCA outperformed the DCT feature extractor. There are, however, many other ways of extracting features from a face (and from an image in general) and many other methods should be studied for any particular problem.
 
+\item The \textbf{matching engine} is also crucial and we have checked (as we all could expect) that the most intelligent idea is to train a classifier on top of the extracted features. We have also learned that seeking for a good \textbf{set of hyperparameters} (including the kernel) of the classifier determines the final performance of our classifier.
+\end{enumerate}
 
 
 

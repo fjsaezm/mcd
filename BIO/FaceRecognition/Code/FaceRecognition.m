@@ -95,6 +95,7 @@ NonTargetScores=[];
 
 for i=1:numel(MatrixTestLabels) %For each Test image
     contTest=1;
+            TargetScores=[TargetScores, my_distanceRed(contF)];
     for j=1:numel(MatrixTrainLabels) %Comparison with each Training image
             
         my_distance(contTest)=mean(abs(MatrixTestFeats(i,:)-MatrixTrainFeats(j,:))); %Compute the distance measure
@@ -116,7 +117,6 @@ for i=1:numel(MatrixTestLabels) %For each Test image
         my_distanceRed(contF)=min(my_distance(k:k+Train-1)); %Extract the scores of the N training signatures and select the min
         
         if LabelTest(k)==1 %target score            
-            TargetScores=[TargetScores, my_distanceRed(contF)];
         else %non target score 
             NonTargetScores=[NonTargetScores, my_distanceRed(contF)];
         end
