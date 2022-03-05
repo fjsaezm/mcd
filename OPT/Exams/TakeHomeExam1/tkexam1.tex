@@ -125,9 +125,9 @@ Optimización\\
 ¿Cuáles son los criterios de parada del algoritmo simplex algebraico? Expón todas las alternativas posibles y las soluciones a que dan lugar.
 \end{problem}
 
-Para dar respuesta a este problema, recurrimos al document PDF en el que se detalla la versión algebraica del algoritmo simplex para problemas de minimización.\\
+Para dar respuesta a este problema, recurrimos al documento PDF en el que se detalla la versión algebraica del algoritmo simplex para problemas de minimización.\\
 
-Como repaso muy breve de notación para entender la respuesta, recordamos que el problema debe estar expresado en forma estándar (restricciones de igualdad) y que se puede expresar como encontrar el mínimo de una función \(z = \mathbf{c}^T \mathbf{x}\) sujeto a unas restricciones que se escriben matricialmente como \(Ax = b\), siendo \(A\) una matriz y \(b\) un vector. Además, descompondremos \(A = (B \ N)\) siendo \(B\) la matriz básica y \(N\) la no básica.
+Como repaso muy breve de notación para entender la respuesta, recordamos que el problema debe estar expresado en forma estándar (restricciones de igualdad) y que se puede expresar como encontrar el mínimo de una función \(z = \mathbf{c}^T \mathbf{x}\) sujeto a unas restricciones que se escriben matricialmente como \(Ax = b\), siendo \(A\) una matriz y \(b\) un vector. Además, descompondremos \(A = (B \ N)\) siendo \(B\) la matriz básica y \(N\) la no básica.\\
 
 Llamaremos \(I_N\) al conjunto de índices de las variables \textbf{no básicas}. Encontramos dos puntos en los que puede terminar este algoritmo.
 
@@ -138,7 +138,7 @@ z_j - c_j = c_B B^{-1}a_j - c_j \quad \forall j \in I_N,
 \]
 y considerar \(z_k - c_k\) como el máximo de estos valores, el algoritmo \textbf{termina si} \(z_j - c_j \leq 0\), verificándose el \textbf{criterio de optimalidad simplex}, siendo la Solución Básica Factible (SBF) \textbf{óptima}. En esta parada, pueden darse dos posibles alternativas para las soluciones:
 \begin{enumerate}
-\item Si se verifica que \(z_j - c_j = 0\), entonces se tiene que tenemos \textbf{infinitas soluciones óptimas}.
+\item Si se verifica que \(z_j - c_j = 0\), entonces tenemos \textbf{infinitas soluciones óptimas}.
 \item Si, por el contrario, tenemos que \(z_j - c_j < 0\), entonces tenemos una solución \textbf{única} óptima.
 \end{enumerate}
 
@@ -157,7 +157,6 @@ nos damos cuenta de que dicho valor mínimo \(\frac{\bar b_r}{y_{rk}} \) \textbf
 \item ¿Ofrece alguna ventaja la formulación dual respecto de la primal?
   \end{enumerate}
 \end{problem}
-\emph{}
 Para cada problema de programación lineal, \(P\) (Primal), existe otro problema de programación lineal asociado a este, \(D\), llamado el problema dual. Según si nuestro problema primal \(P\) está en forma estándar o canónica, tenemos un problema dual asociado, aunque las formulaciones duales son equivalentes entre sí, independientemente de cómo esté formulado nuestro problema primal \(P\). Asumiremos que nuestro problema primal está escrito en forma canónica.\\
 
 Si nuestro \textbf{problema primal} \(P\) es el siguiente:
@@ -176,12 +175,12 @@ entonces, su \textbf{problema dual} \(D\) asociado es
 Como el problema dual es también un problema de programación lineal, se tiene además el siguiente lema:
 
 \begin{lema}
-El problema dual \(D'\) del problema dual \(D\), es el problema primal \(P\) del problema dual \(D\). (\emph{Propiedad involutiva.})
+Sea \(P\) un problema primal y \(D\) el problema dual de \(P\). Entonces, si consideramos a \(D\) como un problema primal, su problema dual \(D'\) es el problema original \(P\). (\emph{Propiedad involutiva.})
 \end{lema}
 
-Vamos a comentar las \textbf{relaciones más importantes} en términos de las soluciones posibles. El primer resultado que debemos comentar es el siguiente
+Vamos a comentar las \textbf{relaciones más importantes} en términos de las soluciones posibles. El primer resultado que debemos comentar es el siguiente:
 
-\begin{thm}[Teorema de dualidad débil.]
+\begin{thm}[Teorema de dualidad débil]
 Para cualquier posible solución factible del problema primal \(P\), el valor de la función objetivo es siempre mayor o igual que el valor de la función objetivo en el problema dual \(D\). 
 \end{thm}
 
@@ -193,7 +192,7 @@ Si uno de los problemas posee una solucion óptima, entonces \textbf{ambos probl
 
 Gracias a este lema y a otra serie de resultados, llegamos al siguiente teorema:
 
-\begin{thm}[Teorema de dualidad fuerte.]\label{th:dual}
+\begin{thm}[Teorema de dualidad fuerte]\label{th:dual}
 En relación a las soluciones del problema primal \(P\) y su dual \(D\), se cumple \textbf{exactamente uno} de los siguientes:
 \begin{enumerate}
 
@@ -208,9 +207,9 @@ Podemos hablar por último de las \textbf{posibles ventajas} que ofrece usar la 
 
 \begin{itemize}
 
-\item Una primera clara ventaja que podría darnos se da cuando tenemos muchas variables \(x_i\) y pocas restricciones \(a_i\), pues en ese caso al obtener el problema dual conseguimos un problema sencillo (con menos variables objetivo \(w_i\)) que quizá podamos resolver geométricamente.
+\item La primera clara ventaja que el problema dual nos proporciona se observa cuando tenemos muchas variables \(x_i\) y pocas restricciones \(a_i\), pues en ese caso al obtener el problema dual conseguimos un problema sencillo (con menos variables objetivo \(w_i\)) que quizá podamos resolver geométricamente.
 
-\item Otra ventaja que podría ser útil es que las variables y restricciones del problema dual \(D\) tiene una \textbf{interpretación en el campo de la economía} que puede ser de útil para resolver problemas que tengan relación con este campo.
+\item Otra ventaja que podría ser útil es que las variables y restricciones del problema dual \(D\) tienen una \textbf{interpretación útil en el campo de la economía} que puede ser de útil para resolver problemas que tengan relación con este sector.
 
 \item Por último, utilizar la dualidad en problemas de programación lineal (PL) es útil cuando queremos investigar cómo afectan los cambios en los parámetros de un problema PL a las soluciones del problema (\emph{sensitivity analysis}).\\
 \emph{[Información de este aspecto extraída del libro \href{https://books.google.es/books?id=1EZxJHO32swC}{Operations Research:Theory and Applications} (capítulos disponibles en PDF)]}.
@@ -256,15 +255,15 @@ Supongamos que \(f\) es cuasiconvexa. Consideramos \(s_{1},s_{2} \in S_{\alpha}\
 \[
 f\left(\lambda s_{1} + (1-\lambda)s_{2}\right) \leq \max \left\{ f\left(s_{1}\right),f\left(s_{2}\right)\right\} \leq \alpha, \quad \forall \lambda \in (0,1).
 \]
-Donde, la primera desigualdad viene de la definición de cuasiconvexa y la segunda viene de que, como \(s_{1},s_{2} \in S_{\alpha}\)
-Por tanto, tenemos que el segmento \(\lambda s_{1} + (1-\lambda)s_{2}\) para todo \(\lambda \in (0,1)\) está contenido en \( S_{\alpha}\), por lo que \(S_{\alpha}\) es convexo.
+Donde, la primera desigualdad viene de la definición de cuasiconvexa y la segunda es la definición de que  \(s_{1},s_{2}\) sean puntos de \(S_{\alpha}\).
+Por tanto, tenemos que el segmento \(\lambda s_{1} + (1-\lambda)s_{2}\) para todo \(\lambda \in (0,1)\) está contenido en \( S_{\alpha}\), por lo que \(S_{\alpha}\) es convexo.\\
 
 \(\boxed{\Leftarrow}\)\\
 Supongamos ahora que \(S_{\alpha}\) es convexo para cualquier \(\alpha\). Sean \(s_{1},s_{2} \in S\), y consideramos \(\alpha = \max \left\{f(s_{1}),f(s_{2}) \right\}\), y consideramos \(S_{\alpha}\) para este \(\alpha\). Como es convexo, entonces \(\lambda s_{1} + (1-\lambda)s_{2} \in S_{\alpha}\) para todo \(\lambda \in (0,1)\). Por tanto,
 \[
 f(\lambda s_{1} + (1-\lambda)s_{2}) \leq \alpha = \max \left\{f(s_{1},s_{2})\right\}, \quad \forall \lambda \in (0,1)
 \]
-por lo que, \(f\) es cuasiconvexa en este conjunto \(S_{\alpha}\), pero como \(s_{1},s_{2}\) eran arbitrarios, esto cumple para todos ellos, por lo que \(f\) es cuasiconvexa en \(S\). \qed
+por lo que, \(f\) es cuasiconvexa en este conjunto \(S_{\alpha}\), pero como \(s_{1},s_{2}\) eran arbitrarios, esto se cumple para todos ellos, por lo que \(f\) es cuasiconvexa en \(S\). \qed
 
 
 
