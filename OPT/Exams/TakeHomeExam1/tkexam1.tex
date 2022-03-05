@@ -79,7 +79,9 @@
 \newcommand{\R}{\mathbb R}
 
 \newtheorem{thm}{Teorema}
-\newtheorem{lema}[thm]{Lema}
+\newtheorem{lema}{Lema}
+
+\newtheorem{ndef}{Definición}
 
 \def\inline{\lstinline[basicstyle=\ttfamily,keywordstyle={}]}
 
@@ -191,7 +193,7 @@ Si uno de los problemas posee una solucion óptima, entonces \textbf{ambos probl
 
 Gracias a este lema y a otra serie de resultados, llegamos al siguiente teorema:
 
-\begin{thm}[Teorema de dualidad fuerte.]
+\begin{thm}[Teorema de dualidad fuerte.]\label{th:dual}
 En relación a las soluciones del problema primal \(P\) y su dual \(D\), se cumple \textbf{exactamente uno} de los siguientes:
 \begin{enumerate}
 
@@ -206,19 +208,19 @@ Podemos hablar por último de las \textbf{posibles ventajas} que ofrece usar la 
 
 \begin{itemize}
 
-\item Una primera clara ventaja que podría darnos se da cuando tenemos muchas variables \(x_i\) y pocas restricciones \(a_i\), pues en ese caso al obtener el problema dual conseguimos un problema sencillo (con menos variables objetivo \(w_i\) )que quizá podamos resolver geométricamente.
+\item Una primera clara ventaja que podría darnos se da cuando tenemos muchas variables \(x_i\) y pocas restricciones \(a_i\), pues en ese caso al obtener el problema dual conseguimos un problema sencillo (con menos variables objetivo \(w_i\)) que quizá podamos resolver geométricamente.
 
 \item Otra ventaja que podría ser útil es que las variables y restricciones del problema dual \(D\) tiene una \textbf{interpretación en el campo de la economía} que puede ser de útil para resolver problemas que tengan relación con este campo.
 
 \item Por último, utilizar la dualidad en problemas de programación lineal (PL) es útil cuando queremos investigar cómo afectan los cambios en los parámetros de un problema PL a las soluciones del problema (\emph{sensitivity analysis}).\\
-\emph{[Información extraída de} \href{http://www.nitjsr.ac.in/course_assignment/CA02CA3103%20RMTLPP:%20Duality.pdf}{estas notas del Instituto Nacional de Tecnología en la India}]
+\emph{[Información de este aspecto extraída del libro \href{https://books.google.es/books?id=1EZxJHO32swC}{Operations Research:Theory and Applications} (capítulos disponibles en PDF)]}.
 \end{itemize}
 
 \emph{[La referencia principal consultada para realizar esta cuestión ha sido:Bazaraa, Mokhtar S, Jarvis, John J, and Sherali, Hanif D. (2011). Linear programming and
-network flows (4th ed.). Chapter 6:Duality and Sensitivity Analysis. ]}
+network flows (4th ed.). Chapter 6:Duality and Sensitivity Analysis.]}
 
 
-
+\newpage
 
 \section{Ejercicios}
 
@@ -230,11 +232,46 @@ S_\alpha = \{x \in S: f(x) \leq \alpha\}
 es convexo para cada \(\alpha \in \R\)
 \end{problem}
 
+Recordamos primero las dos definiciones clave:
+
+\begin{ndef}
+  Un conjunto \(S\) es convexo si, para cualesquiera dos puntos del conjunto \(x_{1},x_{2} \in S\), el segmento que los une está contenido en el conjunto. Esto es,
+  \[
+    \lambda x_{1} + (1-\lambda)x_{2} \in S, \quad \forall \lambda \in (0,1).
+  \]
+\end{ndef}
+
+\begin{ndef}
+  Consideramos \(S \subset \R^{n}\) un conjunto no vacío. Una función \(f:S\to \R\) es cuasiconvexa si para cada \(x_{1},x_{2} \in S\) se tiene
+  \[
+    f(\lambda x_{1} + (1-\lambda)x_{2}) \leq \max \left\{f(x_{1}), f(x_{2})\right\}, \quad \forall \lambda \in (0,1).
+  \]
+\end{ndef}
+
+Realizaremos las dos implicaciones.
+
+\(\boxed{\Rightarrow}\)\\
+
+Supongamos que \(f\) es cuasiconvexa. Consideramos \(s_{1},s_{2} \in S_{\alpha}\), tenemos que \(f(s_{1}), f(s_{2}) \leq \alpha\). Sea ahora el segmento que une \(s_{1},s_{2}\) definido por \(\lambda s_{1} + (1-\lambda)s_{2}\) para todo \(\lambda \in (0,1)\). Como \(f\) es cuasiconvexa, se tiene
+\[
+f\left(\lambda s_{1} + (1-\lambda)s_{2}\right) \leq \max \left\{ f\left(s_{1}\right),f\left(s_{2}\right)\right\} \leq \alpha, \quad \forall \lambda \in (0,1).
+\]
+Donde, la primera desigualdad viene de la definición de cuasiconvexa y la segunda viene de que, como \(s_{1},s_{2} \in S_{\alpha}\)
+Por tanto, tenemos que el segmento \(\lambda s_{1} + (1-\lambda)s_{2}\) para todo \(\lambda \in (0,1)\) está contenido en \( S_{\alpha}\), por lo que \(S_{\alpha}\) es convexo.
+
+\(\boxed{\Leftarrow}\)\\
+Supongamos ahora que \(S_{\alpha}\) es convexo para cualquier \(\alpha\). Sean \(s_{1},s_{2} \in S\), y consideramos \(\alpha = \max \left\{f(s_{1}),f(s_{2}) \right\}\), y consideramos \(S_{\alpha}\) para este \(\alpha\). Como es convexo, entonces \(\lambda s_{1} + (1-\lambda)s_{2} \in S_{\alpha}\) para todo \(\lambda \in (0,1)\). Por tanto,
+\[
+f(\lambda s_{1} + (1-\lambda)s_{2}) \leq \alpha = \max \left\{f(s_{1},s_{2})\right\}, \quad \forall \lambda \in (0,1)
+\]
+por lo que, \(f\) es cuasiconvexa en este conjunto \(S_{\alpha}\), pero como \(s_{1},s_{2}\) eran arbitrarios, esto cumple para todos ellos, por lo que \(f\) es cuasiconvexa en \(S\). \qed
+
+
 
 \begin{problem}{2}
 Haciendo uso de la cuestión 2, demostrar que el siguiente problema:
 \begin{align*}
-  max\ x_3 &\\
+ P: \max\ x_3 &\\
  \text{subject to}\\
  2x_1 - x_2 + x_3 & \leq -1\\
  -x_1 + 2x_2 + x_3 & \leq -1\\
@@ -242,4 +279,33 @@ Haciendo uso de la cuestión 2, demostrar que el siguiente problema:
 \end{align*}
 carece de solución.
 \end{problem}
+
+Tenemos nuestro problema \(P\) en forma canónica, podemos considerar pues su versión dual \(D\).  Los elementos que tenemos son:
+\[
+c^{T} = (0,0,1,0), \quad A = \begin{pmatrix} 2 & -1 & 1 \\ -1 & 2 & 1 \end{pmatrix},\quad b = \begin{pmatrix} -1 \\ -1\end{pmatrix}
+\]
+Por lo que, el problema dual es
+\begin{align*}
+  D: \min \ -w_{1} - w_{2}& \\
+  \text{subject to}\\
+  2w_{1} - w_{2} & \geq 0\\
+  -w_{1} + 2w_{2}& \geq 0\\
+  w_{1} + w_{2} & \geq 1\\
+  w_{1},w_{2} & \geq 0
+\end{align*}
+
+Podemos ahora representar este problema gráficamente (como hemos indicado en la cuestión dos que era una de las ventajas que obteníamos usando el problema dual). El resultado de dibujarlo queda expresado en la Figura \ref{fig:dual}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.4]{Ej4}
+  \caption{Región factible para el problema dual \(D\)}
+  \label{fig:dual}
+\end{figure}
+
+Viendo estas restricciones y el vector \(-c\), podemos considerar para cada \(n \in \mathbb N\) la solución factible \(w_{n} = (n,n)^{T}\). Por tanto, los valores objetivo \(z_{n}^{*} = b^{T}w_{n} = -2n\), sucesión que tiende a menos infinito cuando \(n \to \infty\). Por esto, la solución del problema dual óptima es \textbf{no acotada}.\\
+
+Haciendo ahora uso del Teorema \ref{th:dual}, como solo puede darse una de las opciones y aquí tenemos que uno de los problemas (el dual \(D\)) tiene una solución no acotada, el teorema nos dice que el problema primal \(P\) no tiene solución factible, como queríamos ver.
+
+
 \end{document}
