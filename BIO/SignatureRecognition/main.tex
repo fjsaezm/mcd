@@ -171,7 +171,7 @@ Choose a signature (from a random user) and show (assuming that the sensor has a
 \end{itemize}
 
 
-The first thing we do is to modularize the data reading to avoid very long scripts. Firstly, we realise that we can read the data easily iterating through three \inline{for} loops and using a single line to read the file, by using \inline{sprintf(\'%02d\',user)}, which converts the user number to a 2 decimal number. This way, we can avoid the \inline{if} statement:
+ Firstly, we realise that we can read the data easily iterating through three \inline{for} loops and using a single line to read the file, by using \inline{sprintf(\'%02d\',user)}, which converts the user number to a 2 decimal number. This way, we can avoid the \inline{if} statement:
 
 \begin{minted}{MatLab}
   for user=1:n_users
@@ -183,13 +183,39 @@ The first thing we do is to modularize the data reading to avoid very long scrip
          
 \end{minted}
 
-The whole code to read the data is in the file \inline{ReadData.m}
+Now, we created the script \inline{plot_signals.m} to load a selected user, session and sign and plot the four asked signals. In the first case, we selected \(user=7\), \(session=2\) and \(sign=1\). The result is shown in Figure \ref{fig:four:signals}:
+
+\begin{figure}[H]
+  \centering
+  \subfloat{\label{fig:1a}\includegraphics[width=0.35\linewidth]{Figures/x-func-y-1}}\qquad
+  \subfloat{\label{fig:1b}\includegraphics[width=0.35\linewidth]{Figures/x-func-t-1}}\\
+  \subfloat{\label{fig:1c}\includegraphics[width=0.35\textwidth]{Figures/y-func-t-1}}\qquad%
+  \subfloat{\label{fig:1d}\includegraphics[width=0.35\textwidth]{Figures/p-func-t-1}}%
+  \caption{Plot of $x$ as function of $y$, and then $x,y,p$ as functions of $t$.}
+  \label{fig:four:signals}
+\end{figure}
+
 \subsection*{Repeat the process}
+
+We repeat the process, using now \(session = 3\), \(sign=1\). We changed session to see if we can see any differences between different days.
+
+\begin{figure}[H]
+  \centering
+  \subfloat{\label{fig:1a}\includegraphics[width=0.35\linewidth]{Figures/x-func-y-2}}\qquad
+  \subfloat{\label{fig:1b}\includegraphics[width=0.35\linewidth]{Figures/x-func-t-2}}\\
+  \subfloat{\label{fig:1c}\includegraphics[width=0.35\textwidth]{Figures/y-func-t-2}}\qquad%
+  \subfloat{\label{fig:1d}\includegraphics[width=0.35\textwidth]{Figures/p-func-t-2}}%
+  \caption{Second sign. Plot of $x$ as function of $y$, and then $x,y,p$ as functions of $t$.}
+  \label{fig:four:signals:2}
+\end{figure}
 
 
 
 \textbf{ Are the different signals reasonable? Do they have the same length? Why?}
 
+We can see that the two signs are relatively similar. The second one is shifted to the left, but it has the same shape and similar lines. If we have a look at $x,y,p$ as functions of $t$, we can see that its shape, trend and \emph{ups and downs} are very similar in both signatures, which tells us that very similar processes have been followed to draw each of them. Hence, we can say that they are \textbf{reasonable}.\\
+
+The signs do not have the same length neither in the $x,y$ axis nor in the $t$ axis. We see that the second sign was drawn quite bigger (approx $1.500$ difference) than the second one, and it also took approximately $0.2$ seconds longer to be drawn. The \textbf{explanation} of this is simple: the time for a person drawing its sign its variable and depends on many factors, and the difference between the times is maybe not noticeable for humans, but it is for the computers that works with exact numbers.
 
 \section{Feature Extraction}
 
@@ -224,12 +250,26 @@ You have to save this matrix into the file \inline{BiosecurIDparameters.mat}.\\
 Once you have the file \inline{BiosecurIDparameters.mat}, you have to plot the distributions normalized between 0 and 1 (dividing by the total number of points of the distribution) for each of the 4 parameters. \\
 \emph{HINT: You can use the Matlab functions hist.m and histc.m}\\
 
+\textbf{Comments about the developed code for the feature extraction.}
+
+The four implemented functions were implemented in files with the same name as they are called in the file \inline{featureExtractor.m}. The functions are pretty simple: all of them but one are coded in \textbf{1 line}. The one that is a little bit longer is \inline{Npenups}. In this function, we have to take into account that if we find a zero in the \emph{pressure function}, we have to check if the previous position was \textbf{not} a zero. To achieve this, we find where the function is equal to zero and we loop over those index and check if the previous position was (or not) a zero.
+
+To be able to code the rest of the functions in one line, \emph{logical indexing} was very useful. This allows us to index the elements of a vector that match a condition. For instance, in the case of \inline{Ppendown}, which computes the mean pressure when the pen is down, it is useful to use \inline{p(p>0)} which selects from \(p\) the positions where it is greater than zero. Using this, the complete function is:
+
+\begin{minted}{MatLab}
+function Ppd = Ppendown(p)
+  % Compute mean pressure using positions 
+  % Where pen is down (p > 0)
+  Ppd = mean(p(p > 0) );
+end
+\end{minted}
+
 \textbf{QUESTION:  Plot the 5 distributions.}
 
 
 \section{Performance Evaluation}
 
-We will evaluate the performance of our system according to the number of signatures N in the enrollment set \((N=1, N=4 and N=12)\).\\
+We will evaluate the performance of our system according to the number of signatures N in the enrollment set \((N=1, N=4 \) and \(N=12)\).\\
 
 The similarity score between a query/test signature and the enrollment signatures (signatures in the database) will be the Euclidean distance between feature vectors (vectors with 4 parameters).  The final score will be the average score of the N comparisons (comparison between the query/test sample and the N enrollment samples).\\
 

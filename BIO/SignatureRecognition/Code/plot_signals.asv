@@ -3,7 +3,7 @@
 
 f_s = 200;
 selected_user = 7;
-selected_session = 3;
+selected_session = 2;
 selected_sign = 1;
 
 BiosecurID=load(['./DB/u10', sprintf('%02d',selected_user) ,'s000', num2str(selected_session), '_sg000', num2str(selected_sign), '.mat']);
@@ -25,28 +25,28 @@ plot(BiosecurID.y, BiosecurID.x, 'Color','black');
 hold off;
 
 figure;
-% x function of t
+% x function of y
 hold on;
 title("x as function of time");
-xlabel('time') 
-ylabel('x') 
+xlabel('x') 
+ylabel('time') 
 plot(t_axis, BiosecurID.x, 'Color','black');
 hold off;
 
 figure;
-% y function of t
+% x function of y
 hold on;
-title("y as function of time");
-xlabel('time') 
-ylabel('p') 
-plot(t_axis, BiosecurID.y, 'Color','black');
+title("x as function of time");
+xlabel('x') 
+ylabel('time') 
+plot(t_axis, BiosecurID.x, 'Color','black');
 hold off;
 
 figure;
-% p function of t
+% x function of y
 hold on;
-title("p as function of time");
-xlabel('time') 
-ylabel('p') 
-plot(t_axis, BiosecurID.p, 'Color','black');
+title("x as function of time");
+xlabel('x') 
+ylabel('time') 
+plot(t_axis, BiosecurID.x, 'Color','black');
 hold off;
