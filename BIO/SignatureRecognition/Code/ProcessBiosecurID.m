@@ -36,26 +36,32 @@ n_bins = 30;
 %YOUR CODE       
 figure;
 hold on;
-h = histogram(BiosecurIDparameters(:,:,1),n_bins);
-title("Histogram of Ttotal")
+h = histogram(BiosecurIDparameters(:,:,1), 'Normalization', 'probability');
+title("Normalized histogram of Ttotal")
+hold off;
+
+figure;
+hold on;
+h = histogram(BiosecurIDparameters(:,:,1)/length(BiosecurIDparameters(:,:,1)));
+title("Normalized histogram of Ttotal")
 hold off;
             
 figure;
 hold on;
-h = histogram(BiosecurIDparameters(:,:,2),n_bins);
-title("Histogram of Npenups")
+h = histogram(BiosecurIDparameters(:,:,2),'Normalization', 'probability');
+title("Normalized histogram of Npenups")
 hold off;
             
 figure;
 hold on;
-h = histogram(BiosecurIDparameters(:,:,3),n_bins);
-title("Histogram of Tpendown")
+h = histogram(BiosecurIDparameters(:,:,3),'Normalization', 'probability');
+title("Normalized histogram of Tpendown")
 hold off;
             
 figure;
 hold on;
-h = histogram(BiosecurIDparameters(:,:,4),n_bins);
-title("Histogram of Ppendown")
+h = histogram(BiosecurIDparameters(:,:,4),'Normalization', 'probability');
+title("Normalized histogram of Ppendown")
 hold off;
             
 

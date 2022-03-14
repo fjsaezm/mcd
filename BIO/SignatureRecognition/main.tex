@@ -279,8 +279,9 @@ You have to develop the function \inline{Score=Matcher(test,Model)} where:
 \item	test: is the feature vector of the query/test signature \((1\times4)\)
 \item	Model: is a matrix containing the feature vectors of the signatures enrolled in the database. Therefore, this matrix contains Nx4 values in which N is the number of signatures enrolled for the claimed identity.
 \end{itemize}
-There are two cases to be analyzed:
-Genuine Scores: scores obtained when you compare a signature with his real enrolled identity (claimed identity = enrolled identity). So these users should be accepted by the system. For each user you will use N signatures as enrolled samples and the rest for testing:
+There are two cases to be analyzed:\\
+
+\textbf{Genuine Scores}: scores obtained when you compare a signature with his real enrolled identity (claimed identity = enrolled identity). So these users should be accepted by the system. For each user you will use N signatures as enrolled samples and the rest for testing:
 \begin{enumerate}
 \item	For \(N=1\) we will have \(SG=15\) genuine scores.
 \item	For \(N=4\) we will have \(SG=12\) genuine scores.
@@ -288,7 +289,7 @@ Genuine Scores: scores obtained when you compare a signature with his real enrol
 \end{enumerate}
 For each of the scenarios \((N=1,4,12)\) you have to save all the genuine scores into a matrix (with dimension \(50 \times SG)\). Each of the three matrixes will be stored into a .mat file with name: \inline{GenuineScores_N.mat}.\\
 
-Impostor Scores: scores obtained when you compare a signature with the enrolled samples of other users (claimed identity $\neq$ enrolled identity). So these users should be rejected by the system. In this case, we will compare one signature of each user (the first one) with the models of the rest of the users (excluding the genuine case). Therefore, we will obtain SI=49 impostor scores for each user and each scenario \((N=1,4,12)\).
+\textbf{Impostor Scores}: scores obtained when you compare a signature with the enrolled samples of other users (claimed identity $\neq$ enrolled identity). So these users should be rejected by the system. In this case, we will compare one signature of each user (the first one) with the models of the rest of the users (excluding the genuine case). Therefore, we will obtain SI=49 impostor scores for each user and each scenario \((N=1,4,12)\).
 For each scenario \((N=1,4,12)\) these impostor scores will be saved into a matrix with dimensions \(50\times SI\), \((50x49)\). Each of the three matrixes will be stored into a .mat file with name: \inline{ImpostorScores_N.mat}.
 
 Once we obtain the genuine and impostor scores, we will evaluate the performance of our system for each of the three scenarios \((N=1,4,12)\) as a function of: FAR/FRR, EER and DET curves.
