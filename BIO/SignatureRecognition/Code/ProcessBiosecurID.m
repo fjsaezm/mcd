@@ -1,5 +1,3 @@
-
-
 close all
 clear all
 clc
@@ -30,42 +28,7 @@ for user=1:n_users
 
 end
 
-
-n_bins = 30;
-
-%YOUR CODE       
-figure;
-hold on;
-h = histogram(BiosecurIDparameters(:,:,1), 'Normalization', 'probability');
-title("Normalized histogram of Ttotal")
-hold off;
-
-figure;
-hold on;
-h = histogram(BiosecurIDparameters(:,:,1)/length(BiosecurIDparameters(:,:,1)));
-title("Normalized histogram of Ttotal")
-hold off;
-            
-figure;
-hold on;
-h = histogram(BiosecurIDparameters(:,:,2),'Normalization', 'probability');
-title("Normalized histogram of Npenups")
-hold off;
-            
-figure;
-hold on;
-h = histogram(BiosecurIDparameters(:,:,3),'Normalization', 'probability');
-title("Normalized histogram of Tpendown")
-hold off;
-            
-figure;
-hold on;
-h = histogram(BiosecurIDparameters(:,:,4),'Normalization', 'probability');
-title("Normalized histogram of Ppendown")
-hold off;
-            
-
-            
-            
+% https://es.mathworks.com/matlabcentral/answers/45532-dividing-each-row-by-maximum-value
+BiosecurIDparameters = bsxfun(@rdivide,BiosecurIDparameters,max(BiosecurIDparameters));
 
 save('BiosecurIDparameters','BiosecurIDparameters');

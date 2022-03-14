@@ -2,6 +2,8 @@ close all
 clear all
 clc
 
+addpath('DetPlots\')
+
 %load de signature parameters
 mat=load('BiosecurIDparameters.mat');
 BiosecurIDparameters=mat.BiosecurIDparameters;
@@ -20,7 +22,7 @@ for N=[1 4 12]
             modelo=BiosecurIDparameters(us,1:N,:);
             modelo=reshape(modelo,N,4);
 
-            for n_test=N+1:firmas 
+            for n_test=N+1:firmas   
                 %Test signatures: remaining signatures of the user
                 test=BiosecurIDparameters(us,n_test,:);
                 test=reshape(test,1,4);
@@ -34,9 +36,11 @@ for N=[1 4 12]
     n=n+1;
 end
 
-GenuineScores_1=GenuineScores{1};
-GenuineScores_4=GenuineScores{2};
-GenuineScores_12=GenuineScores{3};
+
+% Apply desired normalization
+GenuineScores_1= 1./ (GenuineScores{1}+ 0.00000001);
+GenuineScores_4= 1 ./ (GenuineScores{2} + 0.00000001);
+GenuineScores_12= 1 ./ (GenuineScores{3} + 0.00000001);
 
 
 %% IMPOSTOR SCORES
@@ -65,9 +69,9 @@ for N=[1 4 12]
     n=n+1;
 end
 
-ImpostorScores_1=ImpostorScores{1};
-ImpostorScores_4=ImpostorScores{2};
-ImpostorScores_12=ImpostorScores{3};
+ImpostorScores_1= 1 ./ (ImpostorScores{1} + 0.00000001);
+ImpostorScores_4= 1./ (ImpostorScores{2} + 0.00000001);
+ImpostorScores_12= 1./(ImpostorScores{3} + 0.00000001);
 
 
 %So far, you have obtained the similarity distance between signatures (values close to
