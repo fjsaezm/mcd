@@ -25,16 +25,16 @@ for user=1:n_users
             sign_idx = (session - 1)*4 + sign_genuine;
             BiosecurIDparameters(user, sign_idx, 1:3) = [BiosecurID.x, BiosecurID.y, BiosecurID.p];
             % Compute gradients and assign
-            dx = gradient(BiosecurID.x);
-            dy = gradient(BiosecurID.y);
-            dp = gradient(BiosecurID.p);
+            dx = Gradient(BiosecurID.x);
+            dy = Gradient(BiosecurID.y);
+            dp = Gradient(BiosecurID.p);
             BiosecurIDparameters(user, sign_idx, 4:6) = [dx,dy,dp];
 
             
             % Compute second derivatives
-            ddxx = gradient(dx);
-            ddyy = gradient(dy);
-            ddpp = gradient(dp);
+            ddxx = Gradient(dx);
+            ddyy = Gradient(dy);
+            ddpp = Gradient(dp);
             BiosecurIDparameters(user, sign_idx, 7:9) = [ddxx,ddyy,ddpp];
 
         end
