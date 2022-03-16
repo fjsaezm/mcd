@@ -29,6 +29,7 @@ for user=1:n_users
 end
 
 % https://es.mathworks.com/matlabcentral/answers/45532-dividing-each-row-by-maximum-value
-BiosecurIDparameters = bsxfun(@rdivide,BiosecurIDparameters,max(BiosecurIDparameters));
+BiosecurIDparametersNormalized = bsxfun(@rdivide,BiosecurIDparameters,max(BiosecurIDparameters));
 
 save('BiosecurIDparameters','BiosecurIDparameters');
+save('BiosecurIDparametersNormalized.mat', "BiosecurIDparametersNormalized");

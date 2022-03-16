@@ -1,8 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{+w}{  }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{user}\PYG{p}{=}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{n}{n\PYGZus{}users}
-\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{session}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{l+m+mi}{4}\PYG{p}{)}
-\PYG{+w}{      }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{sign\PYGZus{}genuine}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{l+m+mi}{4}\PYG{p}{)}
-\PYG{+w}{          }\PYG{c}{\PYGZpc{}This is how to load the signatures:}
-\PYG{+w}{          }\PYG{n}{BiosecurID}\PYG{p}{=}\PYG{n+nb}{load}\PYG{p}{([}\PYG{l+s}{\PYGZsq{}./DB/u100\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}\PYGZpc{}02d\PYGZsq{}}\PYG{p}{,}\PYG{n}{user}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{,}\PYG{l+s}{\PYGZsq{}s000\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{num2str}\PYG{p}{(}\PYG{n}{session}\PYG{p}{),}
-\PYG{+w}{                                }\PYG{l+s}{\PYGZsq{}\PYGZus{}sg000\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{num2str}\PYG{p}{(}\PYG{n}{genuine\PYGZus{}signs}\PYG{p}{(}\PYG{n}{sign\PYGZus{}genuine}\PYG{p}{)),}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}.mat\PYGZsq{}}\PYG{p}{]);}
-\end{Verbatim}

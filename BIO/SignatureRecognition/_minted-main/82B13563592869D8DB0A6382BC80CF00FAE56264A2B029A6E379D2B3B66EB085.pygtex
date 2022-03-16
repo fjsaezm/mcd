@@ -1,7 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{function}\PYG{+w}{ }Ppd\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nf}{Ppendown}\PYG{p}{(}p\PYG{p}{)}
-\PYG{+w}{  }\PYG{c}{\PYGZpc{} Compute mean pressure using positions}
-\PYG{+w}{  }\PYG{c}{\PYGZpc{} Where pen is down (p \PYGZgt{} 0)}
-\PYG{+w}{  }\PYG{n}{Ppd}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{mean}\PYG{p}{(}\PYG{n}{p}\PYG{p}{(}\PYG{n}{p}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{);}
-\PYG{k}{end}
-\end{Verbatim}

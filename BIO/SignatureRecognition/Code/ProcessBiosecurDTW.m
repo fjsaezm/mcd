@@ -2,9 +2,9 @@ close all
 clear all
 clc
 
-%BiosecurIDparameters matrix with: 50 (users) x 16 (signatures/user) x 9
-%params (x,y,p), its derivatives and second derivatives
-BiosecurIDparameters=ones(50,16,9);
+%BiosecurIDparameters matrix with: 50 (users) x 16 (signatures/user) x 1 
+% This 1 will be a Cell with x,y,p, derivatives and second derivatives
+BiosecurIDparameters=ones(50,16,1);
 
 genuine_signs = [1,2,6,7];
 

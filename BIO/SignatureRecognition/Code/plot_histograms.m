@@ -13,11 +13,6 @@ h = histogram(BiosecurIDparameters(:,:,1), 'Normalization', 'probability');
 title("Normalized histogram of Ttotal")
 hold off;
 
-figure;
-hold on;
-h = histogram(BiosecurIDparameters(:,:,1)/length(BiosecurIDparameters(:,:,1)));
-title("Normalized histogram of Ttotal")
-hold off;
             
 figure;
 hold on;

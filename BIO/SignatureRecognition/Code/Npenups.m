@@ -4,13 +4,13 @@ function Npu = Npenups(p)
     Npu = 0;
 
     % Find index where pressure is zero
-    index = find(p == 0);
+    index = find(p == 0.0);
 
     % For each of those index
     for i = index
         % If previous value is not zero, there
         % was a pen-up
-        if p(i-1) ~= 0
+        if p(i-1) > 0.0
             Npu = Npu + 1;
         end
     end
