@@ -12,8 +12,8 @@ BiosecurIDparameters=mat.BiosecurIDparameters;
 usuarios=size(BiosecurIDparameters,1);
 firmas=size(BiosecurIDparameters,2);
 
-BiosecurIDparameters= BiosecurIDparameters(:,:,1:4);
-
+BiosecurIDparameters= BiosecurIDparameters(:,:,1:1);
+ 
 
 %% GENUINE SCORES
 i=1; n=1;
@@ -23,7 +23,7 @@ for N=[1 4 12]
     for us=1:usuarios
             %Extract the user model
             modelo=BiosecurIDparameters(us,1:N,:);
-            modelo=reshape(modelo,N,size(modelo,3));
+            modelo=reshape(modelo,N,size(BiosecurIDparameters,3));
 
             for n_test=N+1:firmas   
                 %Test signatures: remaining signatures of the user

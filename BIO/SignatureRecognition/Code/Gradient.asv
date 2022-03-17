@@ -1,0 +1,13 @@
+function grad=Gradient(a)
+% Computes the euclidean distance between
+% Test and model
+% Equivalently, we can compute the norm of the difference
+
+    grad = [a(1) a(2:) - a(1:)]
+    N = size(a,1);
+    grad = zeros(1,N);
+    grad(1) = a(1);
+    for i = 2:length(a)
+        grad(i) = a(i) - a(i-1);
+    end
+end

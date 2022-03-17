@@ -365,7 +365,24 @@ Handcraft                & $30$    & $29.5$ & $27.0$
 
 
 
-\textbf{QUESTION. According to the results, are they reasonable? What metrics are more illustrative? When do you obtain the best performance? }
+\textbf{QUESTION. According to the results, are they reasonable? What metrics are more illustrative? When do you obtain the best performance?}\\
+
+The results are \textbf{very reasonable}. Let us go deeper on why: \\
+
+The handcrafted features may not be optimal or not be enough to classify the signatures. In fact, we have tested to \textbf{reduce} the number of used features (it can be done by changing the number \(4\) in line \(15\) of the script \inline{Evaluation.m}) and the EER has \emph{decreased}, so the results have improved. This may mean that not all of the features are important or that some of them are even \emph{missleading}.\\
+
+If we forget about this and focus on the obtained results, we see that we have an \(EER > 27.0\) for any of the considered \(N\). In general, this cant be considered as a good results, since this means that we are accepting almost \(30\%\) of \textbf{false} signs, which could be \textbf{very risky} in a signature detection system. Also, the experience for the user in a system that rejects its true sign almost \(30\%\) of the time is not positive.\\
+
+The \textbf{best performance} is obtained when the greatest possible number of signs \(N=12\) is used. This is common in the signature recognition field, since the signatures of the same user have \textbf{high variability} and, hence, the time series obtained by the sensors have high variance. Using higher number of signatures to compare with the each of the proposed test, \textbf{we are reducing the variance}, so we obtain better approximations in average (remember that we are averaging the distance in the \(N\) signs).
+
+\subsection{Normalizing the extracted features}
+
+It is a common (and most of the times, recommended) practise to \emph{normalize} the data, so that all the features are in the same range or scale. There are a few ways of normalizing the data, each one being more convenient for a specific problem. In our case, all the extracted features have a \emph{phisical} sense, so we thought that \(Z-\)normalizing them was not the most appropiate way. Thus, we decided to normalize the features by \textbf{dividing} each feature by the \textbf{maximum} value of this feature.\\
+
+We found on \href{% https://es.mathworks.com/matlabcentral/answers/45532-dividing-each-row-by-maximum-value
+}{this link} how to divide each column of a matrix by the maximum of that column, and we added it to the \inline{ProcessBiosecurID.m} script to obtain the normalized features.
+
+
 
 
 \section{Extra Work 2: Changing the features}
@@ -388,7 +405,7 @@ The list of developed files for this exercise are:
   \item 	The equation to obtain the score of the 1vs1 time function comparison is \(score=e^{-\frac{D}{k}}\), where D is the minimum accumulative distance obtain after using DTW in Matlab, and K is the number of aligned time samples.
 \end{enumerate}
 
-Let us revise what we have to do in this section. In previous sections, we \textbf{extracted} handcrafted features from our signs and then tested a very simple matcher based on distances. As we were asked for, we completed the \emph{Feature extractor} and the \emph{Matcher} that are represented in Figure \ref{fig:intro}.\\
+Let us revise what we have to do in this section. In previous sections, we \textbf{extracted} handcrafted features from our signs and then tested a very simple \textbf{matcher} based on distances. As we were asked for, we completed the \emph{Feature extractor} and the \emph{Matcher} that are represented in Figure \ref{fig:intro}.\\
 
 Now, our goal is to change these two parts of the diagram and use different features and adapt our matcher to these new features.
 
@@ -480,6 +497,8 @@ where subindex \(i\) refers to the \(i-th\) comparing sign and subindex \(j\) re
 We have our new \textbf{features} and \textbf{matcher}, now we can use them to determine the DET curve and the EER for our signature recognition system. The previous \inline{Evaluation.m} script is no more valid due to the differences in the data (we now have variable-length time signals instead of \(4\)
 features). However, the structure of the new developed script is the same.  The code can be found on \inline{EvaluationDTW}, and the main changes with respect to the previous script are in the way of \emph{loading} the signs to be compared.\\
 
+Also, we have to recall that in this case we \textbf{eliminate} the \emph{final result normalization} (which was the division \(1./ results + 0.00000001\)) that we applied in the previous evaluation system. We do not use this normalization in this case since it does not makes sense when the score has been computed using the current exponential score.\\
+
 We executed the script to find the DET curve and EER value, with the results obtained shown in Figure \ref{fig:extra:DET}.
 
 \begin{figure}[H]
@@ -502,6 +521,11 @@ Time Series                      & $15.06$  & $7.66$ & $5.0$
 \label{res:extra:table}
 \end{table}
 
-As we can see, the more signs considered in the comparison, the lower EER (and, hence, the better results) we obtain, as it happened in the previous recognition system.
+As we can see, the more signs considered in the comparison, the lower EER (and, hence, the better results) we obtain, as it happened in the previous recognition system.\\
+
+
+\section{Conclusions}
+
+In this Lab Assignment, we have developed \textbf{two} different Signature Recognition systems: one based on handcrafted features and another one based on the time series obtained by the sensor and its derivatives.
 
 \end{document}
