@@ -6,7 +6,7 @@ addpath('DetPlots\')
 
 %load de signature parameters
 mat=load('BiosecurIDparameters.mat');
-BiosecurIDparameters=mat.BiosecurIDparameters;
+BiosecurIDparameters=mat.BiosecurIDparametersNormalized;
 
 %obtain size of users and signatures/user
 usuarios=size(BiosecurIDparameters,1);

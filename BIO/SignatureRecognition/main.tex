@@ -252,7 +252,7 @@ Once you have the file \inline{BiosecurIDparameters.mat}, you have to plot the d
 
 \textbf{Comments about the developed code for the feature extraction.}\\
 
-The four implemented functions were implemented in files with the same name as they are called in the file \inline{featureExtractor.m}. The functions are pretty simple: all of them but one are coded in \textbf{1 line}. The one that is a little bit longer is \inline{Npenups}. In this function, we have to take into account that if we find a zero in the \emph{pressure function}, we have to check if the previous position was \textbf{not} a zero. To achieve this, we find where the function is equal to zero and we loop over those index and check if the previous position was (or not) a zero.
+The four implemented functions were implemented in files with the same name as they are called in the file \inline{featureExtractor.m}. The functions are pretty simple: all of them but one are coded in \textbf{1 line}. The one that is a little bit longer is \inline{Npenups}. In this function, we have to take into account that if we find a zero in the \emph{pressure function}, we have to check if the previous position was \textbf{not} a zero. To achieve this, we find where the function is equal to zero and we loop over those index and check if the previous position was (or not) a zero.\\
 
 To be able to code the rest of the functions in one line, \emph{logical indexing} was very useful. This allows us to index the elements of a vector that match a condition. For instance, in the case of \inline{Ppendown}, which computes the mean pressure when the pen is down, it is useful to use \inline{p(p>0)} which selects from \(p\) the positions where it is greater than zero. Using this, the complete function is:
 
@@ -263,8 +263,6 @@ function Ppd = Ppendown(p)
   Ppd = mean(p(p > 0) );
 end
 \end{minted}
-
-\newpage
 
 \textbf{QUESTION:  Plot the 4 distributions.}\\
 
@@ -279,7 +277,7 @@ end
 \end{figure}
 
 
-As we can observe, we could say that the distributions of \(Ttotal, Tpendown\) and \(Ppendown\) are Gaussian distributions for certain parameters \(\mu,\sigma\). The variable \(Npenups\) is a little bit different, we could say that it is a \emph{bimodal} distribution without specifying any particular named distribution.
+As we can observe, we could say that the distributions of \(Ttotal, Tpendown\) and \(Ppendown\) are close to be Gaussian distributions for certain parameters \(\mu,\sigma\). The variable \(Npenups\) is a little bit different, we could say that it is a \emph{bimodal} distribution without specifying any particular known distribution.
 
 \section{Performance Evaluation}
 
@@ -351,7 +349,7 @@ Lastly, we are provided with the \inline{Evaluation.m} scripts that loads the Fe
   \label{fig:HAND}
 \end{figure}
 
-We also present the EER values in Table \ref{table:res:HAND}.
+The DET curves are really far from being an optimal DET curve, which informs us that this approximation is probably not obtaining close to perfect results in this task. We also present the EER values in Table \ref{table:res:HAND}.
 
 \begin{table}[H]
   \centering
@@ -362,8 +360,6 @@ Handcraft                & $30$    & $29.5$ & $27.0$
 \caption{EER results with \emph{handcrafted} features.}
 \label{table:res:HAND}
 \end{table}
-
-
 
 \textbf{QUESTION. According to the results, are they reasonable? What metrics are more illustrative? When do you obtain the best performance?}\\
 
@@ -380,9 +376,41 @@ The \textbf{best performance} is obtained when the greatest possible number of s
 It is a common (and most of the times, recommended) practise to \emph{normalize} the data, so that all the features are in the same range or scale. There are a few ways of normalizing the data, each one being more convenient for a specific problem. In our case, all the extracted features have a \emph{phisical} sense, so we thought that \(Z-\)normalizing them was not the most appropiate way. Thus, we decided to normalize the features by \textbf{dividing} each feature by the \textbf{maximum} value of this feature.\\
 
 We found on \href{% https://es.mathworks.com/matlabcentral/answers/45532-dividing-each-row-by-maximum-value
-}{this link} how to divide each column of a matrix by the maximum of that column, and we added it to the \inline{ProcessBiosecurID.m} script to obtain the normalized features.
+}{this link} how to divide each column of a matrix by the maximum of that column, and we added it to the \inline{ProcessBiosecurID.m} script to obtain the normalized features. The code for this is the following:
+
+\begin{minted}{MatLab}
+BiosecurIDparametersNormalized = bsxfun(@rdivide,BiosecurIDparameters,max(BiosecurIDparameters));
+
+save('BiosecurIDparametersNormalized.mat', "BiosecurIDparametersNormalized");
+\end{minted}
 
 
+Using this, we can change the matrix that we load in the \inline{Evaluation} and execute the script, obtaining the DET curves represented in Figure \ref{fig:NORM} with the EER marked in blue.
+
+\begin{figure}[H]
+  \centering
+  \subfloat[\(N=1\)]{\label{fig:extra1}\includegraphics[width=0.32\linewidth]{Figures/EER-1-NORM}}\qquad
+  \subfloat[\(N=4\)]{\label{fig:extra4}\includegraphics[width=0.32\linewidth]{Figures/EER-4-NORM}}
+  \subfloat[\(N=12\)]{\label{fig:extra12}\includegraphics[width=0.32\textwidth]{Figures/EER-12-NORM}}\qquad%
+  \caption{DET curves with EER for each of the different \(N = 1,4,12\) with \emph{handcrafted and normalized} features.}
+  \label{fig:NORM}
+\end{figure}
+
+
+We can see that the DET curves are quite more proximal to an \emph{optimal} DET curve than the ones that we obtained in the previous case in Figure \ref{fig:HAND}. At first sight, we could say that the results have improved. We check this printing the results in Table \ref{table:res:NORM}.
+
+\begin{table}[H]
+  \centering
+\begin{tabular}{l|rrr}
+Feature extraction / $N$ & $N = 1$ & $N=4$  & $N = 12$ \\ \hline
+Handcraft                & $30$    & $29.5$ & $27.0$  \\
+Handcraft (Normalized) & $12.8$ & $12.24$ & $\mathbf{8.500}$
+\end{tabular}
+\caption{EER results with \emph{handcrafted} and normalized features.}
+\label{table:res:NORM}
+\end{table}
+
+The suspicions that we got before seeing the DET curves are confirmed in Table \ref{table:res:NORM}: the results obtained by the normalized are \textbf{better} than the ones obtained without normalizing the variables. This makes sense since normalizing is usually a good practise in distance computing, since not all the variables were in the same scale at the beginning.\\
 
 
 \section{Extra Work 2: Changing the features}
@@ -499,7 +527,7 @@ features). However, the structure of the new developed script is the same.  The 
 
 Also, we have to recall that in this case we \textbf{eliminate} the \emph{final result normalization} (which was the division \(1./ results + 0.00000001\)) that we applied in the previous evaluation system. We do not use this normalization in this case since it does not makes sense when the score has been computed using the current exponential score.\\
 
-We executed the script to find the DET curve and EER value, with the results obtained shown in Figure \ref{fig:extra:DET}.
+We executed the script to find the DET curve and EER value, with the results obtained shown in Figure \ref{fig:extra:DET}. It must be noted that the \textbf{execution time} for this script was much longer than the time that the first \emph{system} took. In total, it took \textbf{almost three minutes} for the execution.
 
 \begin{figure}[H]
   \centering
@@ -509,6 +537,9 @@ We executed the script to find the DET curve and EER value, with the results obt
   \caption{DET curves with EER for each of the different \(N = 1,4,12\).}
   \label{fig:extra:DET}
 \end{figure}
+
+
+The DET curves obtained are quite different from the ones obtained with the first features and matcher. In this case, the DET curve has \textbf{in general} lower values and the EERS are lower than in the previous case. Also, we can appretiate that the DET curve from the \(N=12\) case (found in Figure \ref{fig:extra12}) is quite particular, since the drop from \(10\) to \(5\) FRR and the drop from \(5\) to \(0\) FRR are very fast, in contrast with the continuous drop in Figures \ref{fig:extra1} and \ref{fig:extra4}. \\
 
 We also present the EER results in Table \ref{res:extra:table}.
 \begin{table}[H]
@@ -526,6 +557,38 @@ As we can see, the more signs considered in the comparison, the lower EER (and, 
 
 \section{Conclusions}
 
-In this Lab Assignment, we have developed \textbf{two} different Signature Recognition systems: one based on handcrafted features and another one based on the time series obtained by the sensor and its derivatives.
+In this Lab Assignment, we have developed \textbf{two} different Signature Recognition systems: one based on handcrafted features and another one based on the time series obtained by the sensor and its derivatives. All the EER results obtained are collected in Table \ref{table:res:ALL}.
+
+\begin{table}[H]
+  \centering
+\begin{tabular}{l|rrr}
+Feature extraction / $N$ & $N = 1$ & $N=4$  & $N = 12$ \\ \hline
+Handcraft                & $30$    & $29.5$ & $27.0$  \\
+Handcraft (Normalized) & $12.8$ & $12.24$ & $8.500$ \\
+Time Series                      & $15.06$  & $7.66$ & $\mathbf{5.0}$  
+\end{tabular}
+\caption{All obtained EER results.}
+\label{table:res:ALL}
+\end{table}
+
+Some obtained conclusions obtained are the following:
+
+\begin{itemize}
+\item The \textbf{time series features} and the \textbf{DTW Matcher} are the best performers, achieving an \(EER = 5.0\) which is a reasonably good result, although it could be improved even further with the addition of more features.
+\item Normalizing the features is very important and in this case improves the results.
+\item The extracted features do \textbf{not} provide very trustable results for signature recognition.
+\item In this small database, the computing time is feasible. However, in a bigger database the \emph{Time Series + DTW} system could be too computationally expensive, so some kind of \textbf{representation} of the time series (and thus, another matcher) should probably be considered.
+\end{itemize}
+
+As a very last comment, I decided to try and increase the number of signs to compare to the maximum, that is \(N = 15\). The \inline{EvaluationDTW} was executed and the result was the DET curve shown in \ref{fig:extra:best}. The EER obtained is \(EER = 4.81\), which is \textbf{the best} obtained until now.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale= 0.5]{Figures/EER-15-DTW}
+  \caption{DET curves with EER \(N = 15\).}
+  \label{fig:extra:best}
+\end{figure}
+
+This enforces the statement that it is better to compare with as much other elements as possible, but still leaves us with margin for improvement in the EER.
 
 \end{document}

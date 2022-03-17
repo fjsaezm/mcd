@@ -2,6 +2,8 @@ close all
 clear all
 clc
 
+tic
+
 addpath('DetPlots\')
 
 %load de signature parameters
@@ -97,4 +99,4 @@ figure;
 figure;
 [EER12,DCF_opt12,ThresEER12]=Eval_Det(GenuineScores_12(:)',ImpostorScores_12(:)','b')
 
-
+toc
