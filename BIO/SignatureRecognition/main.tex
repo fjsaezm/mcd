@@ -279,7 +279,7 @@ end
 \end{figure}
 
 
-As we can observe, we could say that the distributions of \(Ttotal, Tpendown\) and \(Ppendown\) are Gaussian distributions for certain parameters \(\mu,\sigma\). The variable \(Npenups\) is a little bit different, we could say that it is a \emph{bimodal} distribution, such as a Gaussian Mixture of \(2\) gaussians.
+As we can observe, we could say that the distributions of \(Ttotal, Tpendown\) and \(Ppendown\) are Gaussian distributions for certain parameters \(\mu,\sigma\). The variable \(Npenups\) is a little bit different, we could say that it is a \emph{bimodal} distribution without specifying any particular named distribution.
 
 \section{Performance Evaluation}
 
@@ -299,7 +299,7 @@ There are two cases to be analyzed:\\
 \begin{enumerate}
 \item	For \(N=1\) we will have \(SG=15\) genuine scores.
 \item	For \(N=4\) we will have \(SG=12\) genuine scores.
-\item	For \(N=12\) we will have SG=4 genuine scores.
+\item	For \(N=12\) we will have \(SG=4\) genuine scores.
 \end{enumerate}
 For each of the scenarios \((N=1,4,12)\) you have to save all the genuine scores into a matrix (with dimension \(50 \times SG)\). Each of the three matrixes will be stored into a .mat file with name: \inline{GenuineScores_N.mat}.\\
 
@@ -319,30 +319,189 @@ To obtain these performance metrics you will have available the next functions:
 \item	\inline{ImpostorScores}: the scores form non target or impostor comparisons. These scores are obtained after applying the following normalization: \(ImpostorScores =1./(ImpostorScores_N+0.00000001)\)
 \end{enumerate}
 
-\textbf{QUESTION. Plot the performance graphics (DET curves) using the genuine and impostors score stored in their respectively matrixes (for each of the scenarios \(N=1,4,12\)). Indicate the EER value.}
+\textbf{QUESTION. Plot the performance graphics (DET curves) using the genuine and impostors score stored in their respectively matrixes (for each of the scenarios \(N=1,4,12\)). Indicate the EER value.} \\
+
+Firstly, we code the \inline{Matcher} function. The code of this function is very straigthforward:
+
+\begin{minted}{MatLab}
+function Score=Matcher(test,Model)
+  % Computes the euclidean distance between
+  % Test and model
+  % Equivalently, we can compute the norm of the difference
+
+      N = size(Model,1);
+      scores = zeros(1,N);
+      for i=1:N
+          scores(i) = norm(test-Model(i,:));
+      end
+      Score = mean(scores);
+end
+\end{minted}
+
+As we can see, we only have to check how many examples are we comparing the \inline{test} features against, compute the norm of the difference for each of those examples and then computing the mean of this norm.\\
+
+Lastly, we are provided with the \inline{Evaluation.m} scripts that loads the Feature Matrix that we have saved in the \inline{ProcessBiosecurID.m} script and performs an evaluation using this features. This script uses \(N = 1,4,12\) different signs to compare against, stores and plots the results for all of them. We execute it and obtain the following DET curves and EER values, presented in Figure \ref{fig:HAND}.
+
+\begin{figure}[H]
+  \centering
+  \subfloat[\(N=1\)]{\label{fig:extra1}\includegraphics[width=0.32\linewidth]{Figures/EER-1-HAND}}\qquad
+  \subfloat[\(N=4\)]{\label{fig:extra4}\includegraphics[width=0.32\linewidth]{Figures/EER-4-HAND}}
+  \subfloat[\(N=12\)]{\label{fig:extra12}\includegraphics[width=0.32\textwidth]{Figures/EER-12-HAND}}\qquad%
+  \caption{DET curves with EER for each of the different \(N = 1,4,12\) with \emph{handcrafted} features.}
+  \label{fig:HAND}
+\end{figure}
+
+We also present the EER values in Table \ref{table:res:HAND}.
+
+\begin{table}[H]
+  \centering
+\begin{tabular}{l|rrr}
+Feature extraction / $N$ & $N = 1$ & $N=4$  & $N = 12$ \\ \hline
+Handcraft                & $30$    & $29.5$ & $27.0$  
+\end{tabular}
+\caption{EER results with \emph{handcrafted} features.}
+\label{table:res:HAND}
+\end{table}
+
 
 
 \textbf{QUESTION. According to the results, are they reasonable? What metrics are more illustrative? When do you obtain the best performance? }
 
 
-\section{Extra}
+\section{Extra Work 2: Changing the features}
 
-\subsection{Extra work 1}
- If you want to obtain a mark up to 8 points out of 10 you should complete one of the following points:
- \begin{enumerate}
-\item Think and give a reasonable explanation of some additional features you can extract from the signatures. Program them, and repeat the point 4. Performance Evaluation in order to prove their improvement in the system performance. 
-\item 	Obtain a list of the most discriminative features and based on that make combinations of features in order to obtain a better performance.
-\item 	Make an evaluation using the skilled forgeries signatures and compared the results with the random forgeries.
- \end{enumerate}
+\subsection*{Previous note}
+The list of developed files for this exercise are:
 
- \subsection{Extra work 2}
-Extra work 2: If you want to obtain a mark up to 10 points out of 10 you should do the following (directly, without doing the Extra work 1):
+\begin{itemize}
+\item \inline{ProcessBiosecurDTW}
+\item \inline{EvaluationDTW}
+\item \inline{Gradient}
+\item \inline{MatcherDTW} and \inline{SingleMatcherDTW}
+\end{itemize}
 
+\subsection*{Task and introduction}
 \begin{enumerate}
   \item 	Develop an online signature recognition system based on local features (time functions) and Dynamic Time Warping for the Matcher. Repeat the same experimental protocol followed in the practice but using this new signature recognition system.
   \item 	You should use the following local features (time functions): x, y, pressure, (and their corresponding first and second derivative).
   \item 	You can use the DTW matcher available in Matlab. Take into account that it only allows to compare time functions of different lengths 1 to 1, i.e., x1 vs x2, y1 vs y2, etc. Therefore, you should compare time functions 1 to 1 and finally obtain the average between all time functions in order to obtain the final score of the comparison between two signatures.
-  \item 	The equation to obtain the score of the 1vs1 time function comparison is score=e-D/k, where D is the minimum accumulative distance obtain after using DTW in Matlab, and K is the number of aligned time samples.
+  \item 	The equation to obtain the score of the 1vs1 time function comparison is \(score=e^{-\frac{D}{k}}\), where D is the minimum accumulative distance obtain after using DTW in Matlab, and K is the number of aligned time samples.
 \end{enumerate}
+
+Let us revise what we have to do in this section. In previous sections, we \textbf{extracted} handcrafted features from our signs and then tested a very simple matcher based on distances. As we were asked for, we completed the \emph{Feature extractor} and the \emph{Matcher} that are represented in Figure \ref{fig:intro}.\\
+
+Now, our goal is to change these two parts of the diagram and use different features and adapt our matcher to these new features.
+
+\subsection{The new feature extractor}
+
+Our new features will be the \emph{raw time series} obtained from the sensor. We will also use its first and second derivatives to increase the amount of available information and they will be useful since they provide extra information about the original time series. To sum up, we will have the following features for each sign:
+\[
+\left\{x, y, p, dx, dy, dp, d^2x, d^2y, d^2p\right\}  
+\]
+
+In order to obtain the derivatives, we must note that the discrete derivatives of a time series are defined as
+\[
+ \Delta [f](x)=f(x+1)-f(x),
+\]
+that is, the difference between the next and the current values of the time series. Using this, we define the following \inline{Gradient} function in the script that has the same name:
+\begin{minted}{MatLab}
+function grad=Gradient(a)
+% Compute the gradient of a discrete time signal
+    grad = a(2:length(a)) - a(1:length(a)-1);
+end
+\end{minted}
+
+Having a function to compute the gradient and the features, we are ready to store all the features in a matrix with all the features for each sign and for each user. However, we realised that in this case this is not so easy, since now we are working with features that \textbf{do not have the same length} for each sign. Remember that in the previous case, we had \(4\) features for each sign, which is not the case now.\\
+
+Our \textbf{workaround} is to make use of MatLab \inline{cells} \footnotemark. This data structure allows us to have variable length vectors in the same structure. So, for the new feature extraction, we created a cell
+\begin{minted}{MatLab}
+BiosecurIDparameters=cell(50,16,9);
+\end{minted}
+  and then introduced the data as follows (the introduction of the derivatives is not shown to reduce code space in the memory)
+\begin{minted}{MatLab}
+% Save parameters
+sign_idx = (session - 1)*4 + sign_genuine;
+
+BiosecurIDparameters{user}{sign_idx}{1} = BiosecurID.x; 
+BiosecurIDparameters{user}{sign_idx}{2} = BiosecurID.y; 
+BiosecurIDparameters{user}{sign_idx}{3} = BiosecurID.p;
+\end{minted}
+
+\footnotetext{ As a note, when introducing a variable to this cells in the \(n-th\) position, be sure that the previous positions have values; otherwise MatLab fills them with zeros and this leads to problems with the following parts of the code (a few hours were wasted facing this problem). }
+
+
+Lastly, as we did in the previous feature extractor, we save the data into a matlab file named \inline{BiosecurIDparametersDTW}.
+
+
+
+\subsection*{The new matcher}
+
+We have our time series ready to be matched with other time series. We are asked to make use of \textbf{Dynamic Time Warping} in order to make this matching. A few considerations must be taken into account when coding this DTW matcher.
+
+\begin{enumerate}
+\item The distance between the time series is computed as
+\[
+dist(x_t,y_t) = e^{-\frac{D}{k}},  
+\]
+where \(x_t,y_t\) are the time series, \(D\) is the distance computed by the DTW and \(k\) is the number of aligned time samples. 
+\item \inline{MatLab} has a \inline{dtw} function (see the \href{https://uk.mathworks.com/help/signal/ref/dtw.html}{documentation for this function}), that returns the distance \(D\) and two lists \(ix,iy\) with the index of both signals \(x_t,y_t\) taken to compute this distance. We can count the number of coincidences between \(ix,iy\) to find the desired \(k\).
+\item The comparison must be done for each of the \(9\) features (time series) that we have chosen. After computing this distance for each feature, we \textbf{average} the distances.
+\item Lastly, we found during the experimentation that the distance returned from the DTW depends on the scale of the time series. That is, larger values of the time series result in larger distances, which causes larger \(D\) values for our score. Hence, we decided to \textbf{divide each time series by its maximum} so that all the time series are in the range \([0,1]\) when they are compared with the DTW. 
+\end{enumerate}
+With these considerations, we created the script \inline{SingleMatcherDTW} that returns, two signs as input \(s_1,s_2\), the average score obtained by the DTW method. The code is simple:
+
+\begin{minted}{MatLab}
+function Single_Score_DTW=SingleMatcherDTW(test,Model)
+% Computes the score using e^{-D/k} where D is the DTW
+% distance and k the number of coincident points in the DTW
+    N = size(Model,2);
+    scores = zeros(1,N);
+    for i=1:N
+        [D,ix,iy] = dtw(test{i}/max(test{i}),...
+                        Model{i}/max(Model{i}));
+        k = sum(ix == iy);
+        scores(i) = exp(-D/k);
+    end
+    Single_Score_DTW = mean(scores);
+end
+\end{minted}
+
+\subsubsection*{Comparing with \(N\) signatures}
+
+Lastly, as we did in the previous Matcher, we will compare with \(N=1,4,12\) signatures. To be able to do this, we will only have to iterate through the \(N\) subjects, use the \inline{Single_Score_DTW} function for each of them, and finally compute the average score obtained, which is given by:
+\[
+\text{Score} = \frac{1}{N}\sum_{i} \left( \frac{1}{9}\sum_{j} e^{-\frac{D_{ij}}{k_{ij}}}\right)
+\]
+where subindex \(i\) refers to the \(i-th\) comparing sign and subindex \(j\) refers to the \(j-th\) comparing feature. This is done in the script \inline{MatcherDTW}, which code is pretty straigthforward.
+
+
+\subsection*{Evaluation}
+
+We have our new \textbf{features} and \textbf{matcher}, now we can use them to determine the DET curve and the EER for our signature recognition system. The previous \inline{Evaluation.m} script is no more valid due to the differences in the data (we now have variable-length time signals instead of \(4\)
+features). However, the structure of the new developed script is the same.  The code can be found on \inline{EvaluationDTW}, and the main changes with respect to the previous script are in the way of \emph{loading} the signs to be compared.\\
+
+We executed the script to find the DET curve and EER value, with the results obtained shown in Figure \ref{fig:extra:DET}.
+
+\begin{figure}[H]
+  \centering
+  \subfloat[\(N=1\)]{\label{fig:extra1}\includegraphics[width=0.32\linewidth]{Figures/EER-1-DTW}}\qquad
+  \subfloat[\(N=4\)]{\label{fig:extra4}\includegraphics[width=0.32\linewidth]{Figures/EER-4-DTW}}
+  \subfloat[\(N=12\)]{\label{fig:extra12}\includegraphics[width=0.32\textwidth]{Figures/EER-12-DTW}}\qquad%
+  \caption{DET curves with EER for each of the different \(N = 1,4,12\).}
+  \label{fig:extra:DET}
+\end{figure}
+
+We also present the EER results in Table \ref{res:extra:table}.
+\begin{table}[H]
+  \centering
+\begin{tabular}{l|rrr}
+Feature extraction / $N$ & $N = 1$ & $N=4$   & $N = 12$ \\ \hline
+Time Series                      & $15.06$  & $7.66$ & $5.0$   
+\end{tabular}
+\caption{EER for the time series features and DTW matcher.}
+\label{res:extra:table}
+\end{table}
+
+As we can see, the more signs considered in the comparison, the lower EER (and, hence, the better results) we obtain, as it happened in the previous recognition system.
 
 \end{document}

@@ -42,7 +42,6 @@ GenuineScores_1= 1./ (GenuineScores{1}+ 0.00000001);
 GenuineScores_4= 1 ./ (GenuineScores{2} + 0.00000001);
 GenuineScores_12= 1 ./ (GenuineScores{3} + 0.00000001);
 
-
 %% IMPOSTOR SCORES
 
 i=1; n=1;
@@ -78,8 +77,6 @@ ImpostorScores_12= 1./(ImpostorScores{3} + 0.00000001);
 %0 for genuine comparisons and higher for impostor comparisons). However,
 %we want to obtain the SCORE (higher for genuine comparisons than for
 %impostor comparisons).
-
-% YOUR CODE
 
 
 figure;
