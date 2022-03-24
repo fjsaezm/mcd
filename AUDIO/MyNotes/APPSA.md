@@ -21,6 +21,59 @@ Nowadays, audio data is everywhere and there are many sources that can obtain mo
 
 However, this data is not always **clean**.
 
+---
+
+MISSING INFORMATION TILL SLIDE 13
+
+---
+
+The DET curve and the EER can help us to stablish a trade-off.
+
+### Spectral feature space - Vector quantization
+
+Consider that we have a signal and for each time instant $t$ we have a feature vector. If we represent some features (typically 2, so that we can see it in 2D), features from different speakers talking in the same language may overlap. Furthermore, there exists intra-locutor variability due to different factors.
+
+We would like to construct a more robust feature space. We construct the **codebook** using K-means, which group features in clusters. Having the $K$ cluster for a user, when a new user comes, we compute the distance of the features to the centroids and the speaker can be determined.
+
+### Gaussian Mixture Models
+
+Consider that each feature vector is a sample. Using all the samples, we can build a _Gaussian Mixture Model (GMM)_, obtaining a multidimensional probability density function.
+
+$$
+p(\mathbf{x}|\lambda_p) = \sum_{i=1}^M w_{ip}g_{ip}(\mathbf{x})
+$$
+
+We can fit a $M$ Gaussian mixture model to our data, usually using the Expectation Maximization algorithm. After this, when a test sample comes, we can compute the likelihood of this new sample, usually assuming independence.
+
+What problem does this GMM have?
+
+- If we have low data from a locutor, the GMM will probably not be well fit for this locutor.
+- When the dimensionality is increased, the number of parameters to estimate explodes.
+
+A solution for the second problem is to use _diagonal_ covariance matrices. This results in faster training and also better results. It has been proved that, using a big enough $M$, a GMM using diagonal matrix can approximate a GMM with non diagonal matrices.
+
+## Universal model
+
+Sometimes we may lack data .........
+
+The **Universal Background Model (UBM)** is a GMM that represents a _general locutor_, using generic data that it is available. With this base, we **adapt** the generic locutor model to the incoming user, using **Maximum a Posteriori** estimation.
+
+Using this, we get **the difference** between the general locutor and the incoming locutor.
+
+## Supervectors
+
+Usually, when having data from a locutor, estimating covariances it is quite hard due the lack of data. Due to this, we sometimes consider **only adapting the means** of the adapted GMM. This is called the **means supervector**.
+
+$$
+\text{supervector}_\lambda = \begin{matrix} \mu_1 \\ \vdots \\ \mu_n\end{matrix}
+$$
+
+The dimension of this vector is $N \times D$, where $N$ is the number of gaussians and $D$ is the data dimensionality.
+
+### Factor Analysis
+
+Having the supervectors, we would like to reduce the dimensionality. We can remember that to obtain each supervector, we fitted a GMM to each user, which may have varied **OR NOT** from the _general locutor_.
+
 # Representación de señales de audio.
 
 **Objetivo**. Representar señales de audio de diversas formas. La
