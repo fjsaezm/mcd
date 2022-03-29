@@ -77,3 +77,39 @@ $$
 $$
 
 
+Consider the case of a three node bayesian network, with joint pdf:
+$$
+P(A,B,Y) = P(A)P(B|A)P(Y|A,B).
+$$
+
+We would like to obtain the probabilities in a table in each case. Extracting data is to observe \(N\) realizations of an experiment. We would like to use this data to determine
+$\theta_A,\theta_B,\theta_{Y|A,B}$. Recall that these $\theta$s **are not distribution parameters but computed probabilities of observations**. We estimate this parameter set:
+$$
+\Theta = \{\theta_A,\theta_B,\theta_{Y|A,B}\}
+$$
+considering that we have to compute $\theta_a$ for all $a \in Values(A)$, $theta_b$ for all $b \in Values(B)$ and $\theta_{y|a,b}$ for all $a\in Values(A), b \in Values(b)$ and $y \in Values(Y)$
+
+Let us compute the likelihood of this $\Theta$:
+\begin{align*}
+L(\Theta,D) & = P(D|\Theta) \\
+& = \prod_{j=1}^N P(a[j],b[j],y[j]|\Theta) \\
+& = \prod_{j=1}^N P(a[j]|\Theta) P(b[j]|\Theta)P(y[j]|a[j],b[j],\Theta)\\
+& = \prod_{j=1}^N P(a[j]|\Theta_A) P(b[j]| \Theta_B)P(y[j] | a[j],b[j],\Theta_{Y|A,B})\\
+& = \prod_{j=1}^N L(\theta_A,D) L(\theta_B,D) L(\theta_{Y|A,B},D)
+\end{align*}
+
+So we have expressed the likelihood of the parameters $\Theta$ as the product of the likelihood of the individual parameters $\theta_i$. We can extend this to a more teneral case.
+
+**Proposition.-** Let $X_1, \dots, X_K$ be random variables with a bayesian network dependence. Let $D$ be a sample. Let $\tilde U = \text{Par}_g(X_i)$. Then,
+\begin{align*}
+L(\Theta,D) & = \prod_{j=1}^N P(\tilde x[j]|\Theta)\\
+& = \prod_{j=1}^N \prod_{i=1}^{K} P(x[j]| \tilde u_i[j],\Theta_i)\\
+& = \prod_{i=1}^{K} L(\Theta_i| D)
+\end{align*}
+
+**Proposition.-**
+The MLE of the general case of a bayesian network is given by:
+$$
+\Theta_{x|\tilde u} = \frac{M[X = x, \tilde U = \tilde u]}{M[\tilde U = \tilde u]}
+$$
+where $M$ is the counting function.

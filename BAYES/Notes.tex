@@ -1,0 +1,290 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Consider a set of variables \(X_1,\dots,X_n\), we will define a model
+that will consider the joint probability density function of the
+variables
+
+\[
+P(X_1,\dots,X_n)
+\]
+
+There are a few forms of representing this
+
+\begin{itemize}
+\item
+  Bayesian Networks, which are represented by directed graphs in which
+  each node represents conditional probabilities, and the edges
+  represent dependencies. (Drawing from the blackboard)
+\item
+  Markov Networks. In this case, we have undirected graphs, where the
+  edges are \emph{factors} (tables of probability)
+\end{itemize}
+
+Bayesian networks have the \emph{factors} in the nodes, while Markov
+networks have the factors in the edges.
+
+Our goal will be to make inference about variables using the available
+information. Sometimes, making inference is understood as
+\textbf{marginalizing the joint distribution}.
+
+\[
+P(A) = \sum_{B,C} P(A,B,C) = \sum_{B,C}P(A) P(B|A)P(C|B,A)
+\]
+
+There are different algorithms to compute this probabilities, such as
+\emph{variable elimination} or \emph{message-passing}.
+
+Also, there are different ways of \textbf{reasoning}, such as
+
+\begin{itemize}
+\tightlist
+\item
+  Causal reasonament, which studies causalities
+\item
+  Evidencial reasonament
+\end{itemize}
+
+With all this types of reasoning, we are assuming \textbf{two main
+points}:
+
+\begin{itemize}
+\tightlist
+\item
+  That we have all the information about both the structure of the
+  network and the \emph{factors} or probabilities.
+\end{itemize}
+
+Having both the network structure and the probabilities of each of the
+factors, we can marginalize to obtain the joint probability
+distributions. However, we can consider a case where we do \textbf{not}
+know the structure of the network but we know the probabilities of the
+factors. This is also a \emph{branch} of study, which we will not go
+deep in. A last case is the one where we \textbf{know} the structure of
+the network, but we are \textbf{lacking} parts of the table which we
+would like to infere. This is the case that we will focus in this
+course.
+
+\hypertarget{example}{%
+\subsection{Example}\label{example}}
+
+Consider the following random variable, modeling the probability of
+obtaining heads or tails in a coinflip
+
+\[
+v^n =\begin{cases}
+1 & \text{heads}\\
+0 & \text{tails}
+\end{cases}
+\]
+
+However, our coin might have different weights for each of the outcomes
+(biased coin). For instance, consider that
+\(\theta = P(\text{heads}) = P(v^n = 1| \theta)\). Hence,
+\(P(\text{tails}) = 1-\theta\). In this case, our goal would be to
+\textbf{determine} \(\theta\).
+
+If we tossed the coin \(n\) times, and \textbf{we knew the probability}
+\(\theta\), the coin tosses would be \textbf{independent}. However, if
+we \textbf{do not know} the probability \(\theta\), the coin tosses
+\textbf{would be dependent} since the \textbf{outcome} of the experiment
+affects \(\theta\). (Diagrams from the blackboard). In this case, the
+joint probability would be
+
+\[
+P(\theta,v^1,\dots,v^n) = P(\theta)\prod_{i=1}^n P(v^i|\theta)
+\]
+
+Estimations of the parameters are sometimes done using the empirical
+distribution function. However, there are other methods of estimating
+the joint pdf, such as \emph{maximum likelihood estimation}.
+
+\hypertarget{maximum-likelihood-estimation}{%
+\subsection{Maximum likelihood
+estimation}\label{maximum-likelihood-estimation}}
+
+We define the \textbf{likelihood} of the data as
+
+\[
+L(\theta;D) = P(D|\theta) = \prod_{j=1}^N P(v^j|\theta)
+\]
+
+Maximum likelihood estimation determines the likelihood function and
+tries to find (or approximate) a maximum of it.
+
+We can generalize our previous coin toss example. Consider that we
+obtained \(M_h\) heads and \(M_t\) tails in our coin toss problem. In
+this case, our likelihood function would be
+
+\[
+L(\theta; M_h,M_t) = \theta^{M_h} (1-\theta)^{M_t}
+\]
+
+The most common approach is to apply the logarithm to the likelihood
+function, which is a monotonous increasing function, to convert the
+product into sums, and then maximize the \textbf{log-likelihood}. In the
+previous example, our log-likelihood would be
+
+\[
+\ell = \log L(\theta; M_h,M_t) = M_h \log \theta + M_t \log (1-\theta)
+\]
+
+Consider the case of a three node bayesian network, with joint pdf: \[
+P(A,B,Y) = P(A)P(B|A)P(Y|A,B).
+\]
+
+We would like to obtain the probabilities in a table in each case.
+Extracting data is to observe (N) realizations of an experiment. We
+would like to use this data to determine
+\(\theta_A,\theta_B,\theta_{Y|A,B}\). Recall that these \(\theta\)s
+\textbf{are not distribution parameters but computed probabilities of
+observations}. We estimate this parameter set: \[
+\Theta = \{\theta_A,\theta_B,\theta_{Y|A,B}\}
+\] considering that we have to compute \(\theta_a\) for all
+\(a \in Values(A)\), \(theta_b\) for all \(b \in Values(B)\) and
+\(\theta_{y|a,b}\) for all \(a\in Values(A), b \in Values(b)\) and
+\(y \in Values(Y)\)
+
+Let us compute the likelihood of this \(\Theta\): \begin{align*}
+L(\Theta,D) & = P(D|\Theta) \\
+& = \prod_{j=1}^N P(a[j],b[j],y[j]|\Theta) \\
+& = \prod_{j=1}^N P(a[j]|\Theta) P(b[j]|\Theta)P(y[j]|a[j],b[j],\Theta)\\
+& = \prod_{j=1}^N P(a[j]|\Theta_A) P(b[j]| \Theta_B)P(y[j] | a[j],b[j],\Theta_{Y|A,B})\\
+& = \prod_{j=1}^N L(\theta_A,D) L(\theta_B,D) L(\theta_{Y|A,B},D)
+\end{align*}
+
+So we have expressed the likelihood of the parameters \(\Theta\) as the
+product of the likelihood of the individual parameters \(\theta_i\). We
+can extend this to a more teneral case.
+
+\textbf{Proposition.-} Let \(X_1, \dots, X_K\) be random variables with
+a bayesian network dependence. Let \(D\) be a sample. Let
+\(\tilde U = \text{Par}_g(X_i)\). Then, \begin{align*}
+L(\Theta,D) & = \prod_{j=1}^N P(\tilde x[j]|\Theta)\\
+& = \prod_{j=1}^N \prod_{i=1}^{K} P(x[j]| \tilde u_i[j],\Theta_i)\\
+& = \prod_{i=1}^{K} L(\Theta_i| D)
+\end{align*}
+
+\textbf{Proposition.-} The MLE of the general case of a bayesian network
+is given by: \[
+\Theta_{x|\tilde u} = \frac{M[X = x, \tilde U = \tilde u]}{M[\tilde U = \tilde u]}
+\] where \(M\) is the counting function.
+
+
+Maximum likelihood estimation has a few limitations:
+
+\begin{enumerate}
+  \item Fragmentation: The number of values to estimate de CDP table increases exponentially with the number of parents \(|\tilde U|\). When the number of observations is low, the probability estimation is very poor and some possible values may even not appear. A common solution is to represent the data in a smaller number of states.
+        \item Overfitting
+\end{enumerate}
+
+
+Example: spam detection using KNN.
+
+INCLUDE IMAGE!!!
+
+Consider a sample of \(1M\) examples. If we had \(K = 30\) nodes, we would have to stimate \(2^{30}\) parameters. This is clearly not factible.
+
+
+
+We want to solve this using \textbf{bayesian estimation}.
+
+\section{The bayesian approach}
+
+Until now, we have been dealing with the likelihood of our data \(L(\Theta ;D)\). In the bayesian approach, we try to compute the \textbf{posterior probability} using the Bayes' theorem:
+\[
+  P(\Theta|D) = \frac{P(D|\Theta)P(\Theta)}{P(D)}
+\]
+where \(P(\Theta)\) is the prior probability of our parameter, \(P(D)\) is the proabability of the data, and \(P(D|\Theta)\) is the likelihood.\\
+
+To achieve this, we \textbf{need a good estimation of the prior probability} \(P(\Theta)\). We will know study a few distributions that can be used as prior distributions:
+
+\subsection{Beta and Dirichlet distributions}
+
+This is the univariate version of the Dirichlet distirbution. It is given by:
+\[
+  f(x;\alpha,\beta) = \frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)}
+\]
+where
+\[
+B(\alpha,\beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} = \int_{0}^{1}x^{\alpha-1}(1-x)^{\beta - 1}
+\]
+is essentially a normalizing factor.
+
+We generalize this formula to obtain the Dirichlet distribution. (Complete from jupyter notebook )
+
+Why is this distirbution interesting?
+
+\textbf{Definition.-} If the posterior distribution \(P(\theta|D)\) is in the same probability distribution family as the prior probability distirbution \(P(\theta)\), then the prior and the posterior are called \textbf{conjugate distributions}, and the prior is called a \textbf{conjugate prior} for the likelihood function \(P(D|\Theta)\).
+
+Let us see this in an example using the beta distribution in the biased coin example:
+\[
+P(\Theta|D) = \frac{\theta^{M_{h}}(1-\theta)^{M_{t}} \cdot \theta^{\alpha-1}(1-\theta)^{\beta - 1}}{P(D)} \frac{1}{B(\alpha,\beta)} = \frac{1}{P(D)B(\alpha,\beta)} \theta^{M_{h} + \alpha - 1}(1-\theta)^{M_{t}+\beta - 1}
+\]
+Let us compute the probabiltiy of the data
+\begin{align*}
+  P(D) & = \int_{0}^{1}P(D|\theta)P(\theta)d\theta\\
+  & = \frac{1}{B(\alpha,\beta)}\int_{0}^{1}\theta^{M_{h}+\alpha - 1}(1-\theta)^{M_{t}+\beta-1}d\theta \\
+  & = \frac{1}{B(\alpha,\beta)} \frac{\Gamma(M_{h}+\alpha) \Gamma(M_{t}+\beta)}{\Gamma(M_{h}+M_{t}+\alpha + \beta)}
+\end{align*}
+We use it back in the previous expression
+\begin{align*}
+  \frac{1}{P(D)B(\alpha,\beta)} \theta^{M_{h} + \alpha - 1}(1-\theta)^{M_{t}+\beta - 1} & =  \frac{\Gamma(M_{h}+\alpha) \Gamma(M_{t}+\beta)}{\Gamma(M_{h}+M_{t}+\alpha + \beta)}\theta^{M_{h} + \alpha - 1}(1-\theta)^{M_{t} + \beta - 1}\\
+  & = B(\theta; M_{h} + \alpha, M_{t} + \beta)
+\end{align*}
+
+\end{document}
