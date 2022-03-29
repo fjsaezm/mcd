@@ -75,3 +75,5 @@ The most common approach is to apply the logarithm to the likelihood function, w
 $$
 \ell = \log L(\theta; M_h,M_t) = M_h \log \theta + M_t \log (1-\theta)
 $$
+
+

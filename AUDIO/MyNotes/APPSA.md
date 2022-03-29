@@ -74,6 +74,127 @@ The dimension of this vector is $N \times D$, where $N$ is the number of gaussia
 
 Having the supervectors, we would like to reduce the dimensionality. We can remember that to obtain each supervector, we fitted a GMM to each user, which may have varied **OR NOT** from the _general locutor_.
 
+**Factor Analysis** tries to compensate the variability, both *inter-session* and *inter-locutor* variabilities. The basic supposition is that the variability lies in a **lower dimensional subspace**. 
+
+$$
+\text{model} = \text{locutor} + \text{session}.
+$$
+
+We want to **eliminate** the 
+
+Advantages:
+
+Disadvantages:
+- We deal with high dimensionality, so we have a high computational cost
+- The training dataset **must** be highly representative, so that the *channel variability matrix* is representative enough, but it is hard to obtain data with high variability.
+
+The solution to this problems is to use **Total Variability**, using the *i-vectors*. Considering the original super-vector, we reduce its dimensionality to \(T\) dimensions, combining information about both *channel* and *locutor.  The model is
+$$
+m_s' = m + T w_{sh}
+$$
+where \(m_s'\) is the *total variability model*, \(m\) is the *UBM*, \(T\) is the total variability matrix and \(w_{sh}\) is SOMETHING
+
+
+
+We thus obtain a new subspace (the *i-vector* subspace), one per locution (as in supervectors), with a much lower dimension.
+
+
+In this new space, the posterior model is simpler, we can use classic techniques such as LDA or within-class covariance normalization.
+
+The training of the subspace \(T\) is not required, but as a comment, having the supervectors for each *locutor*, we will have a mean supervector for each locutor and a *global* mean supervector. We initialize the subespace using PCA, and then we optimize the result using the EM algorithm. 
+
+### i-vector scoring
+
+After training, we would like to use this matrix in a test set. We project the supervectors using \(T\) and then we have to compute a distance between the projections. A classical approach is to use the *cosine distance*:
+$$
+dist(w,,w') = \frac{w \cdot w'}{|w||w'|} = cos(w,w')
+$$
+
+This distance requires a normalization (data may be all in the **1st quadrant**(????)) and calibration (probability).
+
+The *i-vectors* can be used to increase the discrimination, using for instance (WCNN, NAP, LDA or PLDA)
+
+### PLDA
+
+PLDA is essentially JFA but using the i-vectors. The difference is that, in the model:
+$$
+w_{ij}' = ...
+$$
+The matrixes are probabilities
+
+In PLDA we can use an scoring 
+$$
+S_{w_1,w_2} = \frac{p(w_1,w_2|H_0)}{p(w_1|H_1)p(w_2|H_1)}
+$$
+
+this scoring is probabilistic, so the output is **interpretable**, usually interpreted as a **log-likelihod**, so it is very interesting for *real-life problems*.
+
+
+## Classic examples for language recognitnion
+
+
+Our goal in this case is to detect which language is the speaker talking. We can consider:
+
+- Close set, in which we have a fixed number of possible inputs for the new cases (if we train with \(n\) languages, we will receive one of those languages)
+- Open set, in which we can receive a different language 
+
+We can use this on *call enrouting, audio classification or anonymous speaker(s) detection*.
+
+The idea is the same as the one used in *locutor recognition*, we receive an audio signal and we 
+
+In addition to the previous explained technieques, we can use **token-based** models.
+
+- Spectral features: MFCCs and SDCs.
+- Tokenizers: converts speech in a sequence of known phonemes (each phoneme can be modeled with a three state HMM). PRLM (learns the language model using a given tokenizer), using *n-grams*. We also can do this in parallel (PPRLM) using multiple phone recognizers and then use the log-likelihood.
+
+## State of art:
+
+1. PPRLM (2000-2008)
+2. *i-vector*(2006-1016)
+3. DNNs
+
+
+# Unit 2: Part 2: Time sequence processing
+
+Until now, we have been dealing with *linear transformations* of the data. When deep neural networks appear, **non linear transformations** can be used.
+
+## Neural networks
+
+Given an input, we seek to minimize a ...
+
+EXPLANAITON
+
+FRAME STACKING
+
+### How to use them
+
+- **End-to-end**: classical classification
+- **Feature extraction**: use the DNNs to extract features
+- **Locution-level representation**
+
+### End to end
+
+In this case, we use the feature vectors to obtain a probability a posteriori of each language considered.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Representación de señales de audio.
 
 **Objetivo**. Representar señales de audio de diversas formas. La
