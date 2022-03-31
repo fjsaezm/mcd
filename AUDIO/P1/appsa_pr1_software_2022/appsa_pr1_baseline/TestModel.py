@@ -23,8 +23,9 @@ import config as cfg
 
 
 def test_model(state, reference_tsv_path, reduced_number_of_data=None, strore_predicitions_fname=None):
+    
     dataset = DatasetDcase2019Task4(os.path.join(cfg.workspace),
-                                    base_feature_dir=os.path.join(cfg.workspace, "dataset", "features"),
+                                    base_feature_dir=os.path.join(cfg.workspace, "appsa_pr1_dataset_validation", "features"),
                                     save_log_feature=False)
 
     crnn_kwargs = state["model"]["kwargs"]

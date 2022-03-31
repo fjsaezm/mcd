@@ -24,7 +24,7 @@ CLASSES = np.array(['Alarm_bell_ringing', 'Blender', 'Cat', 'Dishes', 'Dog',
 
 # %% Display audio files and features
 
-def plot_waveform(filename, axis = None):
+def plot_waveform(filename, ax = None):
     """Loads and plots the signal
 
     Args:
@@ -42,7 +42,7 @@ def plot_waveform(filename, axis = None):
     x = lr.load(path, sr=44100)
     x_len_seconds = x[0].size / x[1]
 
-    if axis == None:
+    if ax == None:
         fig, ax = plt.subplots()
         
     ax.plot(x[0])
