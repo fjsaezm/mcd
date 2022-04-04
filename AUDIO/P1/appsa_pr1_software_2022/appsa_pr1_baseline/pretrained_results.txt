@@ -1,0 +1,109 @@
+ INFO - Model loaded at epoch: 83
+ INFO - dataset/metadata/validation/validation.tsv
+ INFO - ../dataset/metadata/validation/validation.tsv Total file number: 1168
+ INFO - Saving predictions at: validation2019_predictions.tsv
+ INFO - Event based metrics (onset-offset)
+========================================
+  Evaluated length                  : 10459.12 sec
+  Evaluated files                   : 1168 
+  Evaluate onset                    : True 
+  Evaluate offset                   : True 
+  T collar                          : 200.00 ms
+  Offset (length)                   : 20.00 %
+
+  Overall metrics (micro-average)
+  ======================================
+  F-measure
+    F-measure (F1)                  : 25.42 %
+    Precision                       : 26.83 %
+    Recall                          : 24.15 %
+  Error rate
+    Error rate (ER)                 : 1.38 
+    Substitution rate               : 0.03 
+    Deletion rate                   : 0.72 
+    Insertion rate                  : 0.62 
+
+  Class-wise average metrics (macro-average)
+  ======================================
+  F-measure
+    F-measure (F1)                  : 22.56 %
+    Precision                       : 22.75 %
+    Recall                          : 24.83 %
+  Error rate
+    Error rate (ER)                 : 1.86 
+    Deletion rate                   : 0.75 
+    Insertion rate                  : 1.10 
+  
+
+  Class-wise metrics
+  ======================================
+    Event label  | Nref    Nsys  | F        Pre      Rec    | ER       Del      Ins    |
+    ------------ | -----   ----- | ------   ------   ------ | ------   ------   ------ |
+    Running_wa.. | 237     331   | 28.9%    24.8%    34.6%  | 1.70     0.65     1.05   |
+    Speech       | 1754    1213  | 35.9%    43.9%    30.3%  | 1.08     0.70     0.39   |
+    Dog          | 570     431   | 6.6%     7.7%     5.8%   | 1.64     0.94     0.70   |
+    Vacuum_cle.. | 92      127   | 32.0%    27.6%    38.0%  | 1.62     0.62     1.00   |
+    Dishes       | 567     502   | 13.1%    13.9%    12.3%  | 1.64     0.88     0.76   |
+    Cat          | 341     331   | 20.8%    21.1%    20.5%  | 1.56     0.79     0.77   |
+    Alarm_bell.. | 420     283   | 38.7%    48.1%    32.4%  | 1.03     0.68     0.35   |
+    Frying       | 94      376   | 11.9%    7.4%     29.8%  | 4.40     0.70     3.70   |
+    Electric_s.. | 65      100   | 14.5%    12.0%    18.5%  | 2.17     0.82     1.35   |
+    Blender      | 96      119   | 23.3%    21.0%    26.0%  | 1.72     0.74     0.98   |
+
+
+ INFO - Segment based metrics
+========================================
+  Evaluated length                  : 11092.62 sec
+  Evaluated files                   : 1168 
+  Segment length                    : 1.00 sec
+
+  Overall metrics (micro-average)
+  ======================================
+  F-measure
+    F-measure (F1)                  : 65.34 %
+    Precision                       : 61.59 %
+    Recall                          : 69.57 %
+  Error rate
+    Error rate (ER)                 : 0.59 
+    Substitution rate               : 0.14 
+    Deletion rate                   : 0.16 
+    Insertion rate                  : 0.29 
+  Accuracy
+    Sensitivity                     : 69.57 %
+    Specificity                     : 95.38 %
+    Balanced accuracy               : 82.48 %
+    Accuracy                        : 92.90 %
+
+  Class-wise average metrics (macro-average)
+  ======================================
+  F-measure
+    F-measure (F1)                  : 59.18 %
+    Precision                       : 57.44 %
+    Recall                          : 62.87 %
+  Error rate
+    Error rate (ER)                 : 0.90 
+    Deletion rate                   : 0.37 
+    Insertion rate                  : 0.53 
+  Accuracy
+    Sensitivity                     : 62.87 %
+    Specificity                     : 95.30 %
+    Balanced accuracy               : 79.08 %
+    Accuracy                        : 92.90 %
+  
+
+  Class-wise metrics
+  ======================================
+    Event label  | Nref    Nsys  | F        Pre      Rec    | ER       Del      Ins    | Sens     Spec     Bacc     Acc     
+    ------------ | -----   ----- | ------   ------   ------ | ------   ------   ------ | ------   ------   ------   ------  
+    Running_wa.. | 1385    1599  | 60.1%    56.0%    64.7%  | 0.86     0.35     0.51   | 64.7%    93.3%    79.0%    90.0%   
+    Speech       | 3745    3743  | 84.9%    84.9%    84.9%  | 0.30     0.15     0.15   | 84.9%    93.1%    89.0%    90.5%   
+    Dog          | 1131    1539  | 57.5%    49.9%    67.9%  | 1.00     0.32     0.68   | 67.9%    92.8%    80.4%    90.5%   
+    Vacuum_cle.. | 801     758   | 61.4%    63.2%    59.8%  | 0.75     0.40     0.35   | 59.8%    97.5%    78.6%    95.0%   
+    Dishes       | 754     1006  | 43.9%    38.4%    51.2%  | 1.31     0.49     0.82   | 51.2%    94.4%    72.8%    91.7%   
+    Cat          | 728     711   | 55.6%    56.3%    54.9%  | 0.88     0.45     0.43   | 54.9%    97.2%    76.1%    94.6%   
+    Alarm_bell.. | 1060    962   | 74.1%    77.9%    70.7%  | 0.49     0.29     0.20   | 70.7%    98.0%    84.3%    95.6%   
+    Frying       | 794     1665  | 46.5%    34.4%    72.0%  | 1.66     0.28     1.38   | 72.0%    90.2%    81.1%    89.0%   
+    Electric_s.. | 522     471   | 59.6%    62.8%    56.7%  | 0.77     0.43     0.34   | 56.7%    98.5%    77.6%    96.6%   
+    Blender      | 538     487   | 48.2%    50.7%    45.9%  | 0.99     0.54     0.45   | 45.9%    97.9%    71.9%    95.5%   
+
+

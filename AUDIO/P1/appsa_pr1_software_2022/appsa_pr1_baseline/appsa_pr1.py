@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 import os
+import copy
 
 
 # %% Environment settings
@@ -129,7 +130,7 @@ def plot_labels(segment, ax = None):
     ax.set_title(segment + ' (ground truth)')
 
 
-def plot_predictions(segment, predfile):
+def plot_predictions(segment, predfile = "validation2019_predictions.tsv"):
 
     pred_tsv = pd.read_table(predfile, sep='\s+')
 
@@ -154,7 +155,7 @@ def plot_predictions(segment, predfile):
     ax.set_title(segment + ' (predictions)')
 
 
-def plot_labels_predictions(segment, predfile):
+def plot_labels_predictions(segment, predfile = "validation2019_predictions.tsv", legend_location = 'best'):
 
     labelfile = os.path.join(DATASET_PATH, META_SUBPATH, META_FILE)
     label_tsv = pd.read_table(labelfile, sep='\s+')
@@ -165,21 +166,34 @@ def plot_labels_predictions(segment, predfile):
 
     fig, ax = plt.subplots()
 
+    appeared_classes =  []
     for _, l in segment_labels.iterrows():
         on = l["onset"]
         off = l["offset"]
         ev = np.where(CLASSES == l["event_label"])[0][0]
 
-        ax.broken_barh([(on, off-on)], (ev-0.5, 1),
-                       color='C'+str(ev), alpha=0.6)
+        if ev in appeared_classes:
+            ax.broken_barh([(on, off-on)], (ev-0.5, 1), color='C'+str(ev), alpha=0.6)
+        else:
+            ax.broken_barh([(on, off-on)], (ev-0.5, 1), color='C'+str(ev), alpha=0.6, label = "Labels")
+            appeared_classes.append(ev)    
 
+    appeared_classes =  []
     for _, p in segment_preds.iterrows():
         on = p["onset"]
         off = p["offset"]
         ev = np.where(CLASSES == p["event_label"])[0][0]
+        
+        if ev in appeared_classes:
+            ax.broken_barh([(on, off-on)], [ev-0.25, 0.5], color='C'+str(ev))
+        else:
+            ax.broken_barh([(on, off-on)], [ev-0.25, 0.5], color='C'+str(ev), label = "Predictions")
+            appeared_classes.append(ev)
 
-        ax.broken_barh([(on, off-on)], [ev-0.25, 0.5], color='C'+str(ev))
+            
+            
 
+    ax.legend(loc = legend_location)
     ax.set_xlim([0, 10])
     ax.set_ylim([-0.5, 9.5])
     ax.set_xlabel('Time (seconds)')
