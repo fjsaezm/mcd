@@ -1,0 +1,295 @@
+
+\section{The bayesian approach}
+
+Until now, we have been dealing with the likelihood of our data \(L(\Theta ;D)\). In the bayesian approach, we try to compute the \textbf{posterior probability} using the Bayes' theorem:
+\[
+    P(\Theta|D) = \frac{P(D|\Theta)P(\Theta)}{P(D)}
+\]
+where \(P(\Theta)\) is the prior probability of our parameter, \(P(D)\) is the probability of the data, and \(P(D|\Theta)\) is the likelihood.\\
+
+To achieve this, we \textbf{need a good estimation of the prior probability} \(P(\Theta)\). We will know study a few distributions that can be used as prior distributions:
+
+\subsection{Beta and Dirichlet distributions}
+
+This is the univariate version of the Dirichlet distribution. It is given by:
+\[
+    f(x;\alpha,\beta) = \frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)}
+\]
+where
+\[
+    B(\alpha,\beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} = \int_{0}^{1}x^{\alpha-1}(1-x)^{\beta - 1}
+\]
+is essentially a normalizing factor.
+
+We generalize this formula to obtain the Dirichlet distribution. (Complete from jupyter notebook )
+
+Why is this distribution interesting?
+
+\begin{ndef} If the posterior distribution \(P(\theta|D)\) is in the same probability distribution family as the prior probability distribution \(P(\theta)\), then the prior and the posterior are called \textbf{conjugate distributions}, and the prior is called a \textbf{conjugate prior} for the likelihood function \(P(D|\Theta)\).
+\end{ndef}
+
+Let us see this in an example using the beta distribution in the biased coin example:
+\[
+    P(\Theta|D) = \frac{\theta^{M_{h}}(1-\theta)^{M_{t}} \cdot \theta^{\alpha-1}(1-\theta)^{\beta - 1}}{P(D)} \frac{1}{B(\alpha,\beta)} = \frac{1}{P(D)B(\alpha,\beta)} \theta^{M_{h} + \alpha - 1}(1-\theta)^{M_{t}+\beta - 1}
+\]
+Let us compute the probability of the data
+\begin{align*}
+    P(D) & = \int_{0}^{1}P(D|\theta)P(\theta)d\theta                                                                       \\
+         & = \frac{1}{B(\alpha,\beta)}\int_{0}^{1}\theta^{M_{h}+\alpha - 1}(1-\theta)^{M_{t}+\beta-1}d\theta               \\
+         & = \frac{1}{B(\alpha,\beta)} \frac{\Gamma(M_{h}+\alpha) \Gamma(M_{t}+\beta)}{\Gamma(M_{h}+M_{t}+\alpha + \beta)}
+\end{align*}
+We use it back in the previous expression
+\begin{align*}
+    \frac{1}{P(D)B(\alpha,\beta)} \theta^{M_{h} + \alpha - 1}(1-\theta)^{M_{t}+\beta - 1} & =  \frac{\Gamma(M_{h}+\alpha) \Gamma(M_{t}+\beta)}{\Gamma(M_{h}+M_{t}+\alpha + \beta)}\theta^{M_{h} + \alpha - 1}(1-\theta)^{M_{t} + \beta - 1} \\
+                                                                                          & = B(\theta; M_{h} + \alpha, M_{t} + \beta)
+\end{align*}
+
+
+\subsection{Prediction using Bayesian Networks}
+
+Consider that we have observed \(n\) random variables \(v[1],\dots,v[n]\), we would like to predict the following value \(v[n+1]\). This can be expressed as:
+\[
+    P(v[n+1] = 1|v[1],\dots,v[n]) = \int_{0}^{1}P(v[n+1] = 1|\theta)P(\theta | v[1],\dots,v[n])
+\]
+In the biased coin toss, we recall that \(P(v[n+1]|\theta) = \theta\) and \(P(\theta|v[1],\dots ,v[n]) = P(\theta|D) \sim \beta(\theta ; M_{h} + \alpha, m_{t}+\beta)\). Thus, the last expression follows:
+\begin{align*}
+    \int_{0}^{1}P(v[n+1] = 1|\theta)P(\theta | v[1],\dots,v[n]) & = \int_{0}^{1}\theta \frac{\Gamma(M_{h} + M_{t} + \alpha + \beta)}{\Gamma(M_{h} + \alpha)\Gamma(M_{t} + \beta)} \theta^{M_{h}+ \alpha -1}(1-\theta)^{M_{t}+\beta - 1} d\theta \\
+                                                                & =  \frac{\Gamma(M_{h} + M_{t} + \alpha + \beta)}{\Gamma(M_{h} + \alpha)\Gamma(M_{t} + \beta)} \int_{0}^{1} \theta^{M_{h}+ \alpha -1}(1-\theta)^{M_{t}+\beta - 1} d\theta      \\
+                                                                & = \cdots                                                                                                                                                                      \\
+                                                                & = \frac{M_{h} + \alpha}{M_{h} + M_{t}+ \alpha + \beta}
+\end{align*}
+The conclusion is that in this example, we only need to know the previous values to estimate the following example. All this calculations are only a proof of the expectation of a beta random variable for a particular case.
+
+
+\subsection{Naive Bayes}
+
+Consider the Bayesian Network in Figure \ref{fig:naive:bayes}. Consider that \(X_{i}\) are gaussian distributions, that is
+\[
+    P(X_{i}|C) = \mathcal N(\mu_i,\sigma_i^{2})
+\]
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[->, >=stealth', auto, semithick, node distance=3cm]
+
+        \tikzstyle{every state}=[fill=white,draw=black,thick,text=black,scale=1]
+        \node[state] at (0,0) (A) {$X_1$};
+        \node[state] (B)[right of=A] {$\cdots$} ;
+        \node[state] (C)[right of=B] {$X_N$};
+        \node[state] (D)[above of= B] {$C$};
+
+        \path
+        % S1 = A Paths
+        (D) edge (A)
+        (D) edge (B)
+        (D) edge (C);
+
+    \end{tikzpicture}
+    \caption{Naive Bayes network.}
+    \label{fig:naive:bayes}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[->, >=stealth', auto, semithick, node distance=3cm]
+
+        \tikzstyle{every state}=[fill=white,draw=black,thick,text=black,scale=1]
+        \node[state] at (0,0) (A) {$\theta_{X_i|C}$};
+        \node[state] (B)[right of=A] {$X_i$} ;
+        \node[state] (C)[right of=B] {$C$};
+
+        \path
+        % S1 = A Paths
+        (A) edge (B)
+        (C) edge (B);
+
+    \end{tikzpicture}
+    \caption{Relation between parameters \(\theta\), class \(C\) and \(X_i\).}
+    \label{fig:naive:bayes:class}
+\end{figure}
+
+In this case, we would have the diagram presented in Figure \ref{fig:naive:bayes:class}
+% TODO : Insert second diagram
+where \(X_{i} = \{x_{i}[1],\dots,x_{i}[n]\}\). Clearly, the parameters to seek in this case are \(\theta_{X|C} = \mu_{i},\sigma_{i}^{2}\). Let us compute the likelihood, assuming independence:
+\[
+    L(\mu_{i},\sigma_{i}^{2}; D) = P(x_{i}[1],\dots,x_{i}[n]|\mu_{i},\sigma_{i}^{2},C) = \prod_{j=1}^{N} \text{pdf}_{G}(x_{i}; \mu_{i}, \sigma_{i}^{2})
+\]
+where \(\text{pdf}_{G}\) stands for the probability density function of a Gaussian distribution with parameters \(\mu_{i},\sigma_{i}^{2}\). Hence, the log-likelihood is
+\begin{align*}
+    \ell(\mu_{i},\sigma_{i}^{2}; D) & = \log \left( L(\mu_{i},\sigma_{i}^{2}, D)\right)                                                                                 \\
+                                    & = \log \left(  \prod_{j=1}^{N} \text{pdf}_{G}(x_{i}; \mu_{i}, \sigma_{i}^{2}) \right)                                             \\
+                                    & = \sum_{i}^{N} \log \text{pdf}_{G}(x_{i}; \mu_{i},\sigma_{i}^{2})                                                                 \\
+                                    & = \sum_{i}^N \left( \log\frac{1}{\sigma_i \sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x_i[j] - \mu_i}{\sigma_i}\right)^2}\right)      \\
+                                    & = \sum_{i}^N \log \left(\frac{1}{\sigma_i \sqrt{2\pi}}\right) - \frac{1}{2}\sum_i^N  \left(\frac{x_i[j] - \mu_i}{\sigma}\right)^2 \\
+                                    & = - N \log \sqrt{2\pi \sigma_i}^2 - \frac{1}{2}\sum_i^N  \left(\frac{x_i[j] - \mu_i}{\sigma}\right)^2
+\end{align*}
+We can now compute the derivate of the log-likelihood in order to find its theoretical maximum:
+\begin{align*}
+    0 & = \frac{\partial \ell}{\partial \sigma_{i}^{2}}                                                                                              \\
+      & = - N \frac{(2 \pi)/2 }{\left(\sqrt{2\pi \sigma_{i}^{2}}\right)^{2}}  + \sum_{j=1}^{N} \frac{2}{(x_{i}[j] - \mu_{i})}{(2\sigma_{i}^{2})^{2}} \\
+      & = -N \frac{1}{2 \sigma_{i}^{2}} + 2 \frac{2}{(2\sigma_{i}^{2})^{2}} \sum_{j=1}^{N}(x_{i}[j] - \mu_{i})^{2}
+\end{align*}
+which implies
+\[
+    \sigma_{i}^{2} = \frac{1}{N} \sum_{j}^{N}(x_{i}[j] - \mu_{i})^{2}
+\]
+which is the expression of the sample variance. Applying this process to the expectation \(\mu_i\), we obtain that the MLE estimator is the sample mean.
+
+\begin{example}[Gaussian Linear Model]
+
+    Consider the Bayesian network in Figure \ref{fig:GLM}, where \(X_{1},\dots, X_{K}\) are continuous random variables and the parents of a continuous random variable \(Y\).
+    We would like to model
+    \[
+        P \left( Y| \XN \right) = \normal{\beta_0 + \beta_1 x_1 + \dots + \beta_k x_k}{\sigma^2}.
+    \]
+    We can use a Linear Gaussian Model (LGM).
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[->, >=stealth', auto, semithick, node distance=3cm]
+
+            \tikzstyle{every state}=[fill=white,draw=black,thick,text=black,scale=1]
+            \node[state] at (0,0) (A) {$X_1$};
+            \node[state] (B)[right of=A] {$\cdots$} ;
+            \node[state] (C)[right of=B] {$X_N$};
+            \node[state] (D)[below of= B] {$Y$};
+
+            \path
+            % S1 = A Paths
+            (A) edge (D)
+            (B) edge (D)
+            (C) edge (D);
+
+        \end{tikzpicture}
+        \caption{\(\XN\) are parents of \(Y\).}
+        \label{fig:GLM}
+    \end{figure}
+
+    \begin{align*}
+        P(Y|X_{1},\dots, X_{K}) & \sim \mathcal N \left( \beta_{0} + \beta_{1}x_{1} + \dots + \beta_{k}x_{k}, \sigma^2 \right) \\
+                                & = \mathcal N ( \mathbf{\beta}^{T} \mathbf{x}^{T}, \sigma^{2} )
+    \end{align*}
+
+\end{example}
+
+\begin{example}[Moving object ]
+    Consider a moving object. Let \(x_t\) be the position at time \(t\), \(v_t\) be the speed at time \(t\). Then, it is known that:
+    \[
+        x_{t+1} = x_t + v_t \Delta t = x_t + v_t
+    \]
+    then, using a LGM to obtain:
+    \[
+        P\left(X_{t+1} | x_t,v_t\right) \sim \normal{x_t + v_t + 1, \sigma_t^2}.
+    \]
+\end{example}
+
+
+Let us now calculate the maximum likelihood estimator for the general LGM. We already know that the log likelihood for this model is:
+
+\[
+    \ell(\mu_{i},\sigma_{i}^{2};D) = - N \log \sqrt{2\pi \sigma_i}^2 - \frac{1}{2}\sum_i^N  \left(\frac{x_i[j] - \mu_i}{\sigma}\right)^2.
+\]
+
+We can use the expression of this particular case and derivate with respect the different variables:
+\begin{align*}
+    \frac{\partial \ell}{\partial \beta_0} & = - \sum_{j=1}^N \frac{1}{\sigma^2} \left( \beta_0 + \sum_i^N \left(\beta_i x_i[j]\right) -y[j]\right)    \\
+                                           & = - \frac{1}{\sigma^2} \left(N \beta_0 + \sum \left(\beta_i \sum_j x_i[j]\right) - \sum_j^N y[j] \right).
+\end{align*}
+Our goal is to equate the last expression to zero. We can divide the whole equation by \(N\), since this does not change the result.Clearly, since \(-\frac{\sigma^2}{N} \neq 0\), we obtain:
+\[
+    0 = \underbrace{\frac{1}{N}\sum{j=1}^N y[j]}_{\E_D[y]} = \beta_0 + \sum_{i}\left( \beta_i \underbrace{\frac{1}{N} \sum_j x_i[j]}_{\E_D[x_i]}\right)
+\]
+which results in:
+\begin{equation}\label{MLE:LGM}
+    \E_D[y] = \beta_0 + \sum_i^K \E_D[x_i]
+\end{equation}
+
+We now derivate with respect the rest of the \(\beta_i\).
+\begin{align*}
+    \frac{\partial \ell}{\partial \beta_i} & = -  \sum{j=1}^N \frac{1}{\sigma^2} \left( \beta_0 + \sum_i^K \left(\beta_i x_i[j]\right) - y[j] \right)x_i[j]                                                             \\
+                                           & = - \frac{1}{\sigma^2} \left(\beta_0 \sum_{j=1}^N x_i[j] + \beta_i \sum_{j=1}^N x_1[j]x_i[j] + \dots + \beta_k \sum_{j=1}^N x_k[j]x_i[j] - \sum_{j=1}^N y[j]x_i[j]\right).
+\end{align*}
+And, as we always do in MLE, we find the maximum using the zeros of the derivative: we know that \(\sigma^2/N \neq 0\) so:
+\begin{equation}\label{MLE:LGM:2}
+    0 = \E[y X_i]  = \beta_0 \E_D[X_i] + \sum_{i=j}^K \beta_i \E_D[X_j \ X_i]
+\end{equation}
+
+
+
+\section{Expectation Maximization}
+
+There are situations where we cannot apply maximum likelihood estimation as we have done before, for example, when there is missing data or latent (unobserved) variables. We can consider three types of missing data:
+
+\begin{enumerate}
+    \item Missing completely at random: When the reason why those values are missing is independent of the values themselves and the observed ones.
+    \item Missing at random: The fact that data is missing is not completely random but can be explained given the observed data.
+    \item Missing not at random: The reason why data is missing is related with such data.
+\end{enumerate}
+
+Let us see an example where the MLE algorithm cannot be applied with missing data:
+\begin{example}
+    Let \(X,Y\) be two random variables such that
+    \[
+        P(x, y \mid \Theta) = P(x \mid \theta_x)P(y \mid x, \theta_{y\mid x}) = \theta_x \ \theta_{y\mid x}.
+    \]
+    That is, we are considering a simple Bayesian network \( X \to Y \), with both variables being bernoulli trials. Consider the following set of observations \( \mathcal{D} = \{(?, y_0)), (x_0, y_1), (?, y_0) \). The likelihood is
+    \begin{align*}
+        \mathcal{L}(\Theta, \mathcal{D}) & = \prod_{i=1}^N P(X[i], Y[i] | \Theta)                                                                          \\
+                                         & = \prod_{i=1}^N P(X[i]|\theta_x)P(Y[i] \mid X[i],\theta_{y|x})                                                  \\
+                                         & = P(y_1 \mid x_0)P(x_0)\left(\sum_x P(y_0\mid x)P(x)\right)^2                                                   \\
+                                         & = (\theta_{x_0}\theta_{y_0 \mid x_0} + \theta_{x_1}\theta_{y_0 \mid x_1} )^2 \theta_{x_0}\theta_{y_1 \mid x_0}.
+    \end{align*}
+    Where its partial derivatives cannot be independently optimized.
+\end{example}
+
+The \textbf{Expectation Maximization (EM)} algorithm focuses on the case of the \textbf{missing at random} data, and performs a MLE estimation. We will follow a two step iterative process, summarized as:
+\begin{enumerate}
+    \item Compute the \emph{expected value of the missing data}.
+    \item \emph{Optimize} the set of parameters.
+\end{enumerate}
+
+\subsection{General EM algorithm}
+
+
+Given a set of observed variables \( \mathbf{X} = (X_1,\dots, X_N) \) and a set of hidden or latent variables \( \mathbf{Z} = (Z_1, \dots, Z_M) \), governed by a set of parameters \( \mathbf{\theta} \), the EM algorithm seeks to find the maximum likelihood estimate of the marginal likelihood \( P(\mathbf{x} \mid \mathbf{\theta}) \)  of the visible variables by applying the following 2-step iterative procedure:
+\begin{enumerate}
+    \item \textbf{Expectation step}: Define \( Q(\mathbf{\theta} \mid \mathbf{\theta}^{(t)}) \) as the expected value of the log likelihood with respect to the conditional distribution  of the hidden variables given the observed:
+          \[
+              Q(\mathbf{\theta} \mid \mathbf{\theta}^{(t)}) = \mathbb{E}_{\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}} \left[ \log P(\mathbf{x}, \mathbf{Z} \mid \mathbf{\theta}) \right].
+          \]
+    \item \textbf{Maximization step}: Find the optimal parameters that maximize \( Q \):
+          \[
+              \mathbf{\theta}^{(t+1)} = \text{arg}\max_{\mathbf{\theta}} Q(\mathbf{\theta} \mid \mathbf{\theta}^{(t)}).
+          \]
+\end{enumerate}
+
+\begin{nth}
+    The marginal likelihood cannot decrease after any iteration of the expectation maximization algorithm.
+\end{nth}
+
+\emph{Proof. } For any unknown but fixed value of the hidden variables \( \mathbf{z} \), applying the definition of conditional probability to \( P(\mathbf{z} \mid \mathbf{x}, \mathbf{\theta})\) we can write\footnote{Given that \( P(\mathbf{z} \mid \mathbf{x}, \mathbf{\theta}) \neq 0\).  }
+\[
+    \log P(\mathbf{x} \mid \mathbf{\theta}) = \log P(\mathbf{x}, \mathbf{z} \mid \mathbf{\theta}) - \log P(\mathbf{z} \mid \mathbf{x}, \mathbf{\theta})
+\]
+By taking expectations over \( \mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)} \) and since \(P(\mathbf{x}\mid \mathbf{\theta})\) does not depend on \(\mathbf{Z}\), we get that
+\[
+    \begin{aligned}
+        \log P(\mathbf{x} \mid \mathbf{\theta}) & = \mathbb{E}_{\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}} \left[ \log P(\mathbf{x}, \mathbf{Z} \mid \mathbf{\theta}) \right] - \mathbb{E}_{\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}} \left[ \log P(\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}) \right] \\
+                                                & = Q(\mathbf{\theta}, \mathbf{\theta}^{(t)}) - \mathbb{E}_{\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}} \left[ \log P(\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}) \right]
+    \end{aligned}
+\]
+Given this quality, the increase in the marginal likelihood is
+\[
+    \begin{aligned}
+        \log P(\mathbf{x} \mid \mathbf{\theta}) - \log P(\mathbf{x} \mid \mathbf{\theta}^{(t)}) & =
+        Q(\mathbf{\theta}, \mathbf{\theta}^{(t)}) -  Q(\mathbf{\theta}^{(t)}, \mathbf{\theta}^{(t)})                                                                                                                                                                                                                                                                           \\
+                                                                                                & - \mathbb{E}_{\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}} \left[ \log P(\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta})\right] + \mathbb{E}_{\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}} \left[ \log P(\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}) \right] \\
+                                                                                                & =  Q(\mathbf{\theta}, \mathbf{\theta}^{(t)}) -  Q(\mathbf{\theta}^{(t)}, \mathbf{\theta}^{(t)}) + KL\left(  P(\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta}^{(t)}) \bigl\vert  P(\mathbf{Z} \mid \mathbf{x}, \mathbf{\theta})\right)
+    \end{aligned}
+\]
+Using that the KL divergence is always positive, we arrive at
+\[
+    \log P(\mathbf{x} \mid \mathbf{\theta}^{(t+1)}) - \log P(\mathbf{x} \mid \mathbf{\theta}^{(t)}) \geq  Q(\mathbf{\theta}^{(t+1)}, \mathbf{\theta}^{(t)}) -  Q(\mathbf{\theta}^{(t)}, \mathbf{\theta}^{(t)}) \geq 0.
+\]
+Where the last inequality is given by the maximization step of the EM algorithm.\hfill \( \blacksquare \)
+

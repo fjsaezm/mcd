@@ -126,7 +126,12 @@
 
 % Ejemplos
 \theoremstyle{example-style}
-\newtheorem{example}{Example}[section]
+\newtheorem{example-orig}{Example}[section]
+
+% redefine 
+\newenvironment{example}{\begin{example-orig}}%
+  {\emph{End of example.}\end{example-orig}}
+
 
 % Ejercicios y solución
 \theoremstyle{definition-style}
@@ -134,6 +139,15 @@
 
 \theoremstyle{remark-style}
 \newtheorem*{sol}{Solution}
+
+
+% Float
+\usepackage{float}
+
+% tikz
+\usepackage{tikz}
+%\usetikzlibrary{shapes,arrows,positioning}
+\usetikzlibrary{automata,arrows,positioning,calc}
 
 %---------------------------------------------------------------------------
 %  PORTADA
@@ -157,6 +171,7 @@
 %%% Macros
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
 \newcommand{\iif}{\;\Longleftrightarrow\;}
 
 \newcommand{\Ker}[2]{K\left( \frac{{#1} - {#2}_i}{h}\right)}
@@ -165,3 +180,7 @@
 \newcommand{\nn}[1]{\mathbf{#1}}
 
 \newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+
+
+\newcommand{\XN}{X_1,\dots,X_N}
+\newcommand{\normal}[2][]{\mathcal N \left( {#1}, {#2} \right )}
