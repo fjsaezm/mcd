@@ -1,0 +1,167 @@
+\documentclass[a4paper]{article}
+
+\addtolength{\hoffset}{-2.25cm}
+\addtolength{\textwidth}{4.5cm}
+\addtolength{\voffset}{-3.25cm}
+\addtolength{\textheight}{5cm}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0in}
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\usepackage{blindtext} % Package to generate dummy text
+\usepackage{charter} % Use the Charter font
+\usepackage[utf8]{inputenc} % Use UTF-8 encoding
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+\usepackage{amsthm, amsmath, amssymb} % Mathematical typesetting
+\usepackage{float} % Improved interface for floating objects
+\usepackage[final, colorlinks = true,
+            linkcolor = black,
+            citecolor = black]{hyperref} % For hyperlinks in the PDF
+\usepackage{graphicx, multicol} % Enhanced support for graphics
+\usepackage{xcolor} % Driver-independent color extensions
+\usepackage{marvosym, wasysym} % More symbols
+\usepackage{rotating} % Rotation tools
+\usepackage{censor} % Facilities for controlling restricted text
+\usepackage{listings} % Environment for non-formatted code, !uses style file!
+\usepackage{pseudocode} % Environment for specifying algorithms in a natural way
+ % Environment for f-structures, !uses style file!
+\usepackage{booktabs} % Enhances quality of tables
+\usepackage{tikz-qtree} % Easy tree drawing tool
+ % Configuration for b-trees and b+-trees, !uses style file!
+\usepackage[backend=biber,style=numeric,
+            sorting=nyt]{biblatex} % Complete reimplementation of bibliographic facilities
+\addbibresource{ecl.bib}
+\usepackage{csquotes} % Context sensitive quotation facilities
+\usepackage[yyyymmdd]{datetime} % Uses YEAR-MONTH-DAY format for dates
+\renewcommand{\dateseparator}{-} % Sets dateseparator to '-'
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{}\renewcommand{\headrulewidth}{0pt} % Blank out the default header
+\fancyfoot[L]{} % Custom footer text
+\fancyfoot[C]{} % Custom footer text
+\fancyfoot[R]{\thepage} % Custom footer text
+\newcommand{\note}[1]{\marginpar{\scriptsize \textcolor{red}{#1}}} % Enables comments in red on margin
+\usepackage{mathtools}
+\usepackage{amsmath}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\usepackage{cancel}
+\usepackage{minted}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+%-------------------------------
+
+%----------------------------------------------------------------------------------------
+
+%-------------------------------
+%	ENVIRONMENT SECTION
+%-------------------------------
+\pagestyle{fancy}
+\usepackage{mdframed}
+
+\usepackage[sfdefault]{FiraSans} %% option 'sfdefault' activates Fira Sans as the default text font
+\usepackage[T1]{fontenc}
+\renewcommand*\oldstylenums[1]{{\firaoldstyle #1}}
+
+
+% remove numbering from sections
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0pt}{}
+
+
+
+%-------------------------------------------------------------------------------------------
+%	CUSTOM COMMANDS
+%-------------------------------
+\newcommand{\gaussian}{\frac{1}{\sigma\sqrt{2\pi}}\exp\left(- \frac{(x-\mu)^2}{2\sigma^2}\right)}
+\newcommand{\R}{\mathbb R}
+
+\def\inline{\lstinline[basicstyle=\ttfamily,keywordstyle={}]}
+
+
+\begin{document}
+
+
+%-------------------------------
+%	TITLE SECTION
+%-------------------------------
+
+\fancyhead[C]{}
+\hrule \medskip % Upper rule
+\begin{minipage}{0.295\textwidth}
+  \raggedright
+  \footnotesize
+  Francisco Javier Sáez Maldonado \hfill\\
+  franciscojavier.saez@estudiante.uam.es
+  \hfill\\
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+  \centering
+  \large
+  Speaker Recognition\\
+  \normalsize
+  Deep Learning for Audio Signals\\
+\end{minipage}
+\begin{minipage}{0.295\textwidth}
+  \raggedleft
+  \today\hfill\\
+\end{minipage}
+\medskip\hrule
+
+%-------------------------------
+%	CONTENTS
+%-------------------------------
+
+\tableofcontents
+
+\section*{Introduction}
+
+Speaker recognition is the task of identifying a person from his/her voice. In this lab report, we will examine a speaker recognition system that will use \emph{x-vectors} embeddings to classify the speakers. The system has been developed to solve the \href{https://www.robots.ox.ac.uk/~vgg/data/voxceleb/competition2020.html}{VoxCeleb} challenge.\\
+
+The system \emph{extracts} the fixed-size embeddings trying to include in these representations as much discriminative information as possible for the speaker recognition task. A few architectures of neural networks can be used with this purpose, as well as different loss functions.\\
+
+The code that I used to test the model, which was provided by \href{http://audias.ii.uam.es/staff/}{Alicia Lozano}, can be found in this \href{https://drive.google.com/file/d/1aWhFcbRUTJ0sOtYNPvLjHencfINu8SFz/view?usp=sharing}{link}.
+
+\section{Examining the code}
+
+In this section, we will examine the provided code in order to find the most relevant parts of it. Let us begin by examining the \inline{trainSpeakerNet.py} file, since it is the main script. The code is properly commented so identifying the different parts is quite simple.\\
+
+\textbf{Questions.}\\
+
+\begin{itemize}
+  \item \emph{Which line of the code trains the model?}\\
+
+        We found \inline{line 169}:
+        \begin{minted}{Python}
+    loss, traineer = s.train_network(loader=trainLoader);
+  \end{minted}
+        which trains the code. The variable \inline{s} was previously initialized as \inline{s = SpeakerNet(**vars(args));}, creating an instance of the SpeakerNet defined model class. This class has the called \inline{train_network} function, which performs (vaguely explained) a classic forward pass with loss computation and returns the average loss and the \inline{train eer}.
+
+  \item \emph{Which command loads a pre-trained model?}\\
+
+        Having a look from lines \(112-121\), we find that in lines \(116\) and \(120\), the function \inline{s.loadParameters(args)} is called. This function loads the pretrained model from a specific file. As we can see in the code, a distinction is made in our case, being able to load the model from the \inline{save_path} or from the argument \inline{args.initial_model}.
+  \item \emph{Which line evaluates the performance of the neural network?}\\
+
+        A few lines below the training line, in line \inline{176} we find:
+        \begin{minted}[]{Python}
+    sc, lab, _ = s.evaluateFromList(args.test_list, print_interval=100, test_path=args.test_path, eval_frames=args.eval_frames)
+  \end{minted}
+        which evaluates the model in the \inline{test_list}. In this function, all the features for each of the test file audios (\emph{.wav}) files are extracted and then the scores are computed using \inline{pairwise_distance}.
+
+  \item \emph{Which variable contains the scores of the trials list? In which file are those scores saved?}\\
+
+        In line \inline{177} we observe that the scores are thresholded and stored in the variable \inline{result}. Then, they are saved in the \inline{scorefile} file. This is a variable that, in line \(150\) opened a file called \inline{result_save_path/scores.txt}, where \inline{result_save_path} came as an argument from the execution of the script.
+
+  \item \emph{Which variable controls the number of epochs(iterations) that the model is trained?}\\
+
+        We find in line \(198\) and \(201\) that the variable \inline{it} is modified and checks the \inline{max_epoch} indicated as an argument.
+
+
+\end{itemize}
+
+
+\end{document}
