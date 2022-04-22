@@ -148,17 +148,131 @@ In this section, we will examine the provided code in order to find the most rel
 
         A few lines below the training line, in line \inline{176} we find:
         \begin{minted}[]{Python}
-    sc, lab, _ = s.evaluateFromList(args.test_list, print_interval=100, test_path=args.test_path, eval_frames=args.eval_frames)
+    sc, lab, _ = s.evaluateFromList(args.test_list, print_interval=100,
+                                    test_path=args.test_path, eval_frames=args.eval_frames)
   \end{minted}
         which evaluates the model in the \inline{test_list}. In this function, all the features for each of the test file audios (\emph{.wav}) files are extracted and then the scores are computed using \inline{pairwise_distance}.
 
   \item \emph{Which variable contains the scores of the trials list? In which file are those scores saved?}\\
 
-        In line \inline{177} we observe that the scores are thresholded and stored in the variable \inline{result}. Then, they are saved in the \inline{scorefile} file. This is a variable that, in line \(150\) opened a file called \inline{result_save_path/scores.txt}, where \inline{result_save_path} came as an argument from the execution of the script.
+        Firstly, we find in line \inline{176} that the scores of the trials are stored in the variable \inline{sc}. Then, in line \inline{177} we observe that the scores are thresholded and stored in the variable \inline{result}. Then, they are saved in the \inline{scorefile} file. This is a variable that, in line \(150\) opened a file called \inline{result_save_path/scores.txt}, where \inline{result_save_path} came as an argument from the execution of the script.
 
   \item \emph{Which variable controls the number of epochs(iterations) that the model is trained?}\\
 
-        We find in line \(198\) and \(201\) that the variable \inline{it} is modified and checks the \inline{max_epoch} indicated as an argument.
+        We find in line \(198\) and \(201\) that the variable \inline{it} is modified and checks the \inline{max_epoch} indicated as an argument. Then, is the variable \inline{max_epoch} the one that controls the number of epochs that the model is trained.
+
+  \item \emph{Which parameter determines the loss function?}\\
+
+        We find that in line \(29\) the argument \inline{--trainfunc} with description \emph{'Loss function'} is declared. Then, it is passed to the model class in the creation of the instance of the model (passing all the arguments at the same time).
+
+  \item \emph{What is the purpose of the parameter \inline{test_interval}?}\\
+
+        Having a look at the description of the parameters, in \inline{line 27} we read that this parameter controls how many train epochs we make before every evaluation. For instance, if \(test\_interval = 10\), then every \(10\) training epoch we perform an evaluation on the \inline{test_list} (\inline{line 176}) and save the results.
+
+  \item \emph{Which argument has to be modified in order to change the architecture of the model?}\\
+
+
+        The architecture of the model is defined in the argument \inline{--model}. As we can see, in the folder \inline{models}, there are a few implementations of \inline{ResNet} and \inline{VGG} that could be used to change the architecture of the model.
+
+  \item \emph{What is the purpose of the parameter \inline{nClasses}? How would you obtain this value from the dataset? Write the command that you would use.}\\
+
+        The parameter \inline{nClasses} controls the number of speakers that are used in the softmax layer. Let us explain how we would obtain this from the dataset. As we are explained in the provided jupyter notebook, the training data is stored in the folder \inline{data/voxceleb2}. Inside this folder, we find a large number of subfolders, each one containing the audios from a different speaker, which \textbf{represents a class} in our problem. So, to obtain the parameter \inline{nClasses}, we would have to count the number of folders stored in the directory \inline{data/voxceleb2}. We can do this in linux by using a \inline{pipe}, listing the folders in the directory and then counting the number of lines (using the linux command \inline{wc -l}). The execution provides the following result:
+
+        \begin{minted}{bash}
+           !ls data/voxceleb2/ | wc -l
+
+           4953
+        \end{minted}
+
+
+        It has to be remarked that the validation set does not have the same number of unique classes. When we execute this same command in the folder \inline{data/voxceleb1}, we obtain that there are only \(40\) classes.
+
+\end{itemize}
+
+
+\section{Evaluating pretrained models}
+
+We are given two pretrained models using the \emph{VoxCeleb2} dataset (the dev partition). In this section, we evaluate the models and compare the results. To evaluate the models, we have to execute the previous script, using the argument \inline{--eval} as well as the dataset path, the model type and some extra parameters. We show the execution output (removing the \inline{warning} lines).\\
+
+\textbf{First Model:}\\
+\begin{minted}{bash}
+!python ./trainSpeakerNet.py --eval --model ResNetSE34L --log_input True \
+          --trainfunc angleproto --save_path exps/test_lite --eval_frames 400 \
+          --test_list lists/veri_test.txt \
+          --initial_model pretrained_models/baseline_lite_ap.model
+
+
+Embedding size is 512, encoder SAP.
+Initialised AngleProto
+Initialised Adam optimizer
+Initialised step LR scheduler
+Model has 1437080 parameters
+Model pretrained_models/baseline_lite_ap.model loaded!
+Reading 4700 of 4715: 28.75 Hz, embedding size 512
+Computing 37700 of 37720: 1776.69 Hz
+
+EER 2.1792
+\end{minted}
+
+\textbf{Second Model:}\\
+\begin{minted}{bash}
+!python ./trainSpeakerNet.py --eval --model ResNetSE34V2 --log_input True \
+  --encoder_type ASP --n_mels 64 --trainfunc softmaxproto \
+  --save_path exps/test_v2 --eval_frames 400 --test_list lists/veri_test.txt \
+  --initial_model pretrained_models/baseline_v2_ap.model
+
+Embedding size is 512, encoder ASP.
+Initialised Softmax Loss
+Initialised AngleProto
+Initialised SoftmaxPrototypical Loss
+Initialised Adam optimizer
+Initialised step LR scheduler
+Model has 11103416 parameters
+Model pretrained_models/baseline_v2_ap.model loaded!
+Reading 4700 of 4715: 4.19 Hz, embedding size 512
+Computing 37700 of 37720: 1766.00 Hz
+
+EER 1.1771
+\end{minted}
+
+\textbf{Questions.}\\
+
+\begin{itemize}
+  \item \emph{How does each of the previous model perform?}\\
+
+        We obtain the following results:
+        \begin{itemize}
+          \item Model 1 EER: \(2.1792\).
+          \item Model 2 EER: \(1.1771\).
+        \end{itemize}
+
+  Further explanation on these results will be provided in the following questions.
+
+  \item \emph{Which one is the best and why?}\\
+
+        As we will explain in the following question, the lower the EER is, the better the model is. This implies that, in our case, the second model is better than the first one.
+
+  \item \emph{What is the EER and how can we interpret it?}\\
+
+        EER stands for \textbf{Equal Error Rate}. To understand this concept, we assume that the concepts of \emph{TP, TN, FP, and FN} are known. Using these concepts and considering \(N\) as the total number of examples, we can define the \textbf{False Rejection Rate (FFR)} and \textbf{False Aceptation Rate (FAR)} as the ratios:
+        \[
+        FFR = \frac{FN}{N}, \quad FAR = \frac{FP}{N}.
+        \]
+
+        For each of these two metrics, we have to choose a \emph{threshold} that we would like our model to fulfill, using the number of \emph{allowed False Positives and False Negatives}. The \textbf{Dectection Error Tradeoff (DET)} curve represents this tradeoff trying to decrease both FAR and FFR. We can see an example of DET curve in Figure \ref{fig:DET}.
+
+        \begin{figure}
+          \centering
+          \includegraphics[scale=0.4]{Figures/DET}
+          \caption{Example of DET curve.}
+          \label{fig:DET}
+        \end{figure}
+
+        With all these concept, we can define the EER as the point of the DET curve where \(FAR = FRR\), that is, the point where our model rejects the same amount of positive examples than the number of negative samples that it accepts.
+
+        At this point, we get to understand why a lower EER is better, since if the EER is lower it means that both our FAR and FFR (which are \emph{negative} quantities) are low.
+  \item \emph{What are the differences between the models?}\\
+
 
 
 \end{itemize}
