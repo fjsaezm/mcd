@@ -32,9 +32,9 @@
 \usepackage{booktabs} % Enhances quality of tables
 \usepackage{tikz-qtree} % Easy tree drawing tool
  % Configuration for b-trees and b+-trees, !uses style file!
-\usepackage[backend=biber,style=numeric,
+\usepackage[backend=bibtex,style=numeric,
             sorting=nyt]{biblatex} % Complete reimplementation of bibliographic facilities
-\addbibresource{ecl.bib}
+\addbibresource{b.bib}
 \usepackage{csquotes} % Context sensitive quotation facilities
 \usepackage[yyyymmdd]{datetime} % Uses YEAR-MONTH-DAY format for dates
 \renewcommand{\dateseparator}{-} % Sets dateseparator to '-'
@@ -56,7 +56,7 @@
 %-------------------------------
 
 %----------------------------------------------------------------------------------------
-
+\nocite{*}
 %-------------------------------
 %	ENVIRONMENT SECTION
 %-------------------------------
@@ -73,14 +73,21 @@
 \titleformat{\section}{\normalfont\Large\bfseries}{}{0pt}{}
 
 
+% Reference
+
 
 %-------------------------------------------------------------------------------------------
 %	CUSTOM COMMANDS
 %-------------------------------
 \newcommand{\gaussian}{\frac{1}{\sigma\sqrt{2\pi}}\exp\left(- \frac{(x-\mu)^2}{2\sigma^2}\right)}
 \newcommand{\R}{\mathbb R}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
 
 \def\inline{\lstinline[basicstyle=\ttfamily,keywordstyle={}]}
+
+
+\newcommand{\ps}{x^+}
+\newcommand{\ns}{x^-}
 
 
 \begin{document}
@@ -277,5 +284,56 @@ EER 1.1771
 
 \end{itemize}
 
+
+\section{Training a model}
+
+In this section, we are given a few specifications for a model and we are asked to train a model using the provided specifications. In particular, the specifications are:
+
+\begin{itemize}
+  \item The \textbf{encoder} must be a \inline{ResNetSE34L} with \inline{SAP} (which does not increase the out dimension of the linear layer of the model).
+  \item Loss function \textbf{amsoftmax}
+  \item \inline{Scale = 30}
+  \item \inline{margin = 0.3}
+  \item Number of speaker equal to the number of classes (we found before that the number is \(4953\)).
+        \item Fix a number of epochs. In our case, we tested a few different numbers, fixing the final number to \(100\) epoch (leading to a training that lasts more than one hour).
+\end{itemize}
+
+
+\section{Extra: Training a model of our choice}
+In this last section, we are asked to train a model of our choice, choosing an \textbf{encoder} and
+
+The choice I made was to select
+
+\subsection{Intuitions on triplet losses}
+
+\emph{x-vectors} are representations of the audio signals we are dealing with. Ideally, we would like to obtain intermediate representations in our encoder that, given an input data $x$, preserve the distance between similar data points close and also makes de distance between different datapoints far on the embedding space \cite{Sohn2016ImprovedDM}.
+
+Let us set the notation that we will use first. We will consider sets of triplets $(x,\ps,\ns)$ where:
+\begin{itemize}
+\item The element $x$ is an anchor point,
+\item The element $\ps$ is a positive instance,
+\item The element $\ns$ is a negative instance.
+\end{itemize}
+
+The main idea is to learn a representation of $x$, say $g(x)$, such that the distance of the representation of the input is closer in distance to the representation of the positive sample $\ps$ than the representation of the negative sample $\ns$. Using the norm, we can formally express that as follows:
+$$
+\norm{g(x) - g(\ps)}_2 \leq \norm{g(x) - g(\ns)}_2,
+$$
+for each triplet in the set.\\
+
+The loss function that we will use will use this inequality, adding a last term, which we will motivate now: Support-vector machines (SVMs) are supervised learning models used for classification or regression problems. They are one of the most robust prediction methods. They search for a hyperplane $h$ in high or infinite dimensional space that separates the data as much as possible, making use of \emph{support vectors}, the datapoints that are closest to the hyperplane. If the data is linearly separable, we can select two hyperplanes $h_1,h_2$ that are parallel to $h$ and making the distance from them to $h$ as large as possible. That region is called the \emph{margin}.\\
+
+Coming back to our triplets problem, we also want to introduce a margin between the distances of the elements of the triplets, in order to separate positive examples from negative examples as much as possible. This way, we introduce a \emph{margin} term $\alpha$, rewriting our last equation as follows:
+\[
+\norm{g(x) - g(\ps)}_2 + \alpha < \norm{g(x) - g(\ns)}_2.
+\]
+Using this inequality, we can define a loss function for each triplet in the set:
+\begin{equation}\label{triplet:single:loss}
+\ell^\alpha (x,\ps,\ns) =  \norm{g(x) - g(\ps)}_2^2 - \norm{g(x) - g(\ns)}_2^2 + \alpha.
+\end{equation}
+This loss has been defined for a single triplet. This is the loss function that we have defined in the file \inline{loss/triplet.py}.
+
+
+\printbibliography
 
 \end{document}
