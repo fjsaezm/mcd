@@ -287,7 +287,7 @@ EER 1.1771
 
 \section{Training a model}
 
-In this section, we are given a few specifications for a model and we are asked to train a model using the provided specifications. In particular, the specifications are:
+In this section, we are given a few specifications for a model and we are asked to train a model using these specifications. In particular, the specifications are:
 
 \begin{itemize}
   \item The \textbf{encoder} must be a \inline{ResNetSE34L} with \inline{SAP} (which does not increase the out dimension of the linear layer of the model).
@@ -299,10 +299,84 @@ In this section, we are given a few specifications for a model and we are asked 
 \end{itemize}
 
 
-\section{Extra: Training a model of our choice}
-In this last section, we are asked to train a model of our choice, choosing an \textbf{encoder} and
+To train a model matching the required specifications, we must execute the following command:
+\begin{minted}{Python}
+!python ./trainSpeakerNet.py \
+  --model ResNetSE34L \
+  --encoder_type SAP \
+  --trainfunc amsoftmax \
+  --save_path mytrained_models/model1 \
+  --batch_size 200 \
+  --scale 30 \
+  --margin 0.3 \
+  --nClasses 4953 \
+  --train_list lists/train_list.txt \
+  --test_list lists/veri_test.txt \
+  --max_epoch 10
+\end{minted}
 
-The choice I made was to select
+We decided to plot how the \textbf{EER} evolves with the increase of the epochs. We can see the evolution in Figure \ref{fig:eer:evolution}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.8]{Figures/proposed_model_eer}
+  \caption{EER of the proposed model in the different epochs.}
+  \label{fig:eer:evolution}
+\end{figure}
+
+As we can observe, the EER first has a fast decreasement, which is stopped after approximately \(30\) epochs.
+
+After training the model, we have to evaluate the obtained model so that we can plot the histograms of the test set. In our case, the paths to the model folders are a little bit confusing due to saving-loading the data into \emph{Google Drive}. The command to evaluate is the following:
+
+\begin{minted}{bash}
+!python ./trainSpeakerNet.py --eval --model ResNetSE34L  \
+  --encoder_type SAP --trainfunc amsoftmax \
+  --save_path exps/mymodel_1 --eval_frames 400 --test_list lists/veri_test.txt \
+  --initial_model mytrained_models/mytrained_models/model1/model/model000000100.model
+\end{minted}
+
+Using the evaluation in both \(50\) and \(100\) epochs, we can plot both histograms to compare them. We see this in Figure \ref{fig:comp:hists}.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[\centering 50 epochs]{{\includegraphics[scale=0.5]{Figures/hist_50}}}%
+    \qquad
+    \subfloat[\centering 100 epochs]{{\includegraphics[scale=0.5]{Figures/hist_100} }}%
+    \caption{Histograms of target and nontarget examples for different number of epochs.}%
+    \label{fig:comp:hists}%
+\end{figure}
+
+\textbf{Questions.-}
+
+\begin{itemize}
+  \item \emph{How many epochs have you used?}\\
+        As we have mentioned before, we used \(100\) epochs.
+
+  \item \emph{What is the score of the model=}\\
+        The final score of our model in epoch \(100\) is \(EER = 17.605\). Also, in epoch \(50\) the score was \(EER_{50} = 18.8229\), which is not a really big difference considering that is half the number of epochs.
+
+  \item \emph{How is this model compared with the previous pretrained models? Why do you think this is happening?}\\
+        This model is clearly worse than the previous ones. There are a few reasons that we could consider:
+        \begin{enumerate}
+          \item The number of epochs of the previous models was much higher
+          \item In the previous models, the logarithm is applied to the input. This could be a reason why the results are quite different.
+          \item The number of mels used is also different, being the default value in our case (\(40\)) and \(64\) (a higher value) in the previous cases
+                \item We are also applying a margin and a scale which we do not know if it has been applied in the previous model.
+          \item Lastly, the train function is different, \inline{softmaxproto vs amsoftmax}, which could also make a difference in the results.
+        \end{enumerate}
+  \item \emph{Include the histograms in this document. Which threshold would you use to classify between target and non-target trials?}\\
+        We can see the histograms in Figure \ref{fig:comp:hists}. We observe that when the number of epochs increases, the non-target distribution resembles more a gaussian distribution, and the target distribution shifts to the right. The used threshold would be different depending on the number of epochs shown:
+        \begin{enumerate}
+          \item For \(50\) epochs, an appropriate threshold sould be around \(-1.35\).
+                \item For \(100\) epochs, using \(-1.3\) would probably provide good results.
+                \end{enumerate}
+        \end{itemize}
+
+
+\section{Extra: Training a model of our choice}
+In this last section, we are asked to train a model of our choice, choosing an \textbf{encoder} and a loss function to train a model.
+
+The choice I made was to observe the behaviour of the \textbf{triplet loss function} using any encoder architecture. I find triplet loss functions quite interesting since their motivation comes from a very natural and intuitive concept. Let us explain a little bit more about triplet losses.
 
 \subsection{Intuitions on triplet losses}
 
@@ -334,6 +408,9 @@ Using this inequality, we can define a loss function for each triplet in the set
 This loss has been defined for a single triplet. This is the loss function that we have defined in the file \inline{loss/triplet.py}.
 
 
+\subsection{Less parameters}
+
+The last task is to train a model using less parameters. In our case, if we do not want to modify the models (ResNet, VGG), we can only explore the arguments given in the training script to try to reduce the number of used parameters. We found that using the parameter \inline{--nOut}, we can specify the output dimension of the \inline{linear layer} of the model, so the goal would be in this case to reduce this \inline{nOut} parameter rather than using the default value.
 \printbibliography
 
 \end{document}
