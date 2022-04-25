@@ -406,11 +406,46 @@ Using this inequality, we can define a loss function for each triplet in the set
 \ell^\alpha (x,\ps,\ns) =  \norm{g(x) - g(\ps)}_2^2 - \norm{g(x) - g(\ns)}_2^2 + \alpha.
 \end{equation}
 This loss has been defined for a single triplet. This is the loss function that we have defined in the file \inline{loss/triplet.py}.
+\subsection{Unable to perform the experiment}
 
+Using the provided code, we were not able to execute the desired experiment. The following command was used:
+\begin{minted}{bash}
+!python trainSpeakerNet.py \
+  --model ResNetSE34Half \
+  --encoder_type SAP \
+  --trainfunc triplet \
+  --save_path mytrained_models/triplets \
+  --batch_size 20 \
+  --scale 30 \
+  --margin 0.3 \
+  --nClasses 4953 \
+  --train_list lists/train_list.txt \
+  --test_list lists/veri_test.txt \
+  --max_epoch 30
+\end{minted}
+
+And the console provided the following output:
+
+\begin{minted}{bash}
+Traceback (most recent call last):
+  File "trainSpeakerNet.py", line 169, in <module>
+    loss, traineer = s.train_network(loader=trainLoader);
+  File "/content/APPSA_PR2/APPSA_PR2/SpeakerNet.py", line 63, in train_network
+    nloss, prec1 = self.__L__.forward(feat,label)
+  File "/content/APPSA_PR2/APPSA_PR2/loss/triplet.py", line 26, in forward
+    assert x.size()[1] == 2
+AssertionError
+\end{minted}
+
+As we can see, there is a problem with the data dimensions. However, I had no clue about what could be causing the mistake.\\
+
+I did a little bit of research and found the original Github repository that implements the code, and found \href{https://github.com/clovaai/voxceleb_trainer/issues/109}{this issue} where the same problem that I had was commented. However, although the issue is marked as solved, no solution is provided, so we finally could not train an extra network.
 
 \subsection{Less parameters}
 
 The last task is to train a model using less parameters. In our case, if we do not want to modify the models (ResNet, VGG), we can only explore the arguments given in the training script to try to reduce the number of used parameters. We found that using the parameter \inline{--nOut}, we can specify the output dimension of the \inline{linear layer} of the model, so the goal would be in this case to reduce this \inline{nOut} parameter rather than using the default value.
+
+
 \printbibliography
 
 \end{document}
