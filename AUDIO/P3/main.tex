@@ -109,7 +109,7 @@
 \begin{minipage}{0.4\textwidth}
   \centering
   \large
-  Speech Recognition\\
+  Speech Recognition using ESPNet\\
 
   \normalsize
   Deep Learning for Audio Signals\\
@@ -126,6 +126,98 @@
 
 \tableofcontents
 
+\section*{Introduction}
 
+In this assignment, we will present the Automatic Speech Recognition (ASR) task. The main goal of this task is to assign a sequence of words, letters or phonemes to a given input, which is usually audio features.
+
+In particular, we will use an already \textbf{built} recognition system based in End-to-end deep learning. We will use \emph{ESPNet (End-to-end Speech Processing Toolkit)}. The code that we will use was provided by \href{https://scholar.google.com/citations?user=biA-c9sAAAAJ&hl=en}{Beltrán Labrador} and \href{https://scholar.google.es/citations?user=aENoFF4AAAAJ&hl=es}{Doroteo Torre}, and can be found in this \href{https://colab.research.google.com/drive/17JDlDB2ERa4YQAtKIaWfQysygPs7ao8W?usp=sharing}{Google Colab notebook}.
+
+\section{Setting the environment up}
+
+To test ESPNet, we will use the dataset \inline{TIMIT}, which contains \(6300\) phrases, divided in \(10\) phrases of each of the \(630\) speakers from the \(8\) main different US dialect regions. The phrases are also divided in male and female speakers. It is also important to remark that the division in train/test splits is done in a way that:
+\begin{itemize}
+  \item A speaker appears rather in the train or in the test split separately, but not in both at the same time.
+  \item The phrases of the test set are \textbf{not} in the train set.
+\end{itemize}
+
+The first task will simply consists on looking at the content of the files that the \inline{TIMIT} corpus provides and understanding these files.
+
+\textbf{Questions.}\\
+
+\begin{itemize}
+  \item \emph{Check the content of the .txt, .wrd and .phn files listening to the audio (.wav file) with a few examples. Comment how it was done and the results obtained.}\\
+
+        To check the content of the files, we can use \inline{bash} commands. After loading the dataset in Google Colab, we store it in the \inline{content/timit/TIMIT} folder, in which we can find the \inline{TRAIN/TEST} folders. Having a look at the \href{https://catalog.ldc.upenn.edu/LDC93s1}{official documentation} and to the assignment documentation, we observe that we have the folders have the following structure:
+        \begin{minted}{bash}
+        <DIALECT>/<SEX><SPEAKER_ID>/<SENTENCE_ID>.<FILE_TYPE>
+        \end{minted}
+
+        We can list the different users of any of the regions and select one of them to observe his or her data. For convenience, we firstly use the code provided to examine the data of the user \inline{DR1/FCJF0}, meaning that it is an user from the first dialect region, and it is a female. We select the audio \inline{SX397} and then we show the \emph{spelling} of the phrase.
+
+        \begin{minted}{bash}
+          !cat /content/timit/TIMIT/TRAIN/DR1/FCJF0/SX397.TXT
+
+          0 39220 Tim takes Sheila to see movies twice a week.
+        \end{minted}
+
+        We appreciate that this audio consist uniquely on one phrase. If we use \inline{Ipython.display.audio('path_to_the_audio')}, (where the path in this case is\emph{/content/timit/TIMIT/TRAIN/DR1/FCJF0/SX397.WAV}), we listen to the audio and verify that the spelling is correct. We can also check the \emph{aligned word-level transcription}:
+
+        \begin{minted}{bash}
+          !cat /content/timit/TIMIT/TRAIN/DR1/FCJF0/SX397.WRD
+
+            2240 5540 tim
+            5540 8610 takes
+            8610 14707 sheila
+            14707 15791 to
+            15791 19735 see
+            19735 26402 movies
+            26402 31210 twice
+            31210 31791 a
+            31791 37180 week
+        \end{minted}
+        Which indicates exactly the steps of time where the words happen, and we can lastly observe the phonetic transcription:
+
+        \begin{minted}{bash}
+          !cat /content/timit/TIMIT/TRAIN/DR1/FCJF0/SX397.PHN
+
+          0 2240 h#
+          2240 2940 t
+          2940 4469 ih
+          4469 5540 m
+          5540 5860 tcl
+          5860 6570 t
+          6570 8211 ey
+          8211 8610 kcl
+          8610 11112 sh
+          ...
+        \end{minted}
+
+        Since this is the provided example, we repeat the process with a different example to check that everything is correct in another case. We use the same region and female speaker. We select the sentence id: \inline{SX307}. We show the spelling transcription and the word-level transcription:
+
+        \begin{minted}{bash}
+          !cat /content/timit/TIMIT/TRAIN/DR1/FCJF0/SX307.TXT
+          !echo "-----"
+          !cat /content/timit/TIMIT/TRAIN/DR1/FCJF0/SX307.WRD
+
+          0 23143 The meeting is now adjourned.
+          -----
+          1960 2616 the
+          2616 8293 meeting
+          8293 10160 is
+          10960 13707 now
+          13707 20887 adjourned
+        \end{minted}
+
+        Which shows the content of the phrase. Lastly, we have played the audio as we have explained before to check that the phrase is correct. We detect a little bit of noise on the speaker, but the words can be understood correctly.
+
+  \item \emph{Explore the documentation of the TIMIT corpus and find information associated to the speakers. Can you think of any other applications of this corpus further from the training and evaluation of Speech Recognition systems?}\\
+
+
+        We consider the folder structure mentioned before to give an answer to this. we find that we have audios classified by \emph{sex} and \emph{speaker}. Thanks to this, we could definitely use this corpus to build a \emph{male/female} recognition system or even a \textbf{speaker recognition system}. However, the available data for this kind of tasks would probably too low since this dataset is not focused on this task.
+
+        Also, we know that we have both the \textbf{aligned word transcription} and the \textbf{aligned phonetic transcription} available, which could help us to create a \textbf{event detection system} with the capability of detecting the event: \emph{Speech}. However, it would be this unique event since it is the only one labeled in this dataset, so it would not be very useful, although this dataset could be joined with other events datasets to improve the event detection system.
+
+        Lastly, in \href{https://catalog.ldc.upenn.edu/docs/LDC93S1/SPKRINFO.TXT}{this file of the documentation}, we observe that we can find more information about the speakers such as the race, birth date or education level. All this information could be use to perform different classification tasks, as we mentioned before with the sex. The birth date could be used for a regression problem using audio.
+\end{itemize}
 
 \end{document}
