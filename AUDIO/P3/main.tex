@@ -140,9 +140,9 @@ To test ESPNet, we will use the dataset \inline{TIMIT}, which contains \(6300\) 
   \item The phrases of the test set are \textbf{not} in the train set.
 \end{itemize}
 
-The first task will simply consists on looking at the content of the files that the \inline{TIMIT} corpus provides and understanding these files.
+The first task will simply consists on looking at the content of the files that the \inline{TIMIT} corpus provides and understanding these files.\\
 
-\textbf{Questions.}\\
+\textbf{Questions.}
 
 \begin{itemize}
   \item \emph{Check the content of the .txt, .wrd and .phn files listening to the audio (.wav file) with a few examples. Comment how it was done and the results obtained.}\\
@@ -160,7 +160,11 @@ The first task will simply consists on looking at the content of the files that 
           0 39220 Tim takes Sheila to see movies twice a week.
         \end{minted}
 
-        We appreciate that this audio consist uniquely on one phrase. If we use \inline{Ipython.display.audio('path_to_the_audio')}, (where the path in this case is\emph{/content/timit/TIMIT/TRAIN/DR1/FCJF0/SX397.WAV}), we listen to the audio and verify that the spelling is correct. We can also check the \emph{aligned word-level transcription}:
+        We appreciate that this audio consist uniquely on one phrase. If we use
+        \begin{minted}{Python}
+           Ipython.display.audio('path_to_the_audio')
+        \end{minted}
+        (where the path in this case is\emph{/content/timit/TIMIT/TRAIN/DR1/FCJF0/SX397.WAV}), we listen to the audio and verify that the spelling is correct. We can also check the \emph{aligned word-level transcription}:
 
         \begin{minted}{bash}
           !cat /content/timit/TIMIT/TRAIN/DR1/FCJF0/SX397.WRD
@@ -219,5 +223,31 @@ The first task will simply consists on looking at the content of the files that 
 
         Lastly, in \href{https://catalog.ldc.upenn.edu/docs/LDC93S1/SPKRINFO.TXT}{this file of the documentation}, we observe that we can find more information about the speakers such as the race, birth date or education level. All this information could be use to perform different classification tasks, as we mentioned before with the sex. The birth date could be used for a regression problem using audio.
 \end{itemize}
+
+\section{ESPNet in Bash}
+
+In this section, we will use ESPNet in \inline{Bash} to evaluate a STT system using end-to-end neural networks. We will use the previously presented corpus.
+
+\subsection{Directory tree and KALDI recipes}
+
+\begin{itemize}
+  \item \emph{Which file(s) should be modified to change...:}\\
+        \begin{itemize}
+          \item The DNN backbone: The DNN backbone is specified in the file:
+                \begin{minted}{bash}
+      espnet/egs/timit/asr1/conf/train.yaml
+    \end{minted}
+                If we explore this file, we can see that we can specify the \emph{encoder} architecture, the \emph{decoder} architecture and also the attention related layers and hybrid CTC/attention parameters.
+          \item The Seq-to-seq mapping used:
+        \end{itemize}
+
+  \item \emph{Comparing the obtained results in phoneme recognition and character recognition in the TIMIT corpus, which one do you consider more precise?}\\
+
+        The results are shown in a \inline{Markdown} file. In this file, the number of files, words, the percentage of correct tokens, percentage of substitutions/deletions/insertions and the error rate are shown.
+
+        For each of the cases (phoneme/character) a few
+\end{itemize}
+
+\subsection{Data}
 
 \end{document}
