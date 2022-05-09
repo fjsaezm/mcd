@@ -245,7 +245,11 @@ In this section, we will use ESPNet in \inline{Bash} to evaluate a STT system us
       espnet/egs/timit/asr1/conf/train.yaml
     \end{minted}
                 If we explore this file, we can see that we can specify the \emph{encoder} architecture, the \emph{decoder} architecture and also the attention related layers and hybrid CTC/attention parameters.
-          \item The Seq-to-seq mapping used:
+          \item The Seq-to-seq mapping used: In the scripr
+                \begin{minted}{bash}
+                espnet/egs/timit/asr1/run.sh
+\end{minted}
+                We can find the parameter \inline{trans_type} which indicates if we want to do the Seq-to-seq mapping in the character level or in the phoneme level. This is the parameter that we should modify.
         \end{itemize}
 
   \item \emph{Comparing the obtained results in phoneme recognition and character recognition in the TIMIT corpus, which one do you consider more precise?}\\
@@ -279,7 +283,8 @@ In this section we will prepare the data for the training of the system.
   \item \emph{What are the names of the three subsets of \inline{TIMIT} that are used? How many phrases does each of them have?}\\
   
   The subsets and the number of phrases are summarized in Table \ref{table:timit:subsets}.
-  \begin{table}[H]
+        \begin{table}[H]
+          \centering
     \begin{tabular}{l|rrrr}
     Subset name & \multicolumn{1}{l}{Number of phrases} & \multicolumn{1}{l}{Mean duration} & \multicolumn{1}{l}{Min Duration} & \multicolumn{1}{l}{Max duration} \\ \hline
     train\_wav  & 3696                                  & 3.063                             & 0.915                            & 7.788                            \\
@@ -329,7 +334,7 @@ The variable names are self-explicative and the file \inline{train.yalm} is prop
 \item \emph{Check the evolution of the different parameters and the evolution in train and validation. Do you consider that the training has worked correctly? }
 \end{itemize}
 
-\emph{ESPNet} also generates charts about the trainig process.\\
+\emph{ESPNet} also generates charts about the training process.\\
 
 \textbf{Questions.}
 \begin{itemize}
@@ -345,12 +350,45 @@ In this section, we will examine the file \inline{decode.yalm} and answer some q
 \begin{itemize}
 \item \emph{What does the parameter} \inline{beam-size} \emph{do?}\\
 
-The parameter \inline{beam-size} controls the number of hypotheses kept during the Beam Search (found in the \href{https://espnet.github.io/espnet/_gen/espnet.nets.html?highlight=beam#espnet-nets-batch-beam-search}{documentation} of the \inline{beam search} implementation).
+        The parameter \inline{beam-size} controls the number of hypotheses kept during the Beam Search (found in the \href{https://espnet.github.io/espnet/_gen/espnet.nets.html?highlight=beam#espnet-nets-batch-beam-search}{documentation} of the \inline{beam search} implementation).\textbf{Beam search} is a heuristic search algorithm that explores a graph exploring the most promising node in a limited set. In this sense, it is a \emph{greedy} algorithm, reducing the memory requirements. It uses breadth-first search to build its search tree.
 
-As a note for myself, \textbf{beam search} is
 \item \emph{What does the parameter} \inline{ctc-weight} \emph{do?}\\
 \end{itemize}
 
+
+Lastly, we can execute the recognition script.
+
+\textbf{Question:} \emph{Why do two different results appear? What do they mean? Do they behave as expected?}\\
+If we have a look at the output of the command that executes the ASR decoding, we find two different lines right before the results:
+\begin{minted}{bash}
+write a CER (or TER) result in exp/train_nodev_pytorch_train/decode_test_decode/result.txt
+---
+write a CER (or TER) result in exp/train_nodev_pytorch_train/decode_train_dev_decode/result.txt
+\end{minted}
+
+As it is indicated, the first one is writing on the file the error in the \inline{test} partition, while the second one is writing the result on \inline{train and dev} partitions. We can say that the results behave \textbf{as expected}, since the error in the test partition is a little bit higher than the error in the train set, as it usually happens.
+\subsection{Checking the evaluation results}
+
+Lastly we show that the results can be shown in detail. Let us look at the output of an specific example (the result is tiny, it can be zoomed):
+
+\begin{minted}[fontsize=\tiny]{bash}
+!tail -n 7 espnet/egs/timit/asr1/exp/train_nodev_pytorch_train/decode_test_decode/result.txt
+---
+id: (mwew0-mwew0_sx371)
+Scores: (#C #S #D #I) 32 8 0 0
+REF:  <space> r AY <space> n AW m EY n AA <space> b iy DH ih <space> b EH s <space> t ay M  f er <space> b ih z n ih s <space> m er <space> jh ER z <space>
+HYP:  <space> r EH <space> n AH m IH n AH <space> b iy DX ih <space> b OW s <space> t ay AE f er <space> b ih z n ih s <space> m er <space> jh UW z <space>
+Eval:           S            S    S    S               S               S                 S                                                     S
+\end{minted}
+As we can see, the Substitutions/Deletions and Insertions are shown in detail.
+
+
+
+\textbf{Question.} \emph{Can you manually compute the PER for the previous alignment? What is the PER for this file?}\\
+Using the expression of the PER, we obtain that:
+\[
+PER = \frac{S+D+I}{C}\cdot 100\% = \frac{8}{32} \cdot 100\% = 25\%.
+\]
 
 \printbibliography
 \end{document}
