@@ -226,7 +226,14 @@ The first task will simply consists on looking at the content of the files that 
 
 \section{ESPNet in Bash}
 
-In this section, we will use ESPNet in \inline{Bash} to evaluate a STT system using end-to-end neural networks. We will use the previously presented corpus.
+In this section, we will use ESPNet in \inline{Bash} to evaluate a STT system using end-to-end neural networks. We will use the previously presented corpus. The structure of stages that will have to be followed in order to train the system is presented in Figure \ref{fig:structure:stages}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{Figures/stages}
+\caption{Stages of the complete recipe.}
+\label{fig:structure:stages}
+\end{figure}
 
 \subsection{Directory tree and KALDI recipes}
 
@@ -245,9 +252,105 @@ In this section, we will use ESPNet in \inline{Bash} to evaluate a STT system us
 
         The results are shown in a \inline{Markdown} file. In this file, the number of files, words, the percentage of correct tokens, percentage of substitutions/deletions/insertions and the error rate are shown.
 
-        For each of the cases (phoneme/character) a few
+        For each of the cases (phoneme/character) a few different configurations of encoder, decoder and attention type are displayed. We resume the most most relevant information in Table \ref{table:results:1}.
+        \begin{table}[H]
+          \begin{tabular}{l|lllrr}
+          Transcription type & Encoder        & Attention type              & Decoder       & \multicolumn{1}{l}{Accuracy on tokens} & \multicolumn{1}{l}{Error on tokens} \\ \hline
+          Phonemes           & vggbgrup       & coverage\_location          & gru           & 82.1                                   & 21.4                                \\
+                             & \textbf{bgrup} & \textbf{coverage\_location} & \textbf{lstm} & \textbf{82.7}                          & \textbf{20.2}                       \\
+                             & bgrup          & location                    & gru           & 82.5                                   & 20.5                                \\
+          Characters         & vggbgrup       & location                    & lstm          & 69.6                                   & 38.2                                \\
+                             & vggbgrup       & location2d                  & gru           & 72.0                                   & 34.0                                \\
+                             & bgrup          & coverage\_location          & lstm          & 72.8                                   & 33.7                               
+          \end{tabular}
+          \caption{Results on Phonemes and Characters recognition.}
+
+          \label{table:results:1}
+          \end{table}
+          The results show that, in general, this system is \textbf{more capable of recognizing the phonemes} than the characters itself. There is a difference of about \(10\%\) in accuracy and more than \(15\%\) in the error rates. Recall that the error rates do not have to sum \(100\%\), since the error percentage can be higher than \(100\%\). In particular, in the shown cases, we obtain that the best performing system for phoneme recognition uses \inline{bgrup} as the encoder, an \inline{lstm} as decoder, and uses \inline{coverage_location} as the attention type, obtaining an accuracy of \(82.7\%\) on tokens and an error of \(20\%\).
 \end{itemize}
 
 \subsection{Data}
+In this section we will prepare the data for the training of the system.
 
+\textbf{Questions.}\\
+
+\begin{itemize}
+  \item \emph{What are the names of the three subsets of \inline{TIMIT} that are used? How many phrases does each of them have?}\\
+  
+  The subsets and the number of phrases are summarized in Table \ref{table:timit:subsets}.
+  \begin{table}[H]
+    \begin{tabular}{l|rrrr}
+    Subset name & \multicolumn{1}{l}{Number of phrases} & \multicolumn{1}{l}{Mean duration} & \multicolumn{1}{l}{Min Duration} & \multicolumn{1}{l}{Max duration} \\ \hline
+    train\_wav  & 3696                                  & 3.063                             & 0.915                            & 7.788                            \\
+    dev\_wav    & 400                                   & 3.08                              & 1.09                             & 7.43                             \\
+    test\_wav   & 192                                   & 3.03                              & 1.30                             & 6.21                            
+    \end{tabular}
+    \caption{Information about the used \inline{TIMIT} subsets.}
+    \label{table:timit:subsets}
+    \end{table}
+  \item \emph{What are the "FBANK" features?}\\
+  \textbf{FBANK} (Mel-filter bank coefficients) features are extracted from the raw audios. They can be compared with the known MFCCs(Mel Frequency Cepstral Coeﬃcients), which are obtained using the FBANKS and the DCT. This is shown in \cite{FBANK}. The difference in the process can be observed in Figure \ref{fig:FBANKvsMFCC}.
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{Figures/FBANKvsMFCC.png}
+    \caption{Obtention of FBANK and MFCCs.}
+    \label{fig:FBANKvsMFCC}
+  \end{figure}
+
+  
+  \item \emph{What does the acronym "CMVN" shown in the computational logs mean?}\\
+  We have found in \href{https://en.wikipedia.org/wiki/Cepstral_mean_and_variance_normalization}{Wikipedia} that this acronym stands for \textbf{Cepstral Mean and Variance Normalization}, which is a computationally efficient normalization used in robust speech recognition.  This technique minimizes distortion by noise contamination, leading to \textbf{robust feature extraction}, linearly transforming the Cepstral coefficients.
+\end{itemize}
+
+\subsection{Training the neural networks.}
+
+It is time to train the model and check its performance. 
+
+\textbf{Questions.}\\
+
+\emph{Examine the file} \inline{train.yalm} \emph{and try to identify which parameter should be modified in order to change:}
+\begin{itemize}
+  \item \emph{Number of encoder layers}: This is specified in the variable \inline{elayers}. 
+  \item \emph{Encoder type}: This parameter is stored in the variable \inline{etype}
+  \item \emph{Number of units per encoder layer}: It can be found in the variable \inline{eunits}.
+  \item \emph{Encoder attention type}: The variable \inline{atype} indicates this.
+  \item \emph{Number of units in encoder}: This is stored in the variable \inline{dunits}.
+
+\end{itemize}
+The variable names are self-explicative and the file \inline{train.yalm} is properly commented so finding the answers was easy. Usually, variables related to the encoder start with \inline{e}, the attention variables start with \inline{a} and the decoder variables begin with \inline{d}, making the script intuitive.\\
+
+\textbf{Tensorboard} can be used to graphically analyze the evolution of the training.\\
+
+\textbf{Question.}
+\begin{itemize}
+\item \emph{Can you identify the parameters that correspond to the CTC (Connectionst temporal classification) and attention?}
+\item \emph{Check the evolution of the different parameters and the evolution in train and validation. Do you consider that the training has worked correctly? }
+\end{itemize}
+
+\emph{ESPNet} also generates charts about the trainig process.\\
+
+\textbf{Questions.}
+\begin{itemize}
+\item \emph{Can you observe any difference between the evolutions associated to CTC and attention? Why?}
+\item \emph{What is the final approximated PER in train and validation? Why are the results different? }
+\end{itemize}
+
+\subsection{Recognition and evaluation}
+
+In this section, we will examine the file \inline{decode.yalm} and answer some questions about it.
+
+\textbf{Questions.}
+\begin{itemize}
+\item \emph{What does the parameter} \inline{beam-size} \emph{do?}\\
+
+The parameter \inline{beam-size} controls the number of hypotheses kept during the Beam Search (found in the \href{https://espnet.github.io/espnet/_gen/espnet.nets.html?highlight=beam#espnet-nets-batch-beam-search}{documentation} of the \inline{beam search} implementation).
+
+As a note for myself, \textbf{beam search} is
+\item \emph{What does the parameter} \inline{ctc-weight} \emph{do?}\\
+\end{itemize}
+
+
+\printbibliography
 \end{document}
