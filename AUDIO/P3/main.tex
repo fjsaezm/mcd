@@ -229,16 +229,16 @@ The first task will simply consists on looking at the content of the files that 
 In this section, we will use ESPNet in \inline{Bash} to evaluate a STT system using end-to-end neural networks. We will use the previously presented corpus. The structure of stages that will have to be followed in order to train the system is presented in Figure \ref{fig:structure:stages}
 
 \begin{figure}[H]
-\centering
-\includegraphics[scale=0.6]{Figures/stages}
-\caption{Stages of the complete recipe.}
-\label{fig:structure:stages}
+  \centering
+  \includegraphics[scale=0.6]{Figures/stages}
+  \caption{Stages of the complete recipe.}
+  \label{fig:structure:stages}
 \end{figure}
 
 \subsection{Directory tree and KALDI recipes}
 
 \begin{itemize}
-  \item \emph{Which file(s) should be modified to change...:}\\
+  \item \emph{Which file(s) should be modified to change...:}
         \begin{itemize}
           \item The DNN backbone: The DNN backbone is specified in the file:
                 \begin{minted}{bash}
@@ -259,19 +259,19 @@ In this section, we will use ESPNet in \inline{Bash} to evaluate a STT system us
         For each of the cases (phoneme/character) a few different configurations of encoder, decoder and attention type are displayed. We resume the most most relevant information in Table \ref{table:results:1}.
         \begin{table}[H]
           \begin{tabular}{l|lllrr}
-          Transcription type & Encoder        & Attention type              & Decoder       & \multicolumn{1}{l}{Accuracy on tokens} & \multicolumn{1}{l}{Error on tokens} \\ \hline
-          Phonemes           & vggbgrup       & coverage\_location          & gru           & 82.1                                   & 21.4                                \\
-                             & \textbf{bgrup} & \textbf{coverage\_location} & \textbf{lstm} & \textbf{82.7}                          & \textbf{20.2}                       \\
-                             & bgrup          & location                    & gru           & 82.5                                   & 20.5                                \\
-          Characters         & vggbgrup       & location                    & lstm          & 69.6                                   & 38.2                                \\
-                             & vggbgrup       & location2d                  & gru           & 72.0                                   & 34.0                                \\
-                             & bgrup          & coverage\_location          & lstm          & 72.8                                   & 33.7                               
+            Transcription type & Encoder        & Attention type              & Decoder       & \multicolumn{1}{l}{Accuracy on tokens} & \multicolumn{1}{l}{Error on tokens} \\ \hline
+            Phonemes           & vggbgrup       & coverage\_location          & gru           & 82.1                                   & 21.4                                \\
+                               & \textbf{bgrup} & \textbf{coverage\_location} & \textbf{lstm} & \textbf{82.7}                          & \textbf{20.2}                       \\
+                               & bgrup          & location                    & gru           & 82.5                                   & 20.5                                \\
+            Characters         & vggbgrup       & location                    & lstm          & 69.6                                   & 38.2                                \\
+                               & vggbgrup       & location2d                  & gru           & 72.0                                   & 34.0                                \\
+                               & bgrup          & coverage\_location          & lstm          & 72.8                                   & 33.7
           \end{tabular}
           \caption{Results on Phonemes and Characters recognition.}
 
           \label{table:results:1}
-          \end{table}
-          The results show that, in general, this system is \textbf{more capable of recognizing the phonemes} than the characters itself. There is a difference of about \(10\%\) in accuracy and more than \(15\%\) in the error rates. Recall that the error rates do not have to sum \(100\%\), since the error percentage can be higher than \(100\%\). In particular, in the shown cases, we obtain that the best performing system for phoneme recognition uses \inline{bgrup} as the encoder, an \inline{lstm} as decoder, and uses \inline{coverage_location} as the attention type, obtaining an accuracy of \(82.7\%\) on tokens and an error of \(20\%\).
+        \end{table}
+        The results show that, in general, this system is \textbf{more capable of recognizing the phonemes} than the characters. There is a difference of about \(10\%\) in accuracy and more than \(15\%\) in the error rates. Recall that the error rates do not have to sum \(100\%\), since the error percentage can be higher than \(100\%\). In particular, in the shown cases, we obtain that the best performing system for phoneme recognition uses \inline{bgrup} as the encoder, an \inline{lstm} as decoder, and uses \inline{coverage_location} as the attention type, obtaining an accuracy of \(82.7\%\) on tokens and an error of \(20\%\).
 \end{itemize}
 
 \subsection{Data}
@@ -281,43 +281,43 @@ In this section we will prepare the data for the training of the system.
 
 \begin{itemize}
   \item \emph{What are the names of the three subsets of \inline{TIMIT} that are used? How many phrases does each of them have?}\\
-  
-  The subsets and the number of phrases are summarized in Table \ref{table:timit:subsets}.
+
+        The subsets and the number of phrases are summarized in Table \ref{table:timit:subsets}.
         \begin{table}[H]
           \centering
-    \begin{tabular}{l|rrrr}
-    Subset name & \multicolumn{1}{l}{Number of phrases} & \multicolumn{1}{l}{Mean duration} & \multicolumn{1}{l}{Min Duration} & \multicolumn{1}{l}{Max duration} \\ \hline
-    train\_wav  & 3696                                  & 3.063                             & 0.915                            & 7.788                            \\
-    dev\_wav    & 400                                   & 3.08                              & 1.09                             & 7.43                             \\
-    test\_wav   & 192                                   & 3.03                              & 1.30                             & 6.21                            
-    \end{tabular}
-    \caption{Information about the used \inline{TIMIT} subsets.}
-    \label{table:timit:subsets}
-    \end{table}
+          \begin{tabular}{l|rrrr}
+            Subset name & \multicolumn{1}{l}{Number of phrases} & \multicolumn{1}{l}{Mean duration} & \multicolumn{1}{l}{Min Duration} & \multicolumn{1}{l}{Max duration} \\ \hline
+            train\_wav  & 3696                                  & 3.063                             & 0.915                            & 7.788                            \\
+            dev\_wav    & 400                                   & 3.08                              & 1.09                             & 7.43                             \\
+            test\_wav   & 192                                   & 3.03                              & 1.30                             & 6.21
+          \end{tabular}
+          \caption{Information about the used \inline{TIMIT} subsets.}
+          \label{table:timit:subsets}
+        \end{table}
   \item \emph{What are the "FBANK" features?}\\
-  \textbf{FBANK} (Mel-filter bank coefficients) features are extracted from the raw audios. They can be compared with the known MFCCs(Mel Frequency Cepstral Coeﬃcients), which are obtained using the FBANKS and the DCT. This is shown in \cite{FBANK}. The difference in the process can be observed in Figure \ref{fig:FBANKvsMFCC}.
+        \textbf{FBANK} (Mel-filter bank coefficients) features are extracted from the raw audios. They can be compared with the known MFCCs(Mel Frequency Cepstral Coeﬃcients), which are obtained using the FBANKS and the DCT. This is shown in \cite{FBANK}. The difference in the process can be observed in Figure \ref{fig:FBANKvsMFCC}.
 
-  \begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.4]{Figures/FBANKvsMFCC.png}
-    \caption{Obtention of FBANK and MFCCs.}
-    \label{fig:FBANKvsMFCC}
-  \end{figure}
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale=0.4]{Figures/FBANKvsMFCC.png}
+          \caption{Obtention of FBANK and MFCCs.}
+          \label{fig:FBANKvsMFCC}
+        \end{figure}
 
-  
+
   \item \emph{What does the acronym "CMVN" shown in the computational logs mean?}\\
-  We have found in \href{https://en.wikipedia.org/wiki/Cepstral_mean_and_variance_normalization}{Wikipedia} that this acronym stands for \textbf{Cepstral Mean and Variance Normalization}, which is a computationally efficient normalization used in robust speech recognition.  This technique minimizes distortion by noise contamination, leading to \textbf{robust feature extraction}, linearly transforming the Cepstral coefficients.
+        We have found in \href{https://en.wikipedia.org/wiki/Cepstral_mean_and_variance_normalization}{Wikipedia} that this acronym stands for \textbf{Cepstral Mean and Variance Normalization}, which is a computationally efficient normalization used in robust speech recognition.  This technique minimizes distortion by noise contamination, leading to \textbf{robust feature extraction}, linearly transforming the Cepstral coefficients.
 \end{itemize}
 
 \subsection{Training the neural networks.}
 
-It is time to train the model and check its performance. 
+It is time to train the model and check its performance.\\
 
-\textbf{Questions.}\\
+\textbf{Question.}\\
 
 \emph{Examine the file} \inline{train.yalm} \emph{and try to identify which parameter should be modified in order to change:}
 \begin{itemize}
-  \item \emph{Number of encoder layers}: This is specified in the variable \inline{elayers}. 
+  \item \emph{Number of encoder layers}: This is specified in the variable \inline{elayers}.
   \item \emph{Encoder type}: This parameter is stored in the variable \inline{etype}
   \item \emph{Number of units per encoder layer}: It can be found in the variable \inline{eunits}.
   \item \emph{Encoder attention type}: The variable \inline{atype} indicates this.
@@ -330,16 +330,26 @@ The variable names are self-explicative and the file \inline{train.yalm} is prop
 
 \textbf{Question.}
 \begin{itemize}
-\item \emph{Can you identify the parameters that correspond to the CTC (Connectionst temporal classification) and attention?}
-\item \emph{Check the evolution of the different parameters and the evolution in train and validation. Do you consider that the training has worked correctly? }
+  \item \emph{Can you identify the parameters that correspond to the CTC (Connectionst temporal classification) and attention?}
+  \item \emph{Check the evolution of the different parameters and the evolution in train and validation. Do you consider that the training has worked correctly? }
 \end{itemize}
 
 \emph{ESPNet} also generates charts about the training process.\\
 
 \textbf{Questions.}
 \begin{itemize}
-\item \emph{Can you observe any difference between the evolutions associated to CTC and attention? Why?}
-\item \emph{What is the final approximated PER in train and validation? Why are the results different? }
+  \item \emph{Can you observe any difference between the evolutions associated to CTC and attention? Why?}
+
+        All the losses are represented in Figure \ref{fig:all:losses}.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale=0.6]{Figures/loss.png}
+          \caption{All losses of the training represented for the \(20\) epochs.}
+          \label{fig:all:losses}
+        \end{figure}
+        As we can see in the previous figure, the \textbf{CTC} loss has a faster decrease in the first few epochs, where the \textbf{Attention} loss struggles to descend. After these epochs, both losses get really close and we could say they are almost the same.
+  \item \emph{What is the final approximated PER in train and validation? Why are the results different? }
+        We can observe the accuracies
 \end{itemize}
 
 \subsection{Recognition and evaluation}
@@ -348,17 +358,38 @@ In this section, we will examine the file \inline{decode.yalm} and answer some q
 
 \textbf{Questions.}
 \begin{itemize}
-\item \emph{What does the parameter} \inline{beam-size} \emph{do?}\\
+  \item \emph{What does the parameter} \inline{beam-size} \emph{do?}\\
 
-        The parameter \inline{beam-size} controls the number of hypotheses kept during the Beam Search (found in the \href{https://espnet.github.io/espnet/_gen/espnet.nets.html?highlight=beam#espnet-nets-batch-beam-search}{documentation} of the \inline{beam search} implementation).\textbf{Beam search} is a heuristic search algorithm that explores a graph exploring the most promising node in a limited set. In this sense, it is a \emph{greedy} algorithm, reducing the memory requirements. It uses breadth-first search to build its search tree.
+        The parameter \inline{beam-size} controls the number of hypotheses kept during the Beam Search (found in the \href{https://espnet.github.io/espnet/_gen/espnet.nets.html?highlight=beam#espnet-nets-batch-beam-search}{documentation} of the \inline{beam search} implementation). \textbf{Beam search} is a heuristic search algorithm that explores a graph exploring the most promising node in a limited set. In this sense, it is a \emph{greedy} algorithm, reducing the memory requirements. It uses breadth-first search to build its search tree.
 
-\item \emph{What does the parameter} \inline{ctc-weight} \emph{do?}\\
+  \item \emph{What does the parameter} \inline{ctc-weight} \emph{do?}\\
+
+        We found in this \href{https://espnet.github.io/espnet/tutorial.html?highlight=ctc%20weight#ctc-attention-and-hybrid-ctc-attention}{section of the documentation} that we can vary this parameter to switch the model's \textbf{decoding} mode from CTC, attention and hybrid. An example is the following code (extracted from the documentation):
+        \begin{minted}{python}
+# hybrid CTC/attention (default)
+ctc-weight: 0.3
+beam-size: 10
+
+# CTC
+ctc-weight: 1.0
+## for best path decoding
+api: v1 # default setting (can be omitted)
+## for prefix search decoding w/ beam search
+api: v2
+beam-size: 10
+
+# attention
+ctc-weight: 0.0
+beam-size: 10
+maxlenratio: 0.8
+minlenratio: 0.3
+  \end{minted}
 \end{itemize}
 
 
-Lastly, we can execute the recognition script.
+Lastly, we can execute the recognition script.\\
 
-\textbf{Question:} \emph{Why do two different results appear? What do they mean? Do they behave as expected?}\\
+\textbf{Question.} \emph{Why do two different results appear? What do they mean? Do they behave as expected?}\\
 If we have a look at the output of the command that executes the ASR decoding, we find two different lines right before the results:
 \begin{minted}{bash}
 write a CER (or TER) result in exp/train_nodev_pytorch_train/decode_test_decode/result.txt
@@ -387,7 +418,7 @@ As we can see, the Substitutions/Deletions and Insertions are shown in detail.
 \textbf{Question.} \emph{Can you manually compute the PER for the previous alignment? What is the PER for this file?}\\
 Using the expression of the PER, we obtain that:
 \[
-PER = \frac{S+D+I}{C}\cdot 100\% = \frac{8}{32} \cdot 100\% = 25\%.
+  PER = \frac{S+D+I}{C}\cdot 100\% = \frac{8}{32} \cdot 100\% = 25\%.
 \]
 
 \printbibliography
