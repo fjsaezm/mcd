@@ -330,7 +330,8 @@ The variable names are self-explicative and the file \inline{train.yalm} is prop
 
 \textbf{Question.}
 \begin{itemize}
-  \item \emph{Can you identify the parameters that correspond to the CTC (Connectionst temporal classification) and attention?}
+  \item \emph{Can you identify the parameters that correspond to the CTC (Connectionst temporal classification) and attention?}\\
+        Attention parameters are those starting with an \inline{a}. We found the parameters \inline{atype,adim, aconv-chans} and \inline{aconv-filts}. Lastly, we find the parameter \inline{mtalpha}, which controls the tradeoff between CTC and attention. This parameter is in the interval \([0,1]\) and if it value is  \(0.0\), the model only uses attention. Contrary, if \(mtalpha = 1.0\), the model only uses CTC.
   \item \emph{Check the evolution of the different parameters and the evolution in train and validation. Do you consider that the training has worked correctly? }
 \end{itemize}
 
