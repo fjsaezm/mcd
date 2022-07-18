@@ -19,3 +19,12 @@
 [submodule "mcd-pst"]
 	path = mcd-pst
 	url = https://github.com/Ocete/mcd-pst
+[submodule "mcd-bayes"]
+	path = mcd-bayes
+	url = https://github.com/fjsaezm/mcd-bayes
+[submodule "mcd-mf"]
+	path = mcd-mf
+	url = https://github.com/fjsaezm/mcd-mf
+[submodule "mcd-opt"]
+	path = mcd-opt
+	url = https://github.com/fjsaezm/mcd-opt
