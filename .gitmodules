@@ -28,3 +28,6 @@
 [submodule "mcd-opt"]
 	path = mcd-opt
 	url = https://github.com/fjsaezm/mcd-opt
+[submodule "mcd-nlp"]
+	path = mcd-nlp
+	url = https://github.com/fjsaezm/mcd-nlp
