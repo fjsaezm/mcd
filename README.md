@@ -3,6 +3,7 @@
 Exercises, assignments and exams completed in the academic year 2021/22. Mostly made with my good friend [@Ocete](https://github.com/Ocete).
 
 _1st term_
+---
 
 **CN**: Computación Numérica. (Numerical computation)
 
@@ -19,8 +20,10 @@ _1st term_
 **PST**: Procesamiento de Señal y Transformadas. (Signal processing and Fourier transform)  
 
 **TI**: Teoría de la Información.  (Information theory)
----
+
+
 _2nd term_
+---
 
 **MF**: Métodos Funcionales. (Functional methods in machine learning)
 
