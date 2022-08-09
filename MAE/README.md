@@ -13,7 +13,7 @@ Se han realizado 4 prácticas:
 
 # MAE
 
-Repository to store the notes (in construction) and the assignments of the subjects Métodos Avanzados en Estadística (Advanced Methods in Statistics) at the Master in Data Science at Universidad Autónoma de Madrid.
+Repository to store the notes (in construction) and the assignments of the subject Métodos Avanzados en Estadística (Advanced Methods in Statistics) at the Master in Data Science at Universidad Autónoma de Madrid.
 
 The **uncompleted** notes, written in **english**, can be found in the folder [Notes](https://github.com/fjsaezm/mcd/tree/main/MAE/Notes)
 
