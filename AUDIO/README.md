@@ -15,8 +15,6 @@ Repository for the subject Deep learning for Audio signals at the Master's degre
 
 Three assignments and a final presentation have been done:
 
-Se han realizado 3 prácticas y una presentación final en la que se amplía el contenido de una de las prácticas:
-
 - **Event detection** study case using the DCASE challenge: (Folder [P1](https://github.com/fjsaezm/mcd/tree/main/AUDIO/P1))
 - **Speaker recognition** study case using the VoxCeleb challenge (Folder [P2](https://github.com/fjsaezm/mcd/tree/main/AUDIO/P2))
 - Práctica sobre **traducción audio a texto automática** usando ESPNet **Automatic speech recognition** using ESPNet (Folder [P3](https://github.com/fjsaezm/mcd/tree/main/AUDIO/P3))
