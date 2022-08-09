@@ -25,6 +25,8 @@ _1st term_
 _2nd term_
 ---
 
+**OPT**: Optimización (Optimization)
+
 **MF**: Métodos Funcionales. (Functional methods in machine learning)
 
 **BIO**: Aprendizaje profundo para señales biométricas. (Deep learning for biometric signals)
