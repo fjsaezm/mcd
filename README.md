@@ -1,4 +1,4 @@
-# Máster en Ciencia de Datos ([UAM](https://www.uam.es/EPS/MasterCD/1446800691531.htm))
+# Master's degree in Data Science ([UAM](https://www.uam.es/EPS/MasterCD/1446800691531.htm))
 
 Exercises, assignments and exams completed in the academic year 2021/22. Mostly made with my good friend [@Ocete](https://github.com/Ocete).
 
