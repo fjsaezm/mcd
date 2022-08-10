@@ -1,17 +1,5 @@
-# BIO
-
-Repositorio para la asignatura de Aprendizaje profundo para señales Biométricas del Máster de Ciencia de Datos en la Universidad Autónoma de Madrid.
-
-Se han realizado 3 prácticas en esta asignatura, todas ellas en `MatLab`:
-
-- **Reconocimiento de Huella** mediante el estudio de las **minutiaes** de la misma (Carpeta [Fingerprint](https://github.com/fjsaezm/mcd/tree/main/BIO/Fingerprint))
-- **Reconocimiento de Cara** mediante la aplicación de algoritmos de aprendizaje automático y reducción de dimensionalidad de las imágenes de las caras (Carpeta [FaceRecognition](https://github.com/fjsaezm/mcd/tree/main/BIO/FaceRecognition))
-- **Reconocimiento de Firma** mediante la extracción de características de la misma y creación de nuevas características a partir de las extraídas (Carpeta [SignatureRecognition](https://github.com/fjsaezm/mcd/tree/main/BIO/SignatureRecognition))
-
-
-# BIO
-
-Repository for the subject Deep learning for Biometric signals at the Master's degree in Data Science at Universidad Autónoma de Madrid.
+Deep Learning for Biometric signals
+---
 
 Three assignments have been done:
 
