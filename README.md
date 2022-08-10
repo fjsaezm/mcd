@@ -2,6 +2,8 @@
 
 Exercises, assignments and exams completed in the academic year 2021/22. Mostly made with my good friend [@Ocete](https://github.com/Ocete).
 
+Detailed descriptions of the assignments done in each of the subjects can be found in each subject's folder.
+
 _1st term_
 ---
 
