@@ -1,3 +1,4 @@
-Repositorio para las prácticas de la asignatura Procesos estocásticos. Descripción detallada en cada uno de las carpetas internas.
+Stochastic processes
+---
 
-Repository for the assignments of the subject Stochastic Processes. Detailed description in each of the internal folders.
+Discrete time and continuous time folders have detailed descriptions inside.
