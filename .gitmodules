@@ -28,3 +28,6 @@
 [submodule "mcd-nlp"]
 	path = mcd-nlp
 	url = https://github.com/fjsaezm/mcd-nlp
+[submodule "BAYES/mcd-bayes"]
+	path = BAYES/mcd-bayes
+	url = https://github.com/fjsaezm/mcd-bayes.git
