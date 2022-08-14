@@ -2,6 +2,7 @@
 
 # For text count
 *.ipynb  text
+*.html   text
 
 # To ignore it use below
 *.ipynb linguist-documentation
