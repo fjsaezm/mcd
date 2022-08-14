@@ -6,3 +6,4 @@
 
 # To ignore it use below
 *.ipynb linguist-documentation
+*.html linguist-documentation
